@@ -1,0 +1,19 @@
+sdk-version: 1.7.0
+name: cosmart
+source: daml
+parties:
+ - Elastik  
+ - Asx
+ - Yuling
+ - Mohammed
+ - Andy
+version: 0.0.1
+# init-script: Main:setup
+start-navigator: true
+sandbox-options:
+  - --ledgerid=cosmart
+  - -w
+dependencies:
+  - daml-prim
+  - daml-stdlib
+  - daml-script

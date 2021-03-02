@@ -1,0 +1,319 @@
+module Main where
+
+-- Expected workflow :
+--  operator(Elastik)-->InviteParticipant/InviteClient / AddParticipantToProject / InviteJudge / JudgeCriteria
+--  participant-->AcceptParticipantRequest / AddEditProfile / *AddEditsubmission / *JoinTeam / 
+--  client--> CreateProject / CreatChallenge / AddEditProfile / AddJudgeToProject by client
+--  judgs -->  *VoteForProject(SpecifyRating) 
+
+-- anybody can be an operator ?? specify only one operator => once in production auth will fix the issue
+-- participant should not be invited multiple times !! // auth will solve it
+-- shoud not have two profiles // nonconsuming
+
+-- import Daml.Script
+-- import DA.Date
+
+{- data Challenge = Challenge
+  with
+    name: Text 
+    prize: Text 
+  deriving(Eq, Show) -}
+
+-- invite all parties
+template Platform 
+  with 
+    operator: Party 
+  where
+    signatory operator
+
+    controller operator can
+      nonconsuming InviteClient: ContractId ClientInvitation
+        with 
+          client: Party 
+        do create ClientInvitation with ..
+
+    controller operator can
+      nonconsuming InviteParticipant: ContractId ParticipantInvitation
+        with 
+          participant: Party 
+        do create ParticipantInvitation with ..
+
+    controller operator can
+      nonconsuming InviteJudge: ContractId JudgeInvitation
+        with 
+          judge: Party 
+        do create JudgeInvitation with .. 
+
+--  ----------------------------------------------------------------
+
+-- Judge invitation / Request to join a hackathon
+template JudgeInvitation
+  with
+    judge: Party 
+    operator: Party
+  where 
+    signatory operator 
+
+    controller judge can 
+      AcceptjudgeRequest: ContractId JudgeRole
+        do create JudgeRole with ..
+
+template JudgeRole
+  with 
+    judge: Party 
+    operator: Party 
+  where 
+    signatory judge, operator
+
+    controller judge can 
+      nonconsuming AddEditJudProfile: ContractId JudgeProfile
+        with
+          first:Text
+          last:Text
+          email:Text
+        do
+          create JudgeProfile with ..
+
+    controller judge can 
+      nonconsuming JudgeForProject: ContractId RequestToJudgeProject
+        with 
+          projectId: Text 
+          client: Party
+        do create RequestToJudgeProject with ..
+
+template RequestToJudgeProject
+  with 
+    judge: Party 
+    client: Party
+    operator: Party 
+    projectId: Text
+  where 
+    signatory judge 
+
+    controller judge can 
+      AddJudgeToProject: ContractId ClientProject 
+        do 
+          exerciseByKey @ClientProject (client, projectId) AddJudge with judge
+
+--  ----------------------------------------------------------------
+
+-- Participant invitation / Request to join a hackathon
+template ParticipantInvitation
+  with
+    participant: Party 
+    operator: Party
+  where 
+    signatory operator 
+
+    controller participant can 
+      AcceptParticipantRequest: ContractId ParticipantRole
+        do create ParticipantRole with ..
+
+template ParticipantRole
+  with 
+    participant: Party 
+    operator: Party 
+  where 
+    signatory participant, operator 
+
+    controller participant can 
+      AddParProfile: ContractId ParticipantProfile
+        with
+          first:Text
+          last:Text
+          email:Text
+        do
+          create ParticipantProfile with ..
+
+    controller participant can 
+      nonconsuming RegisterForProject: ContractId RequestToJoinProject
+        with 
+          projectId: Text 
+          client: Party
+        do create RequestToJoinProject with ..
+
+template RequestToJoinProject
+  with 
+    participant: Party 
+    client: Party
+    operator: Party 
+    projectId: Text
+  where 
+    signatory participant 
+
+    controller operator can 
+      AddParticipantToProject: ContractId ClientProject 
+        do 
+          exerciseByKey @ClientProject (client, projectId) AddParticipant with participant
+
+--  ----------------------------------------------------------------
+
+-- client invitation
+template ClientInvitation
+  with
+    client: Party 
+    operator: Party
+  where 
+    signatory operator 
+
+    controller client can 
+      AcceptRequest: ContractId ClientRole
+        do create ClientRole with ..
+
+template ClientRole
+  with 
+    client: Party 
+    operator: Party 
+  where 
+    signatory client, operator 
+    
+    controller client can 
+      nonconsuming AddEditCliProfile: ContractId ClientProfile
+        with
+          first:Text
+          last:Text
+          email:Text
+        do
+          create ClientProfile with ..
+
+    controller client can 
+      nonconsuming CreateProject: ContractId ClientProject 
+        with 
+          name: Text 
+          projectId: Text
+        do 
+          create ClientProject with operator, client, projectId, name, desc = "", criteria = "", challenges = [], participants = [], judges = [],projects=[]
+
+--  ----------------------------------------------------------------
+
+-- create a hackathon
+template ClientProject
+  with 
+    client: Party 
+    operator: Party 
+    projectId: Text
+    name: Text 
+    desc:  Text
+    criteria: Text
+    challenges: [Text]
+    participants: [Party]
+    judges: [Party]
+    projects:[ParticipantSubmission]
+  where
+    signatory client 
+    observer participants
+    observer judges
+    
+    key (client,projectId): (Party, Text)
+    maintainer key._1
+
+    controller client can 
+       AddUpdateDescription: ContractId ClientProject 
+        with 
+          newDesc: Text 
+        do create this with client, name, desc= newDesc, challenges
+
+    controller client can 
+       AddUpdateCriteria: ContractId ClientProject 
+        with 
+          newCriteria: Text 
+        do create this with client, name,desc, criteria= newCriteria, challenges
+
+    controller client can 
+       AddUpdateChallenge: ContractId ClientProject 
+        with 
+          challenge: Text 
+        do create this with client, name, desc,criteria, challenges = challenge::challenges
+    
+    controller operator can 
+       AddParticipant: ContractId ClientProject 
+        with 
+          participant: Party 
+        do create this with operator, client, name, desc, criteria, challenges, participants = participant::participants
+
+    controller client can 
+       AddJudge: ContractId ClientProject 
+        with 
+          judge: Party 
+        do create this with operator, client, name, desc, criteria, challenges, judges = judge::judges
+
+    choice AddEditSubmission: ContractId ClientProject
+        with
+          participant: Party 
+          subName: Text 
+          subDesc:  Text
+          submission: Text
+          challengeName: Text
+        controller participant
+        do
+          p <- create ParticipantSubmission with participant,name= subName,desc= subDesc,submission,challengeName,client,participants
+          proj <- fetch p
+          create this with projects = proj::projects
+
+         
+
+
+
+--  ----------------------------------------------------------------
+
+-- create a submission
+template ParticipantSubmission
+  with 
+    participant: Party 
+    client: Party
+    -- submissionId: Text
+    name: Text 
+    desc:  Text
+    submission: Text
+    challengeName: Text
+    participants: [Party]
+  where
+    signatory participant 
+    observer participants
+    observer client
+    
+
+    controller participant can 
+       AddUpdateSubmission: ContractId ParticipantSubmission 
+        with 
+          newDesc: Text 
+          newName: Text 
+          newChallengeName: Text 
+        do create this with participant, name= newName, desc= newDesc, challengeName= newChallengeName
+    
+    controller participant can 
+       AddTeammate: ContractId ParticipantSubmission 
+        -- with 
+        --   participant: Party 
+        do create this with  participant, name, desc,participants = participant::participants
+
+--  ----------------------------------------------------------------
+
+-- profile : client, participant, Judge 
+
+template ClientProfile
+  with 
+    client: Party 
+    first: Text 
+    last:  Text
+    email: Text
+  where 
+    signatory client
+
+template ParticipantProfile
+  with 
+    participant: Party 
+    first: Text 
+    last:  Text
+    email: Text
+  where 
+    signatory participant
+
+template JudgeProfile
+  with 
+    judge: Party 
+    first: Text 
+    last:  Text
+    email: Text
+  where 
+    signatory judge
