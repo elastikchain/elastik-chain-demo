@@ -23,7 +23,6 @@ import icWork3 from '../../assets/img/ic-work3.png';
 import icWork4 from '../../assets/img/ic-work4.png';
 
 import './Home.scss';
-import { LoginModal } from '../../components/LoginModal/LoginModal';
 
 const workSteps = [
     {
@@ -106,7 +105,7 @@ const Home: React.FC = () => {
           </IonToolbar>
         </IonHeader>
         <IonContent fullscreen>
-          <IonModal isOpen={showLoginModal} cssClass='my-custom-class'>
+          <IonModal isOpen={showLoginModal} onDidDismiss={() => setShowLoginModal(false) } cssClass='my-custom-class'>
               <div className="content">
                 <IonSegment mode="md" onIonChange={e => console.log('Segment selected', e.detail.value)}>
                   <IonSegmentButton value="SIGN_IN">

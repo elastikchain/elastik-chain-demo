@@ -11,10 +11,11 @@ import { InviteClient, Platform,
   ClientInvitation, AcceptRequest, 
   InviteJudge, JudgeInvitation, 
   ParticipantInvitation, InviteParticipant,
-  CreateProject, ClientRole, AddUpdateChallenge, ClientProject,
-  RegisterForProject, ParticipantRole, RequestToJoinProject, AddParticipantToProject
-  
-
+  CreateProject, ClientRole, AddChallenge, ClientProject,
+  RegisterForProject, ParticipantRole, RequestToJoinProject,
+  AddEditSubmission,
+  ParticipantSubmission,
+  AddTeammate
 } from "@daml.js/cosmart-0.0.1/lib/Main";
 import { InputDialog, InputDialogProps } from "./InputDialog";
 import useStyles from "./styles";
@@ -26,11 +27,12 @@ export default function Report() {
   const ledger = useLedger();
   const assets = useStreamQueries(Platform).contracts;
   const clientProjectAssets = useStreamQueries(ClientProject).contracts;  
+  console.log('clientProjectAssets', clientProjectAssets);
   const projectAssets = useStreamQueries(ClientRole).contracts;
   const judgeInvitationAssets = useStreamQueries(JudgeInvitation).contracts;
   const requestToJoinProjectAssets = useStreamQueries(RequestToJoinProject).contracts;
-  console.log('requestToJoinProjectAssets', requestToJoinProjectAssets);
-  
+
+  const participantSubmissionAssets = useStreamQueries(ParticipantSubmission).contracts;
   const participantInvitationAssets = useStreamQueries(ParticipantInvitation).contracts;
   const participantRoleAssets = useStreamQueries(ParticipantRole).contracts;
   const clientInvitationAssets = useStreamQueries(ClientInvitation).contracts;
@@ -171,13 +173,21 @@ export default function Report() {
     setCreateProjectProps({ ...defaultCreateProjectProps, open: true, onClose})
   };
   
-  const defaultAddUpdateChallengeProps : InputDialogProps<AddUpdateChallenge> = {
+  const defaultAddUpdateChallengeProps : InputDialogProps<AddChallenge> = {
     open: false,
-    title: "Add Update Challenge",
-    defaultValue: { challenge: "" },
+    title: "Add Challenge",
+    defaultValue: { challengeId: "", nameOf: "", prize: ""},
     fields: {
-      challenge: {
+      challengeId: {
+        label: "Challenge Id",
+        type: "text" 
+      },
+      nameOf: {
         label: "Challenge Name",
+        type: "text" 
+      },
+      prize: {
+        label: "prize",
         type: "text" 
       }
     },
@@ -186,12 +196,86 @@ export default function Report() {
   const [ addUpdateChallengeProps, setAddUpdateChallengeProps ] = useState(defaultAddUpdateChallengeProps);
   // One can pass the original contracts CreateEvent
   function showAddUpdateChallenge(asset : ClientProject.CreateEvent) {
-    async function onClose(state : AddUpdateChallenge | null) {
+    async function onClose(state : AddChallenge | null) {
       setAddUpdateChallengeProps({ ...defaultAddUpdateChallengeProps, open: false});
-      await ledger.exercise(ClientProject.AddUpdateChallenge, asset.contractId, state);
+      await ledger.exercise(ClientProject.AddChallenge, asset.contractId, state);
       alert("Challenge has been created successfully!");
     };
     setAddUpdateChallengeProps({ ...defaultAddUpdateChallengeProps, open: true, onClose})
+  };
+
+  const defaultAddUpdateSubmissionProps : InputDialogProps<AddEditSubmission> = {
+    open: false,
+    title: "Submission",
+    defaultValue: { 
+      participant: party, subName: "", subDesc: "", submission: "", challengeId: ""
+    },
+    fields: {
+      participant: {
+        label: "Participant",
+        type: "text",
+      },
+      subName: {
+        label: "Submission Name",
+        type: "text" 
+      },
+      subDesc: {
+        label: "Submission Description",
+        type: "text" 
+      },
+      submission: {
+        label: "Submission",
+        type: "text" 
+      },
+      challengeId: {
+        label: "Challenge Id",
+        type: "text" 
+      }
+    },
+    onClose: async function() {}
+  };
+  const [ addUpdateSubmissionProps, setAddUpdateSubmissionProps ] = useState(defaultAddUpdateSubmissionProps);
+  // One can pass the original contracts CreateEvent
+  function showParticipantSubmission(asset : ClientProject.CreateEvent) {
+    async function onClose(state : AddEditSubmission | null) {
+      setAddUpdateSubmissionProps({ ...defaultAddUpdateSubmissionProps, open: false});
+      await ledger.exercise(ClientProject.AddEditSubmission, asset.contractId, state);
+      alert("Submission has been created successfully!");
+    };
+    setAddUpdateSubmissionProps({ ...defaultAddUpdateSubmissionProps, open: true, onClose})
+  };
+
+  const defaultAddTeammateProps : InputDialogProps<AddTeammate> = {
+    open: false,
+    title: "Add To The Teammate",
+    defaultValue: { 
+      newChallengeId: "", participantCurrent: party, participantToAdd: ""
+    },
+    fields: {
+      newChallengeId: {
+        label: "Challenge Id",
+        type: "text"
+      },
+      participantCurrent: {
+        label: "Current Participant",
+        type: "text",
+      },
+      participantToAdd: {
+        label: "Participant To Add",
+        type: "text" 
+      }
+    },
+    onClose: async function() {}
+  };
+  const [ addTeammateProps, setAddTeammateProps ] = useState(defaultAddTeammateProps);
+  // One can pass the original contracts CreateEvent
+  function showAddTeammate(asset : ParticipantSubmission.CreateEvent) {
+    async function onClose(state : AddTeammate | null) {
+      setAddTeammateProps({ ...defaultAddTeammateProps, open: false});
+      await ledger.exercise(ParticipantSubmission.AddTeammate, asset.contractId, state);
+      alert("Teammate has been created successfully!");
+    };
+    setAddTeammateProps({ ...defaultAddTeammateProps, open: true, onClose})
   };
   
   // const defaultInviteImporterProps : InputDialogProps<InviteImporter> = {
@@ -356,8 +440,9 @@ export default function Report() {
       <InputDialog { ...createProjectProps } />
       <InputDialog { ...addUpdateChallengeProps } /> 
       <InputDialog { ...registerForProjectProps } /> 
-
-
+      <InputDialog { ...addUpdateSubmissionProps } /> 
+      <InputDialog { ...addTeammateProps } /> 
+      
       {/* <InputDialog { ...inviteImporterProps } /> */}
       {/*<InputDialog { ...AcceptRequestProps } /> 
       /* <InputDialog { ...newAssetProps } /> */}
@@ -388,6 +473,13 @@ export default function Report() {
               </TableCell>
             </TableRow>
           ))}
+          {participantSubmissionAssets.filter((c: any) => (user as any).party === c.payload.participant).map((a: any) => (
+            <TableRow key={a.contractId} className={classes.tableRow}>
+              <TableCell key={6} className={classes.tableCellButton}>
+              <Button color="primary" size="small" className={classes.choiceButton} variant="contained" disabled={a.payload.participant !== party} onClick={() => showAddTeammate(a) }>Add teammate</Button>
+              </TableCell>
+            </TableRow>
+          ))}
           {participantInvitationAssets.filter((c: any) => (user as any).party === c.payload.participant).map((a: any) => (
             <TableRow key={a.contractId} className={classes.tableRow}>
               <TableCell key={6} className={classes.tableCellButton}>
@@ -399,7 +491,14 @@ export default function Report() {
               </TableCell>
             </TableRow>
           ))}
-          {participantRoleAssets.filter((c: any) => (user as any).party === c.payload.participant).map((a: any) => (
+          {clientProjectAssets.map((a: any) => (
+            <TableRow key={a.contractId} className={classes.tableRow}>
+              <TableCell key={6} className={classes.tableCellButton}>
+              <Button color="primary" size="small" className={classes.choiceButton} variant="contained" disabled={a.payload.participants.map((p: any) => p.toLowerCase()).indexOf(party.toLowerCase()) < 0} onClick={() => showParticipantSubmission(a) }> Add Submission</Button>
+              </TableCell>
+            </TableRow>
+          ))}
+          {participantRoleAssets.map((a: any) => (
             <TableRow key={a.contractId} className={classes.tableRow}>
               <TableCell key={6} className={classes.tableCellButton}>
               <Button color="primary" size="small" className={classes.choiceButton} variant="contained" disabled={a.payload.participant !== party} onClick={() => showRegiterForProject(a) }>Register For A Project</Button>
@@ -421,7 +520,6 @@ export default function Report() {
               </TableCell>
             </TableRow>
           ))}
-          
           {projectAssets.filter((c: any) => (user as any).party === c.payload.client).map((a: any) => (
             <TableRow key={a.contractId} className={classes.tableRow}>
               <TableCell key={6} className={classes.tableCellButton}>
@@ -436,7 +534,7 @@ export default function Report() {
           {clientProjectAssets.filter((c: any) => (user as any).party === c.payload.client).map((a: any) => (
             <TableRow key={a.contractId} className={classes.tableRow}>
               <TableCell key={6} className={classes.tableCellButton}>
-              <Button color="primary" size="small" className={classes.choiceButton} variant="contained" disabled={a.payload.client !== party} onClick={() => showAddUpdateChallenge(a) }>Add Challenge</Button>
+              <Button color="primary" size="small" className={classes.choiceButton} variant="contained" disabled={a.payload.client !== party} onClick={() => showAddUpdateChallenge(a) }>Add Challenge To {a.payload.name}</Button>
               </TableCell>
             </TableRow>
           ))}
@@ -477,32 +575,6 @@ export default function Report() {
             </TableRow>
           ))}
 
-        </TableBody>
-      </Table>
-
-      <Table size="small">
-        <TableHead>
-          <TableRow className={classes.tableRow}>
-            {/* <TableCell key={0} className={classes.tableCell}>Issuer</TableCell>
-            <TableCell key={1} className={classes.tableCell}>Owner</TableCell>
-            <TableCell key={2} className={classes.tableCell}>Name</TableCell>
-            <TableCell key={3} className={classes.tableCell}>Value</TableCell>
-            <TableCell key={4} className={classes.tableCell}>DateOfAppraisal</TableCell> */}
-            <TableCell key={5} className={classes.tableCell}>options</TableCell>
-            {/* <TableCell key={6} className={classes.tableCell}>Appraise</TableCell> */}
-          </TableRow>
-        </TableHead>
-        <TableBody>
-          
-          {clientProjectAssets.filter((c: any) => (user as any).party === c.payload.client).map((project: any) => (
-            <TableRow key={project.contractId} className={classes.tableRow}>
-              <TableCell key={6} className={classes.tableCellButton}>
-              <p>{project.payload.name}</p>
-              <Button color="primary" size="small" className={classes.choiceButton} variant="contained" disabled={project.payload.client !== party} onClick={() => showAddUpdateChallenge(project) }>Create Challenge</Button>
-              </TableCell>
-            </TableRow>
-          ))}
-          
         </TableBody>
       </Table>
 

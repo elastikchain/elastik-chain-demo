@@ -13,11 +13,11 @@ module Main where
 -- import Daml.Script
 -- import DA.Date
 
-{- data Challenge = Challenge
-  with
-    name: Text 
-    prize: Text 
-  deriving(Eq, Show) -}
+-- data Challenge = Challenge
+--   with
+--     name: Text 
+--     prize: Text 
+--   deriving(Eq, Show)
 
 -- invite all parties
 template Platform 
@@ -211,7 +211,7 @@ template ClientProject
        AddUpdateDescription: ContractId ClientProject 
         with 
           newDesc: Text 
-        do create this with client, name, desc= newDesc, challenges
+        do create this with client, name, desc=newDesc, challenges
 
     controller client can 
        AddUpdateCriteria: ContractId ClientProject 
@@ -220,10 +220,22 @@ template ClientProject
         do create this with client, name,desc, criteria= newCriteria, challenges
 
     controller client can 
-       AddUpdateChallenge: ContractId ClientProject 
+       AddChallenge: ContractId ClientProject 
         with 
-          challenge: Text 
-        do create this with client, name, desc,criteria, challenges = challenge::challenges
+          challengeId: Text 
+          nameOf:Text
+          prize: Text
+        do 
+          id <- create Challenge with client,nameOf,prize,challengeId
+          create this with challenges = challengeId::challenges
+
+    controller client can 
+       RemoveChallenge: ContractId ClientProject 
+        with 
+          challengeId: Text 
+        do 
+          -- remove an id from table
+          create this with challenges = challengeId::challenges
     
     controller operator can 
        AddParticipant: ContractId ClientProject 
@@ -237,20 +249,38 @@ template ClientProject
           judge: Party 
         do create this with operator, client, name, desc, criteria, challenges, judges = judge::judges
 
-    choice AddEditSubmission: ContractId ClientProject
+    {- choice AddEditSubmission: ContractId ClientProject
         with
           participant: Party 
           subName: Text 
           subDesc:  Text
           submission: Text
-          challengeName: Text
+          challengeId: Text
         controller participant
         do
-          p <- create ParticipantSubmission with participant,name= subName,desc= subDesc,submission,challengeName,client,participants
+          p <- create ParticipantSubmission with participant,name= subName,desc= subDesc,submission,challengeId,client,participants
           proj <- fetch p
-          create this with projects = proj::projects
+          create this with projects = proj::projects -}
 
-         
+template Challenge
+   with
+    challengeId : Text
+    nameOf: Text 
+    prize: Text 
+    client: Party
+  where
+    signatory client
+
+    controller client can 
+      ModifieChallenge: ContractId Challenge
+        with
+          name1:Text
+          prize1:Text
+        do create this with nameOf = name1,prize=prize1, client, challengeId
+    
+
+  
+
 
 
 
@@ -265,7 +295,7 @@ template ParticipantSubmission
     name: Text 
     desc:  Text
     submission: Text
-    challengeName: Text
+    challengeId: Text
     participants: [Party]
   where
     signatory participant 
@@ -278,14 +308,30 @@ template ParticipantSubmission
         with 
           newDesc: Text 
           newName: Text 
-          newChallengeName: Text 
-        do create this with participant, name= newName, desc= newDesc, challengeName= newChallengeName
+          newChallengeId: Text 
+        do create this with participant, name=newName, desc=newDesc, challengeId=newChallengeId, participants=participants
+  
+  {- choice AddEditSubmission: ContractId ClientProject
+        with
+          participant: Party 
+          subName: Text 
+          subDesc:  Text
+          submission: Text
+          challengeId: Text
+        controller participant
+        do
+          p <- create ParticipantSubmission with participant,name= subName,desc= subDesc,submission,challengeId,client,participants
+          proj <- fetch p
+          create this with projects = proj::projects -}
     
     controller participant can 
        AddTeammate: ContractId ParticipantSubmission 
-        -- with 
-        --   participant: Party 
-        do create this with  participant, name, desc,participants = participant::participants
+        with 
+          newChallengeId: Text 
+          participantCurrent: Party 
+          participantToAdd: Party
+        do create this with challengeId=newChallengeId, participant=participantCurrent, participants=participantToAdd::participants
+        
 
 --  ----------------------------------------------------------------
 
@@ -317,3 +363,6 @@ template JudgeProfile
     email: Text
   where 
     signatory judge
+
+
+-- add the voting
