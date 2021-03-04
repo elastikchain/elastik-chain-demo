@@ -1,8 +1,9 @@
 module Main where
 
+
 -- Expected workflow :
 --  operator(Elastik)-->InviteParticipant/InviteClient / AddParticipantToProject / InviteJudge / JudgeCriteria
---  participant-->AcceptParticipantRequest / AddEditProfile / *AddEditsubmission / *JoinTeam / 
+--  participant-->AcceptParticipantRequest / AddEditProfile / AddEditsubmission / Addteammate / 
 --  client--> CreateProject / CreatChallenge / AddEditProfile / AddJudgeToProject by client
 --  judgs -->  *VoteForProject(SpecifyRating) 
 
@@ -10,7 +11,7 @@ module Main where
 -- participant should not be invited multiple times !! // auth will solve it
 -- shoud not have two profiles // nonconsuming
 
--- import Daml.Script
+import Daml.Script
 -- import DA.Date
 
 -- data Challenge = Challenge
@@ -198,7 +199,7 @@ template ClientProject
     challenges: [Text]
     participants: [Party]
     judges: [Party]
-    projects:[ParticipantSubmission]
+    projects:[Text]
   where
     signatory client 
     observer participants
@@ -249,18 +250,50 @@ template ClientProject
           judge: Party 
         do create this with operator, client, name, desc, criteria, challenges, judges = judge::judges
 
-    {- choice AddEditSubmission: ContractId ClientProject
+    nonconsuming choice ProposeSubmission: ContractId ParticipantSubmissionProposal
         with
           participant: Party 
           subName: Text 
           subDesc:  Text
           submission: Text
-          challengeId: Text
         controller participant
         do
-          p <- create ParticipantSubmission with participant,name= subName,desc= subDesc,submission,challengeId,client,participants
-          proj <- fetch p
-          create this with projects = proj::projects -}
+          create ParticipantSubmissionProposal with participant,subName,subDesc,submission,client,projectId
+          -- proj <- fetch p
+          -- create this with projects = proj::projects 
+
+    controller client can 
+       AddSubmissionToList: ContractId ClientProject 
+        with 
+          submissionId: Text 
+        do create this with projects = submissionId::projects 
+          
+
+template ParticipantSubmissionProposal
+  with 
+   projectId: Text
+   participant: Party 
+   subName: Text 
+   subDesc:  Text
+   submission: Text
+   client: Party
+  where 
+    signatory participant
+
+    controller client can
+      AcceptSubmission: ContractId ParticipantSubmission
+        with
+          submissionId:Text
+        do 
+          exerciseByKey @ClientProject (client, projectId) AddSubmissionToList with submissionId
+          create ParticipantSubmission with name=subName,participant,desc=subDesc,submission,client,participants=[],submissionId
+          
+
+
+
+
+
+
 
 template Challenge
    with
@@ -291,46 +324,45 @@ template ParticipantSubmission
   with 
     participant: Party 
     client: Party
-    -- submissionId: Text
+    submissionId: Text
     name: Text 
     desc:  Text
     submission: Text
-    challengeId: Text
+    -- challenges: [Text]
     participants: [Party]
   where
-    signatory participant 
+    signatory participant,client 
     observer participants
     observer client
     
+    key (participant,submissionId): (Party, Text)
+    maintainer key._1
 
     controller participant can 
-       AddUpdateSubmission: ContractId ParticipantSubmission 
+      UpdateSubmission: ContractId ParticipantSubmission 
         with 
           newDesc: Text 
           newName: Text 
-          newChallengeId: Text 
-        do create this with participant, name=newName, desc=newDesc, challengeId=newChallengeId, participants=participants
+        do create this with  name=newName, desc=newDesc
   
-  {- choice AddEditSubmission: ContractId ClientProject
-        with
-          participant: Party 
-          subName: Text 
-          subDesc:  Text
-          submission: Text
-          challengeId: Text
-        controller participant
-        do
-          p <- create ParticipantSubmission with participant,name= subName,desc= subDesc,submission,challengeId,client,participants
-          proj <- fetch p
-          create this with projects = proj::projects -}
+    -- choice RemoveSubmission: ContractId ClientProject
+    --     with
+    --       participant: Party 
+    --       subName: Text 
+    --       subDesc:  Text
+    --       submission: Text
+    --       challengeId: Text
+    --     controller participant
+    --     do
+    --       p <- create ParticipantSubmission with participant,name= subName,desc= subDesc,submission,challengeId,client,participants
+    --       proj <- fetch p
+    --       create this with projects = proj::projects 
     
     controller participant can 
        AddTeammate: ContractId ParticipantSubmission 
         with 
-          newChallengeId: Text 
-          participantCurrent: Party 
           participantToAdd: Party
-        do create this with challengeId=newChallengeId, participant=participantCurrent, participants=participantToAdd::participants
+        do create this with participants=participantToAdd::participants
         
 
 --  ----------------------------------------------------------------
@@ -366,3 +398,18 @@ template JudgeProfile
 
 
 -- add the voting
+
+setup = script do
+  elastik <- allocatePartyWithHint "Elastik" (PartyIdHint "Elastik")
+  -- bob <- allocatePartyWithHint "Bob" (PartyIdHint "Bob")
+
+  aliceTV <- submit elastik do
+    createCmd Platform with
+      operator = elastik
+  pure ()
+
+  -- bobTV <- submit alice do
+  --   exerciseCmd aliceTV Give with newOwner = bob
+
+  -- submit bob do
+  --   exerciseCmd bobTV Give with newOwner = alice
