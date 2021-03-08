@@ -13,9 +13,9 @@ import { InviteClient, Platform,
   ParticipantInvitation, InviteParticipant,
   CreateProject, ClientRole, AddChallenge, ClientProject,
   RegisterForProject, ParticipantRole, RequestToJoinProject,
-  AddEditSubmission,
   ParticipantSubmission,
-  AddTeammate
+  AddTeammate,
+  ProposeSubmission
 } from "@daml.js/cosmart-0.0.1/lib/Main";
 import { InputDialog, InputDialogProps } from "./InputDialog";
 import useStyles from "./styles";
@@ -204,11 +204,11 @@ export default function Report() {
     setAddUpdateChallengeProps({ ...defaultAddUpdateChallengeProps, open: true, onClose})
   };
 
-  const defaultAddUpdateSubmissionProps : InputDialogProps<AddEditSubmission> = {
+  const defaultAddUpdateSubmissionProps : InputDialogProps<ProposeSubmission> = {
     open: false,
     title: "Submission",
     defaultValue: { 
-      participant: party, subName: "", subDesc: "", submission: "", challengeId: ""
+      participant: party, subName: "", subDesc: "", submission: ""
     },
     fields: {
       participant: {
@@ -226,10 +226,6 @@ export default function Report() {
       submission: {
         label: "Submission",
         type: "text" 
-      },
-      challengeId: {
-        label: "Challenge Id",
-        type: "text" 
       }
     },
     onClose: async function() {}
@@ -237,9 +233,9 @@ export default function Report() {
   const [ addUpdateSubmissionProps, setAddUpdateSubmissionProps ] = useState(defaultAddUpdateSubmissionProps);
   // One can pass the original contracts CreateEvent
   function showParticipantSubmission(asset : ClientProject.CreateEvent) {
-    async function onClose(state : AddEditSubmission | null) {
+    async function onClose(state : ProposeSubmission | null) {
       setAddUpdateSubmissionProps({ ...defaultAddUpdateSubmissionProps, open: false});
-      await ledger.exercise(ClientProject.AddEditSubmission, asset.contractId, state);
+      await ledger.exercise(ClientProject.ProposeSubmission, asset.contractId, state);
       alert("Submission has been created successfully!");
     };
     setAddUpdateSubmissionProps({ ...defaultAddUpdateSubmissionProps, open: true, onClose})
@@ -249,17 +245,9 @@ export default function Report() {
     open: false,
     title: "Add To The Teammate",
     defaultValue: { 
-      newChallengeId: "", participantCurrent: party, participantToAdd: ""
+      participantToAdd: ""
     },
     fields: {
-      newChallengeId: {
-        label: "Challenge Id",
-        type: "text"
-      },
-      participantCurrent: {
-        label: "Current Participant",
-        type: "text",
-      },
       participantToAdd: {
         label: "Participant To Add",
         type: "text" 

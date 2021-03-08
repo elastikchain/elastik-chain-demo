@@ -85,7 +85,9 @@ function loginUser(
     userToken : string,
     history : History,
     setIsLoading : React.Dispatch<React.SetStateAction<boolean>>,
-    setError : React.Dispatch<React.SetStateAction<boolean>>) {
+    setError : React.Dispatch<React.SetStateAction<boolean>>,
+    uiTemplate = true
+    ) {
   setError(false);
   setIsLoading(true);
 
@@ -97,7 +99,11 @@ function loginUser(
     dispatch({ type: "LOGIN_SUCCESS", token, party });
     setError(false);
     setIsLoading(false);
-    history.push("/app");
+    if (uiTemplate){
+      history.push("/app");
+    }else{
+      history.push("/profile");
+    }
   } else {
     dispatch({ type: "LOGIN_FAILURE" });
     setError(true);
@@ -109,12 +115,19 @@ const loginDablUser = () => {
   window.location.assign(`https://${dablLoginUrl}`);
 }
 
-function signOut(dispatch : React.Dispatch<LoginAction>, history : History) {
+function signOut(
+  dispatch : React.Dispatch<LoginAction>,
+  history : History,
+  uiTemplate = true) {
   localStorage.removeItem("daml.party");
   localStorage.removeItem("daml.token");
 
   dispatch({ type: "SIGN_OUT_SUCCESS" });
-  history.push("/login");
+  if(uiTemplate){
+    history.push("/login");
+  }else{
+    history.push("/home");
+  }
 }
 
 export { UserProvider, useUserState, useUserDispatch, loginUser, loginDablUser, signOut };

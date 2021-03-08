@@ -25,6 +25,7 @@ import '../themes/variables.css';
 import '../global.scss';
 
 import Home from "../pages/home/Home";
+import FrontLayout from "./FrontLayout/FrontLayout";
 
 export default function App() {
   const userState = useUserState();
@@ -32,8 +33,13 @@ export default function App() {
   return (
     <HashRouter>
       <Switch>
-        <Route exact path="/home" component={Home} />
-        <Route exact path="/" render={() => <Redirect to="/home" />} />
+        <Route
+          exact
+          path="/main"
+          render={() => <Redirect to="/main/profile" />}
+        />
+        <FrontPrivateRoute path="/main" component={FrontLayout} />
+        <PublicRoute path="/home" component={Home} />
         <Route exact path="/" component={RootRoute} />
         <Route
           exact
@@ -49,7 +55,7 @@ export default function App() {
 
   // #######################################################################
 
-  function RootRoute() {
+  function RootRoute({...rest}) {
     const userDispatch = useUserDispatch();
 
     useEffect(() => {
@@ -69,7 +75,8 @@ export default function App() {
     })
 
     return (
-      <Redirect to="/app/report" />
+      // <Redirect to="/app/report" />
+      <Redirect to="/main/profile" />
     )
   }
 
@@ -84,6 +91,29 @@ export default function App() {
             <Redirect
               to={{
                 pathname: "/login",
+                state: {
+                  from: props.location,
+                },
+              }}
+            />
+          )
+        }
+      />
+    );
+  }
+
+  function FrontPrivateRoute({ component, ...rest } : any) {
+    console.log('FrontPrivateRoute');
+    return (
+      <Route
+        {...rest}
+        render={props =>
+          userState.isAuthenticated ? (
+            React.createElement(component, props)
+          ) : (
+            <Redirect
+              to={{
+                pathname: "/home",
                 state: {
                   from: props.location,
                 },

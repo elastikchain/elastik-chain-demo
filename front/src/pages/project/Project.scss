@@ -1,0 +1,22 @@
+.project-wrapper{
+    max-width: 1200px;
+    margin: 0 auto;
+    padding-top: 5rem;
+    .nav-info a{
+        text-decoration: none;
+        color: var(--ion-color-dark);
+    }
+    .nav-info-header{
+        display: flex;
+        justify-content: space-between;
+    }
+    .proj-info-container{
+        display: flex;
+        .short-info-container{
+            padding: 1rem 2rem;
+            & > p{
+                max-width: 480px;
+            }
+        }
+    }
+}

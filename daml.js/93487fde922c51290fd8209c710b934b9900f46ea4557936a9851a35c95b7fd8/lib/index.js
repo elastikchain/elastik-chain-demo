@@ -5,6 +5,6 @@ function __export(m) {
     for (var p in m) if (!exports.hasOwnProperty(p)) exports[p] = m[p];
 }
 Object.defineProperty(exports, "__esModule", { value: true });
-var Main = require('./Main');
-exports.Main = Main;
-exports.packageId = '8dea56109b76a8c627ec5ab97b8715dce466820dbf0719b771ec3a949eacde2b';
+var Daml = require('./Daml');
+exports.Daml = Daml;
+exports.packageId = '93487fde922c51290fd8209c710b934b9900f46ea4557936a9851a35c95b7fd8';

@@ -12,7 +12,9 @@ import {
   IonModal,
   IonSegment,
   IonSegmentButton,
-  IonLabel
+  IonLabel,
+  IonInput,
+  IonItem
 } from '@ionic/react';
 import logo from '../../assets/img/logo-combination.svg';
 import timelineLine from '../../assets/img/img-how-it-work-timeline.png';
@@ -23,6 +25,10 @@ import icWork3 from '../../assets/img/ic-work3.png';
 import icWork4 from '../../assets/img/ic-work4.png';
 
 import './Home.scss';
+import { useUserDispatch, loginUser, loginDablUser } from "../../context/UserContext";
+import { RouteComponentProps } from 'react-router-dom';
+import { Fade, Typography } from '@material-ui/core';
+
 
 const workSteps = [
     {
@@ -78,10 +84,30 @@ const workSteps = [
       }, 
     spaceBetween: 5
 }
-const Home: React.FC = () => {
+const Home = (props : RouteComponentProps) => {
   const [searchText, setSearchText] = useState('');
   const [showLoginModal, setShowLoginModal] = useState(false);
-  
+  const [loginSegement, setLoginSegement] = useState('SIGN_IN');
+  const [loginUserName, setLoginUserName] = useState('');
+  const [loginPassword, setLoginPassword] = useState('');
+  var [isLoading, setIsLoading] = useState(false);
+  var [error, setError] = useState(false);
+  var userDispatch = useUserDispatch();
+
+  const handleLoginSubmit = (evt: any) => {
+    evt.preventDefault();
+    console.log('handleLoginSubmit', evt);
+    loginUser(
+      userDispatch,
+      loginUserName,
+      loginPassword,
+      props.history,
+      setIsLoading,
+      setError,
+      false
+    );
+  }
+
   return  (
       <IonPage>
         <IonHeader>
@@ -106,8 +132,8 @@ const Home: React.FC = () => {
         </IonHeader>
         <IonContent fullscreen>
           <IonModal isOpen={showLoginModal} onDidDismiss={() => setShowLoginModal(false) } cssClass='my-custom-class'>
-              <div className="content">
-                <IonSegment mode="md" onIonChange={e => console.log('Segment selected', e.detail.value)}>
+              <div className="content login-modal-content">
+                <IonSegment mode="md" onIonChange={e => e.detail.value && setLoginSegement(e.detail.value) } value={loginSegement}>
                   <IonSegmentButton value="SIGN_IN">
                     <IonLabel>Sign in</IonLabel>
                   </IonSegmentButton>
@@ -115,10 +141,33 @@ const Home: React.FC = () => {
                     <IonLabel>Sign up</IonLabel>
                   </IonSegmentButton>
                 </IonSegment>
+                <Fade in={error}>
+                  <Typography color="secondary" className="error-message">
+                    Something is wrong with your login or password :(
+                  </Typography>
+                </Fade>
+                {
+                  loginSegement == 'SIGN_IN' ? (
+                    <form className="login-form" onSubmit={handleLoginSubmit}>
+                      <h1>Welcome Back</h1>
+                      <IonItem>
+                        <IonLabel position="floating">Login</IonLabel>
+                        <IonInput value={loginUserName} onIonChange={e => setLoginUserName(e.detail.value!)}></IonInput>
+                      </IonItem>
+                      <IonItem>
+                        <IonLabel position="floating">Password</IonLabel>
+                        <IonInput type="password" value={loginPassword} onIonChange={e => setLoginPassword(e.detail.value!)}></IonInput>
+                      </IonItem>
+                      <IonButton className="submit-button" type="submit">Login</IonButton>
+                    </form>
+                  ) : (
+                    <h1>COMING SOON!</h1>
+                  )
+                }
               </div>
-              <IonButton onClick={() =>{
+              <IonButton fill="outline" color="secondary" onClick={() =>{
                   setShowLoginModal(false) 
-              }}>Close Modal</IonButton>
+              }}>Close</IonButton>
           </IonModal>
           <section className="app-header">
             <div className="content-container">

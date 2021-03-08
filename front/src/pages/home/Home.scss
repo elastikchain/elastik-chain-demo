@@ -141,3 +141,18 @@ section{
         }
     }
 }
+
+.login-form{
+    padding: 3rem 2rem;
+    .submit-button{
+        margin-top: 2rem;
+    }
+}
+
+.login-modal-content{
+    .error-message{
+        margin-left: 2rem;
+        margin-top: 2rem;
+        position: absolute;
+    }
+}
