@@ -102,7 +102,7 @@ function loginUser(
     if (uiTemplate){
       history.push("/app");
     }else{
-      history.push("/profile");
+      history.push("/main");
     }
   } else {
     dispatch({ type: "LOGIN_FAILURE" });

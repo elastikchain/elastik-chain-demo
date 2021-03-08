@@ -96,7 +96,7 @@ const Home = (props : RouteComponentProps) => {
 
   const handleLoginSubmit = (evt: any) => {
     evt.preventDefault();
-    console.log('handleLoginSubmit', evt);
+    // console.log('handleLoginSubmit', evt);
     loginUser(
       userDispatch,
       loginUserName,

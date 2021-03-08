@@ -12,7 +12,7 @@ import menuItemImg from '../../assets/img/img-menu-item.png';
 import './Profile.scss';
 import { useLedger, useStreamQueries } from "@daml/react";
 import { signOut, useUserDispatch, useUserState } from "../../context/UserContext";
-import { ClientRole, ClientProject } from "@daml.js/cosmart-0.0.1/lib/Main";
+import { ClientRole, ClientProject, ClientInvitation, AcceptRequest } from "@daml.js/cosmart-0.0.1/lib/Main";
 import { setSelectedProject } from "../../context/SharedContext";
 
 const Profile = (props : RouteComponentProps) => {
@@ -24,6 +24,7 @@ const Profile = (props : RouteComponentProps) => {
     var userDispatch = useUserDispatch();
 
     const ledger = useLedger();
+    const clientInvitationAssets = useStreamQueries(ClientInvitation).contracts;
     const clientProjectAssets = useStreamQueries(ClientProject).contracts; 
     console.log('clientProjectAssets', clientProjectAssets);
     const projectAssets = useStreamQueries(ClientRole).contracts;
@@ -130,7 +131,19 @@ const Profile = (props : RouteComponentProps) => {
                                     </div>
                                     <div className="profile-info">
                                         <div className="profile-header">
-                                            <IonLabel color="secondary">{(user as any).party}</IonLabel>
+                                            <IonLabel color="secondary">{(user as any).party}
+                                            {
+                                                clientInvitationAssets.filter((c: any) => (user as any).party === c.payload.client).map((a: any) => (
+                                                    <IonButton
+                                                    onClick={async e => {
+                                                        await ledger.exercise(ClientInvitation.AcceptRequest, a.contractId, AcceptRequest);
+                                                        alert('Your request accepted successfully!');
+                                                    }
+                                                    }
+                                                    > Accept Invitation</IonButton>
+                                                ))
+                                            }
+                                            </IonLabel>
                                             <IonButton size="large"> Edit </IonButton>
                                         </div>
                                         <div className="profile-about">
@@ -138,9 +151,15 @@ const Profile = (props : RouteComponentProps) => {
                                             <p>Lorem ipsum dolor sit amet consectetur adipisicing elit. Nihil, neque. Nulla quae pariatur voluptas, tenetur perferendis voluptatibus incidunt provident impedit sapiente eius voluptatum perspiciatis sint quisquam iste nam cupiditate dolores.</p>
                                             <p>Linkedin: <a href="#">Information here</a></p>
                                             <p>Github: <a href="#">Information here</a></p>
-                                            <IonButton 
-                                            onClick={() => setShowCreateProjectModal(true)}
-                                            className="create-project-button"> Create New Project </IonButton>
+                                            {
+                                                projectAssets.filter((c: any) => (user as any).party === c.payload.client).map((a: any) => {
+                                                    return (
+                                                        <IonButton 
+                                                        onClick={() => setShowCreateProjectModal(true)}
+                                                        className="create-project-button"> Create New Project </IonButton>
+                                                    )
+                                                })
+                                            }
                                         </div>
                                     </div>
                                 </div>
