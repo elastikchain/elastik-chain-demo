@@ -14,7 +14,7 @@ import { InviteClient, Platform,
   CreateProject, ClientRole, AddChallenge, ClientProject,
   RegisterForProject, ParticipantRole, RequestToJoinProject,
   ParticipantSubmission,
-  AddTeammate,
+  ProposeTeammate,
   ProposeSubmission
 } from "@daml.js/cosmart-0.0.1/lib/Main";
 import { InputDialog, InputDialogProps } from "./InputDialog";
@@ -241,29 +241,29 @@ export default function Report() {
     setAddUpdateSubmissionProps({ ...defaultAddUpdateSubmissionProps, open: true, onClose})
   };
 
-  const defaultAddTeammateProps : InputDialogProps<AddTeammate> = {
+  const defaultProposeTeammateProps : InputDialogProps<ProposeTeammate> = {
     open: false,
     title: "Add To The Teammate",
     defaultValue: { 
-      participantToAdd: ""
+      email: ""
     },
     fields: {
-      participantToAdd: {
+      email: {
         label: "Participant To Add",
         type: "text" 
       }
     },
     onClose: async function() {}
   };
-  const [ addTeammateProps, setAddTeammateProps ] = useState(defaultAddTeammateProps);
+  const [ addTeammateProps, setProposeTeammateProps ] = useState(defaultProposeTeammateProps);
   // One can pass the original contracts CreateEvent
-  function showAddTeammate(asset : ParticipantSubmission.CreateEvent) {
-    async function onClose(state : AddTeammate | null) {
-      setAddTeammateProps({ ...defaultAddTeammateProps, open: false});
-      await ledger.exercise(ParticipantSubmission.AddTeammate, asset.contractId, state);
+  function showProposeTeammate(asset : ParticipantSubmission.CreateEvent) {
+    async function onClose(state : ProposeTeammate | null) {
+      setProposeTeammateProps({ ...defaultProposeTeammateProps, open: false});
+      await ledger.exercise(ParticipantSubmission.ProposeTeammate, asset.contractId, state);
       alert("Teammate has been created successfully!");
     };
-    setAddTeammateProps({ ...defaultAddTeammateProps, open: true, onClose})
+    setProposeTeammateProps({ ...defaultProposeTeammateProps, open: true, onClose})
   };
   
   // const defaultInviteImporterProps : InputDialogProps<InviteImporter> = {
@@ -464,7 +464,7 @@ export default function Report() {
           {participantSubmissionAssets.filter((c: any) => (user as any).party === c.payload.participant).map((a: any) => (
             <TableRow key={a.contractId} className={classes.tableRow}>
               <TableCell key={6} className={classes.tableCellButton}>
-              <Button color="primary" size="small" className={classes.choiceButton} variant="contained" disabled={a.payload.participant !== party} onClick={() => showAddTeammate(a) }>Add teammate</Button>
+              <Button color="primary" size="small" className={classes.choiceButton} variant="contained" disabled={a.payload.participant !== party} onClick={() => showProposeTeammate(a) }>Add teammate</Button>
               </TableCell>
             </TableRow>
           ))}
