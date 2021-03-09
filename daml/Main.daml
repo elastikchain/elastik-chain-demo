@@ -19,6 +19,14 @@ import Daml.Script
 --     name: Text 
 --     prize: Text 
 --   deriving(Eq, Show)
+-- import DA.Set (Set)
+-- import DA.Set qualified as S
+
+data CriteriaPoint = CriteriaPoint
+  with
+    name:Text
+    point:Decimal
+  deriving(Eq, Show)
 
 -- invite all parties
 template Platform 
@@ -106,7 +114,7 @@ template ParticipantInvitation
   where 
     signatory operator 
 
-    controller participant can 
+    controller participant can
       AcceptParticipantRequest: ContractId ParticipantRole
         do create ParticipantRole with ..
 
@@ -183,7 +191,7 @@ template ClientRole
           name: Text 
           projectId: Text
         do 
-          create ClientProject with operator, client, projectId, name, desc = "", criteria = "", challenges = [], participants = [], judges = [],projects=[]
+          create ClientProject with operator, client, projectId, name, desc = "", criteria = [], challenges = [], participants = [], judges = [],projects=[]
 
 --  ----------------------------------------------------------------
 
@@ -195,15 +203,18 @@ template ClientProject
     projectId: Text
     name: Text 
     desc:  Text
-    criteria: Text
+    criteria: [CriteriaPoint]
     challenges: [Text]
     participants: [Party]
     judges: [Party]
     projects:[Text]
+    -- public :Party
   where
     signatory client 
+    -- observer participants,public
     observer participants
     observer judges
+    
     
     key (client,projectId): (Party, Text)
     maintainer key._1
@@ -217,8 +228,8 @@ template ClientProject
     controller client can 
        AddUpdateCriteria: ContractId ClientProject 
         with 
-          newCriteria: Text 
-        do create this with client, name,desc, criteria= newCriteria, challenges
+          newCriteria: CriteriaPoint 
+        do create this with client, name,desc, criteria=newCriteria::criteria, challenges
 
     controller client can 
        AddChallenge: ContractId ClientProject 
@@ -258,7 +269,7 @@ template ClientProject
           submission: Text
         controller participant
         do
-          create ParticipantSubmissionProposal with participant,subName,subDesc,submission,client,projectId
+          create ParticipantSubmissionProposal with participant,subName,subDesc,submission,client,projectId,operator
           -- proj <- fetch p
           -- create this with projects = proj::projects 
 
@@ -267,16 +278,26 @@ template ClientProject
         with 
           submissionId: Text 
         do create this with projects = submissionId::projects 
+
+    -- choice AddJudgingPoint: ContractId ClientProject
+    --   with
+    --     judge: Party
+    --     criteria:CriteriaPoint
+    --   controller judge
+    --   do create
+
+
           
 
 template ParticipantSubmissionProposal
   with 
-   projectId: Text
-   participant: Party 
-   subName: Text 
-   subDesc:  Text
-   submission: Text
-   client: Party
+    projectId: Text
+    participant: Party 
+    subName: Text 
+    subDesc:  Text
+    submission: Text
+    client: Party
+    operator: Party
   where 
     signatory participant
 
@@ -286,11 +307,8 @@ template ParticipantSubmissionProposal
           submissionId:Text
         do 
           exerciseByKey @ClientProject (client, projectId) AddSubmissionToList with submissionId
-          create ParticipantSubmission with name=subName,participant,desc=subDesc,submission,client,participants=[],submissionId
+          create ParticipantSubmission with name=subName,participant,desc=subDesc,submission,client,participants=[],submissionId,operator
           
-
-
-
 
 
 
@@ -330,6 +348,7 @@ template ParticipantSubmission
     submission: Text
     -- challenges: [Text]
     participants: [Party]
+    operator: Party
   where
     signatory participant,client 
     observer participants
@@ -343,6 +362,7 @@ template ParticipantSubmission
         with 
           newDesc: Text 
           newName: Text 
+
         do create this with  name=newName, desc=newDesc
   
     -- choice RemoveSubmission: ContractId ClientProject
@@ -359,11 +379,35 @@ template ParticipantSubmission
     --       create this with projects = proj::projects 
     
     controller participant can 
-       AddTeammate: ContractId ParticipantSubmission 
+      nonconsuming ProposeTeammate: ContractId AddTeammateProposal 
         with 
-          participantToAdd: Party
-        do create this with participants=participantToAdd::participants
-        
+          -- participantToAdd: Party
+          email: Text
+        do 
+        -- create this with participants=participantToAdd::participants
+          create AddTeammateProposal with email,operator,participant,submissionId
+
+    controller  operator can
+      AddTeammate : ContractId ParticipantSubmission
+        with p : Party
+        do create this with  participants=p::participants
+          
+
+template AddTeammateProposal  
+  with
+    email: Text
+    operator: Party
+    participant: Party
+    submissionId: Text
+  where
+    signatory participant
+
+    controller operator can 
+      AcceptTeammateProposal: ()
+        do 
+          (c1,co) <- fetchByKey @ParticipantProfile (participant,email) 
+          exerciseByKey @ParticipantSubmission (participant,submissionId) AddTeammate with p=co.participant 
+          return ()     
 
 --  ----------------------------------------------------------------
 
@@ -381,11 +425,18 @@ template ClientProfile
 template ParticipantProfile
   with 
     participant: Party 
+    operator: Party
     first: Text 
     last:  Text
     email: Text
+
   where 
     signatory participant
+    observer operator
+
+    -- to add a teammate
+    key (participant,email):(Party,Text)
+    maintainer key._1
 
 template JudgeProfile
   with 
@@ -397,7 +448,22 @@ template JudgeProfile
     signatory judge
 
 
--- add the voting
+-- add the voting 
+
+template Criteria
+  with 
+    judge: Party
+    design: Decimal
+    idea: Decimal
+    code:Decimal
+  where
+    signatory judge
+
+
+
+
+
+
 
 setup = script do
   elastik <- allocatePartyWithHint "Elastik" (PartyIdHint "Elastik")
