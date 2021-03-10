@@ -1,15 +1,15 @@
 build:
 	daml build
 	daml codegen js -o daml.js .daml/dist/*.dar
-	cd ui && yarn install --force --frozen-lockfile
-	cd ui && yarn build
+	#cd ui && yarn install --force --frozen-lockfile
+	#cd ui && yarn build
 	cd front && yarn install --force --frozen-lockfile
 	cd front && yarn build
 	
 deploy: build
 	mkdir -p deploy
 	cp .daml/dist/*.dar deploy
-	cd ui && zip -r ../deploy/cosmart.zip build
+	#cd ui && zip -r ../deploy/cosmart.zip build
 	cd front && zip -r ../deploy/cosmart-front.zip build
 
 clean:

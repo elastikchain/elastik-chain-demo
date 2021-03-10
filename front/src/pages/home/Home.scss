@@ -144,12 +144,26 @@ section{
 
 .login-form{
     padding: 3rem 2rem;
+    padding-bottom: 0;
     .submit-button{
         margin-top: 2rem;
+        min-width: 9rem;
+        margin-bottom: 1rem;
     }
 }
 
 .login-modal-content{
+    position: relative;
+    text-align: center;
+    .close-btn{
+        position: absolute;
+        top: 1rem;
+        right: 1rem;
+    }
+    .logo-slogan{
+        margin: 0 auto;
+        margin-top: 1.5rem;
+    }
     .error-message{
         margin-left: 2rem;
         margin-top: 2rem;

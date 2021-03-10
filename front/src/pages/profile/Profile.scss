@@ -57,3 +57,17 @@
 .project-info{
     cursor: pointer;
 }
+
+.create-project-modal-content{
+    overflow-y: scroll;
+    padding: 1.25rem;
+    padding-top: 0.5rem;
+}
+
+.create-project-modal-content, form{
+    height: 500px;
+}
+
+.criteria-tags-container{
+    overflow: visible;
+}

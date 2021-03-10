@@ -119,8 +119,8 @@ function signOut(
   dispatch : React.Dispatch<LoginAction>,
   history : History,
   uiTemplate = true) {
-  localStorage.removeItem("daml.party");
-  localStorage.removeItem("daml.token");
+  localStorage.removeItem(damlPartyKey);
+  localStorage.removeItem(damlTokenKey);
 
   dispatch({ type: "SIGN_OUT_SUCCESS" });
   if(uiTemplate){

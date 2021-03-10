@@ -10,11 +10,10 @@ import {
   IonSlides,
   IonSlide,
   IonModal,
-  IonSegment,
-  IonSegmentButton,
   IonLabel,
   IonInput,
-  IonItem
+  IonItem,
+  IonIcon
 } from '@ionic/react';
 import logo from '../../assets/img/logo-combination.svg';
 import timelineLine from '../../assets/img/img-how-it-work-timeline.png';
@@ -25,10 +24,12 @@ import icWork3 from '../../assets/img/ic-work3.png';
 import icWork4 from '../../assets/img/ic-work4.png';
 
 import './Home.scss';
-import { useUserDispatch, loginUser, loginDablUser } from "../../context/UserContext";
+import { useUserDispatch, loginUser } from "../../context/UserContext";
 import { RouteComponentProps } from 'react-router-dom';
 import { Fade, Typography } from '@material-ui/core';
 
+import {close} from 'ionicons/icons'; 
+import loginImg from '../../assets/img/logo-slogan.png';
 
 const workSteps = [
     {
@@ -133,23 +134,16 @@ const Home = (props : RouteComponentProps) => {
         <IonContent fullscreen>
           <IonModal isOpen={showLoginModal} onDidDismiss={() => setShowLoginModal(false) } cssClass='my-custom-class'>
               <div className="content login-modal-content">
-                <IonSegment mode="md" onIonChange={e => e.detail.value && setLoginSegement(e.detail.value) } value={loginSegement}>
-                  <IonSegmentButton value="SIGN_IN">
-                    <IonLabel>Sign in</IonLabel>
-                  </IonSegmentButton>
-                  <IonSegmentButton value="SIGN_UP">
-                    <IonLabel>Sign up</IonLabel>
-                  </IonSegmentButton>
-                </IonSegment>
                 <Fade in={error}>
                   <Typography color="secondary" className="error-message">
                     Something is wrong with your login or password :(
                   </Typography>
                 </Fade>
+                <img className="logo-slogan" src={loginImg} alt="logo slogan"/>
                 {
                   loginSegement == 'SIGN_IN' ? (
-                    <form className="login-form" onSubmit={handleLoginSubmit}>
-                      <h1>Welcome Back</h1>
+                    <div className="sign-in">
+                      <form className="login-form" onSubmit={handleLoginSubmit}>
                       <IonItem>
                         <IonLabel position="floating">Login</IonLabel>
                         <IonInput value={loginUserName} onIonChange={e => setLoginUserName(e.detail.value!)}></IonInput>
@@ -160,14 +154,22 @@ const Home = (props : RouteComponentProps) => {
                       </IonItem>
                       <IonButton className="submit-button" type="submit">Login</IonButton>
                     </form>
+                    <div className="d-flex justify-content-center align-items-center">
+                      <IonButton fill="clear" color="secondary">Forgot password?</IonButton>·<IonButton fill="clear" color="secondary" onClick={e => {setLoginSegement('SIGN_UP')}}>Sign up for Elastik-Chain</IonButton>
+                    </div>
+                    </div>
                   ) : (
-                    <h1>COMING SOON!</h1>
+                    <h1>
+                      <IonButton color="secondary" fill="clear" onClick={e => {setLoginSegement('SIGN_IN')}}>Sign in for Elastik-Chain</IonButton>
+                    </h1>
                   )
                 }
+                <IonButton className="close-btn" fill="clear" color="danger" onClick={() =>{
+                    setShowLoginModal(false) 
+                }}>
+                  <IonIcon icon={close}></IonIcon>
+                </IonButton>
               </div>
-              <IonButton fill="outline" color="secondary" onClick={() =>{
-                  setShowLoginModal(false) 
-              }}>Close</IonButton>
           </IonModal>
           <section className="app-header">
             <div className="content-container">

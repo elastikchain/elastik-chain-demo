@@ -1,4 +1,4 @@
-import { IonPage, IonHeader, IonToolbar, IonSearchbar, IonButtons, IonButton, IonContent, IonMenu, IonSplitPane, IonTitle, IonItem, IonList, IonLabel, IonModal, IonInput, IonListHeader } from "@ionic/react";
+import { IonPage, IonHeader, IonToolbar, IonSearchbar, IonButtons, IonButton, IonContent, IonMenu, IonSplitPane, IonTitle, IonItem, IonList, IonLabel, IonModal, IonInput, IonListHeader, IonTextarea, IonDatetime } from "@ionic/react";
 import { IonIcon } from '@ionic/react';
 import { open } from 'ionicons/icons';
 
@@ -14,11 +14,26 @@ import { useLedger, useStreamQueries } from "@daml/react";
 import { signOut, useUserDispatch, useUserState } from "../../context/UserContext";
 import { ClientRole, ClientProject, ClientInvitation, AcceptRequest } from "@daml.js/cosmart-0.0.1/lib/Main";
 import { setSelectedProject } from "../../context/SharedContext";
-
+import * as damlTypes from '@daml/types';
+import CriteriaTagsInput from "../../components/CriteriaTagsInput/CriteriaTagsInput";
+interface CriteriaPoint {
+    name: string;
+    point: damlTypes.Numeric;
+}
 const Profile = (props : RouteComponentProps) => {
     const [searchText, setSearchText] = useState('');
-    const [projectId, setProjectId] = useState('');
-    const [projectName, setProjectName] = useState('');
+    const [projectDetail, setProjectDetail] = useState(
+        { 
+            projectId: "",
+            name: "",
+            desc: "",
+            location: "",
+            startDate: "",
+            endDate: "",
+            criteria: Array<CriteriaPoint>()
+        }
+    );
+        
     const [showCreateProjectModal, setShowCreateProjectModal] = useState(false);
     const user = useUserState();
     var userDispatch = useUserDispatch();
@@ -31,15 +46,20 @@ const Profile = (props : RouteComponentProps) => {
 
     const handleCreateProject = async (evt: any) => {
         evt.preventDefault();
-        ledger.exercise(ClientRole.CreateProject, projectAssets[0].contractId, { name : projectName, projectId: projectId})
-        .then(res => {
+        ledger.exercise(ClientRole.CreateProject, projectAssets[0].contractId, projectDetail)
+        .then(() => {
             setShowCreateProjectModal(false);
             alert('Project Created Successfully!');
         })
-        .catch(err => {
+        .catch((err: any) => {
             setShowCreateProjectModal(false);
             alert('Error: '+JSON.stringify(err));
         })
+    }
+
+    const [criteriaTags, setCriteriaTags] = useState(Array<any>());
+    const handleCriteriaTags = (e: any) => {
+        console.log(e);
     }
     if(!user.isAuthenticated){
         return null;
@@ -52,14 +72,14 @@ const Profile = (props : RouteComponentProps) => {
                         <img className="app-logo" src={logo} alt="logo"/>
                         <IonSearchbar 
                         placeholder="Explore amazing ideas"
-                        value={searchText} onIonChange={e => setSearchText(e.detail.value!)}></IonSearchbar>  
+                        value={searchText} onIonChange={(e: any) => setSearchText(e.detail.value!)}></IonSearchbar>  
                         </div>
                         <IonButtons slot="end" className="toolbar-buttons-container">
                         <div className="toolbar-buttons">
                             <IonButton>
                                 Explore
                             </IonButton>
-                            <IonButton onClick={ (evt) => {
+                            <IonButton onClick={ (evt: any) => {
                                 signOut(
                                     userDispatch,
                                     props.history,
@@ -111,11 +131,30 @@ const Profile = (props : RouteComponentProps) => {
                                         <h1>Create Project</h1>
                                         <IonItem>
                                             <IonLabel position="floating">Project ID</IonLabel>
-                                            <IonInput value={projectId} onIonChange={e => setProjectId(e.detail.value!)}></IonInput>
+                                            <IonInput value={projectDetail.projectId} onIonChange={e => setProjectDetail({...projectDetail, projectId: e.detail.value!})}></IonInput>
                                         </IonItem>
                                         <IonItem>
                                             <IonLabel position="floating">Project Name</IonLabel>
-                                            <IonInput value={projectName} onIonChange={e => setProjectName(e.detail.value!)}></IonInput>
+                                            <IonInput value={projectDetail.name} onIonChange={e => setProjectDetail({...projectDetail, name: e.detail.value!})}></IonInput>
+                                        </IonItem>
+                                        <IonItem>
+                                            <IonLabel position="floating">Location</IonLabel>
+                                            <IonInput value={projectDetail.location} onIonChange={e => setProjectDetail({...projectDetail, location: e.detail.value!})}></IonInput>
+                                        </IonItem>
+                                        <div className="criteria-tags-container">
+                                            <CriteriaTagsInput></CriteriaTagsInput>
+                                        </div>
+                                        <IonItem>
+                                            <IonLabel>Start Date</IonLabel>
+                                            <IonDatetime displayFormat="MM DD YYYY, HH:mm" placeholder="Select Start Date" value={projectDetail.startDate} onIonChange={e => setProjectDetail({...projectDetail, startDate: new Date(e.detail.value!).toISOString()})}></IonDatetime>
+                                        </IonItem>
+                                        <IonItem>
+                                            <IonLabel>End Date</IonLabel>
+                                            <IonDatetime displayFormat="MM DD YYYY, HH:mm" placeholder="Select End Date" value={projectDetail.endDate} onIonChange={e => setProjectDetail({...projectDetail, endDate: new Date(e.detail.value!).toISOString()})}></IonDatetime>
+                                        </IonItem>
+                                        <IonItem>
+                                            <IonLabel position="floating">Project Description</IonLabel>
+                                            <IonTextarea rows={2} value={projectDetail.desc} onIonChange={e => setProjectDetail({...projectDetail, desc: e.detail.value!})}></IonTextarea>
                                         </IonItem>
                                         <IonButton className="submit-button" type="submit">Create</IonButton>
                                     </form>

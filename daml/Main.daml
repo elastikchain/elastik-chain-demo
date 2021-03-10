@@ -189,9 +189,14 @@ template ClientRole
       nonconsuming CreateProject: ContractId ClientProject 
         with 
           name: Text 
+          desc: Text
           projectId: Text
+          startDate: Time
+          endDate: Time
+          location: Text
+          criteria: [CriteriaPoint]
         do 
-          create ClientProject with operator, client, projectId, name, desc = "", criteria = [], challenges = [], participants = [], judges = [],projects=[]
+          create ClientProject with operator, client, projectId, location, startDate, endDate, name, desc, criteria, challenges = [], participants = [], judges = [],projects=[]
 
 --  ----------------------------------------------------------------
 
@@ -202,7 +207,10 @@ template ClientProject
     operator: Party 
     projectId: Text
     name: Text 
-    desc:  Text
+    desc: Text
+    location: Text
+    startDate: Time
+    endDate: Time
     criteria: [CriteriaPoint]
     challenges: [Text]
     participants: [Party]

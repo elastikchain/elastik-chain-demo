@@ -143,23 +143,43 @@ export default function Report() {
       await ledger.exercise(Platform.InviteJudge, asset.contractId, state);
       alert("Invitation sent to the Judge successfully!");
     };
-    setInviteJudgeProps({ ...defaultInviteJudgeProps, open: true, onClose})
+    setInviteJudgeProps({ ...defaultInviteJudgeProps, open: true, onClose })
   };
 
   const defaultCreateProjectProps : InputDialogProps<CreateProject> = {
     open: false,
     title: "Create Project",
-    defaultValue: { name : "", projectId: ""},
+    defaultValue: { name : "", projectId: "", startDate: "", endDate: "", location: "", desc: "", criteria: []},
     fields: {
       name : {
         label: "Project Name",
-        type: "text" 
+        type: "text"
       },
-        projectId: {
-          label: "Project Id",
-          type: "text"
-        }
+      startDate : {
+        label: "Project Start Date",
+        type: "text"
       },
+      endDate : {
+        label: "Project End Date",
+        type: "text"
+      },
+      location : {
+        label: "Project Location",
+        type: "text"
+      },
+      projectId: {
+        label: "Project Id",
+        type: "text"
+      },
+      desc: {
+        label: "Project Descritpion",
+        type: "text"
+      },
+      criteria: {
+        label: "Project criteria",
+        type: "text"
+      }
+    },
     onClose: async function() {}
   };
   const [ createProjectProps, setCreateProjectProps ] = useState(defaultCreateProjectProps);
