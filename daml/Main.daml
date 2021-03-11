@@ -275,9 +275,10 @@ template ClientProject
           subName: Text 
           subDesc:  Text
           submission: Text
+          challengeId: Text
         controller participant
         do
-          create ParticipantSubmissionProposal with participant,subName,subDesc,submission,client,projectId,operator
+          create ParticipantSubmissionProposal with participant,subName,subDesc,submission,client,projectId,challengeId,operator
           -- proj <- fetch p
           -- create this with projects = proj::projects 
 
@@ -300,6 +301,7 @@ template ClientProject
 template ParticipantSubmissionProposal
   with 
     projectId: Text
+    challengeId: Text
     participant: Party 
     subName: Text 
     subDesc:  Text
@@ -315,7 +317,7 @@ template ParticipantSubmissionProposal
           submissionId:Text
         do 
           exerciseByKey @ClientProject (client, projectId) AddSubmissionToList with submissionId
-          create ParticipantSubmission with name=subName,participant,desc=subDesc,submission,client,participants=[],submissionId,operator
+          create ParticipantSubmission with name=subName,participant,desc=subDesc,submission,client,participants=[],submissionId,challengeId,operator
           
 
 
@@ -351,6 +353,7 @@ template ParticipantSubmission
     participant: Party 
     client: Party
     submissionId: Text
+    challengeId: Text
     name: Text 
     desc:  Text
     submission: Text

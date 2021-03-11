@@ -1,5 +1,5 @@
-const setSelectedProject = (projectPayload: any) => {
-    localStorage.setItem('selectedProject', JSON.stringify(projectPayload));
+const setSelectedProject = (project: any) => {
+    localStorage.setItem('selectedProject', JSON.stringify(project));
 }
 
 const getSelectedProject = () => {
@@ -7,4 +7,18 @@ const getSelectedProject = () => {
     return res ? JSON.parse(res) : undefined;
 }
 
-export {setSelectedProject, getSelectedProject};
+const setSelectedSubmission = (submission: any) => {
+    localStorage.setItem('selectedSubmission', JSON.stringify(submission));
+}
+
+const getSelectedSubmission = () => {
+    const res = localStorage.getItem('selectedSubmission');
+    return res ? JSON.parse(res) : undefined;
+}
+
+export {
+    setSelectedProject, 
+    getSelectedProject,
+    setSelectedSubmission,
+    getSelectedSubmission
+};

@@ -25,10 +25,33 @@
     font-display: swap;
 }
 
+.modal-default-close-btn{
+    position: absolute;
+    top: 1rem;
+    right: 1rem;
+}
 
-
+.fw{
+    width: 100%;
+}
+.flex-equal-childs-width{
+    display: flex;
+    > * {
+        margin-right: 0.25rem;
+        margin-left: 0.25rem;
+        flex-grow: 1;
+        flex-basis: 0;
+    }
+}
+.p-margin-vertival-2, .p-margin-vertival-2 p{
+    margin-top: 2px !important;
+    margin-bottom: 2px !important;
+}
 .d-flex{
     display: flex;
+}
+.flex-column{
+    flex-direction: column;
 }
 .margin-h-center{
     margin: 0 auto;

@@ -1,22 +1,13 @@
-.project-wrapper{
-    max-width: 1200px;
-    margin: 0 auto;
-    padding-top: 5rem;
-    .nav-info a{
-        text-decoration: none;
-        color: var(--ion-color-dark);
-    }
-    .nav-info-header{
-        display: flex;
-        justify-content: space-between;
-    }
-    .proj-info-container{
-        display: flex;
-        .short-info-container{
-            padding: 1rem 2rem;
-            & > p{
-                max-width: 480px;
-            }
-        }
-    }
+.challenges-list-header{
+    display: flex;
+    width: 400px;
+    align-items: center;
+    justify-content: space-between;
+}
+
+.challenge-modal-content{
+    position: relative;
+    overflow-y: scroll;
+    padding: 1.25rem;
+    padding-top: 0.5rem;
 }

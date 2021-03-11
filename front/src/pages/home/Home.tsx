@@ -141,7 +141,7 @@ const Home = (props : RouteComponentProps) => {
                 </Fade>
                 <img className="logo-slogan" src={loginImg} alt="logo slogan"/>
                 {
-                  loginSegement == 'SIGN_IN' ? (
+                  loginSegement === 'SIGN_IN' ? (
                     <div className="sign-in">
                       <form className="login-form" onSubmit={handleLoginSubmit}>
                       <IonItem>
@@ -164,7 +164,7 @@ const Home = (props : RouteComponentProps) => {
                     </h1>
                   )
                 }
-                <IonButton className="close-btn" fill="clear" color="danger" onClick={() =>{
+                <IonButton className="modal-default-close-btn" fill="clear" color="danger" onClick={() =>{
                     setShowLoginModal(false) 
                 }}>
                   <IonIcon icon={close}></IonIcon>

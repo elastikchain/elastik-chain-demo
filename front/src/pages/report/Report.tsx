@@ -539,7 +539,7 @@ export default function Report() {
               </TableCell>
             </TableRow>
           ))}
-          {clientProjectAssets.filter((c: any) => (user as any).party === c.payload.client).map((a: any) => (
+          {clientProjectAssets.filter(c => (user as any).party === c.payload.client).map(a => (
             <TableRow key={a.contractId} className={classes.tableRow}>
               <TableCell key={6} className={classes.tableCellButton}>
               <Button color="primary" size="small" className={classes.choiceButton} variant="contained" disabled={a.payload.client !== party} onClick={() => showAddUpdateChallenge(a) }>Add Challenge To {a.payload.name}</Button>
