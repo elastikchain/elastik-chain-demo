@@ -42,6 +42,7 @@ const Profile = (props : RouteComponentProps) => {
     const [showCreateProjectModal, setShowCreateProjectModal] = useState(false);
 
     const defaultSubmissionDetail: ProposeSubmission = { 
+        challengeId: "",
         participant: (user as any).party,
         subName: "",
         subDesc: "",
@@ -55,6 +56,8 @@ const Profile = (props : RouteComponentProps) => {
 
     const ledger = useLedger();
     const clientInvitationAssets = useStreamQueries(ClientInvitation).contracts;
+    console.log('clientInvitationAssets', clientInvitationAssets);
+    
     const participantInvitationAssets = useStreamQueries(
         ParticipantInvitation,
         () => ([{participant: (user as any).party}])
@@ -248,6 +251,11 @@ const Profile = (props : RouteComponentProps) => {
                                             <IonLabel position="floating">Submission</IonLabel>
                                             <IonInput required={true} value={submissionDetail.submission} onIonChange={e => setSubmissionDetail({...submissionDetail, submission: e.detail.value!})}></IonInput>
                                         </IonItem>
+                                        <IonItem>
+                                            <IonLabel position="floating">Challenge Id</IonLabel>
+                                            <IonInput required={true} value={submissionDetail.submission} onIonChange={e => setSubmissionDetail({...submissionDetail, challengeId: e.detail.value!})}></IonInput>
+                                        </IonItem>
+                                        
                                         <IonButton className="submit-button" type="submit">Create</IonButton>
                                     </form>
                                 </div>

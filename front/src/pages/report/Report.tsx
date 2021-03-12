@@ -228,7 +228,7 @@ export default function Report() {
     open: false,
     title: "Submission",
     defaultValue: { 
-      participant: party, subName: "", subDesc: "", submission: ""
+      participant: party, subName: "", subDesc: "", submission: "", challengeId: ""
     },
     fields: {
       participant: {
@@ -245,6 +245,10 @@ export default function Report() {
       },
       submission: {
         label: "Submission",
+        type: "text" 
+      },
+      challengeId: {
+        label: "Challenge Id",
         type: "text" 
       }
     },
