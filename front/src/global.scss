@@ -50,6 +50,21 @@
 .d-flex{
     display: flex;
 }
+.justify-content-space-between{
+    justify-content: space-between;
+}
+.pos-relative{
+    position: relative;
+}
+.text-align-start{
+    text-align: start;
+}
+.justify-content-start{
+    justify-content: start;
+}
+.m-right{
+    margin-right: 1rem;
+}
 .flex-column{
     flex-direction: column;
 }

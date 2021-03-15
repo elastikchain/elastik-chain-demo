@@ -5,6 +5,7 @@ import { useUserState } from "../../context/UserContext";
 import { wsBaseUrl, httpBaseUrl } from "../../config";
 import Profile from "../../pages/profile/Profile";
 import Project from "../../pages/project/Project";
+import Submission from "../../pages/submission/Submission";
 
 const FrontLayout = (props: any) => {
     console.log('FrontLayout', props);
@@ -18,6 +19,7 @@ const FrontLayout = (props: any) => {
             <Switch>
                 <Route path="/main/project" component={Project} />
                 <Route path="/main/profile" component={Profile} />
+                <Route path="/main/submission" component={Submission} />
             </Switch>
         </DamlLedger>
         );

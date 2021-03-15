@@ -1,4 +1,4 @@
-import { IonPage, IonHeader, IonToolbar, IonSearchbar, IonButtons, IonButton, IonContent, IonMenu, IonSplitPane, IonTitle, IonItem, IonList, IonLabel, IonModal, IonInput, IonListHeader, IonTextarea, IonDatetime } from "@ionic/react";
+import { IonPage, IonHeader, IonToolbar, IonSearchbar, IonButtons, IonButton, IonContent, IonMenu, IonSplitPane, IonTitle, IonItem, IonList, IonLabel, IonModal, IonInput, IonListHeader, IonTextarea, IonDatetime, IonNote } from "@ionic/react";
 import { IonIcon } from '@ionic/react';
 import { open, close } from 'ionicons/icons';
 
@@ -12,10 +12,12 @@ import menuItemImg from '../../assets/img/img-menu-item.png';
 import './Profile.scss';
 import { useLedger, useStreamQueries } from "@daml/react";
 import { signOut, useUserDispatch, useUserState } from "../../context/UserContext";
-import { ClientRole, ClientProject, ClientInvitation, AcceptRequest, ParticipantInvitation, ProposeSubmission, CreateProject, ParticipantSubmissionProposal, ParticipantSubmission } from "@daml.js/cosmart-0.0.1/lib/Main";
+import { ClientRole, ClientProject, ClientInvitation, AcceptRequest, ParticipantInvitation, ProposeSubmission, CreateProject, ParticipantSubmissionProposal, ParticipantSubmission, AcceptSubmission, JudgeInvitation } from "@daml.js/cosmart-0.0.1/lib/Main";
 import { setSelectedProject } from "../../context/SharedContext";
 import * as damlTypes from '@daml/types';
 import CriteriaTagsInput from "../../components/CriteriaTagsInput/CriteriaTagsInput";
+import DamlLedger from "@daml/react";
+import { httpBaseUrl, wsBaseUrl } from "../../config";
 interface CriteriaPoint {
     name: string;
     point: damlTypes.Numeric;
@@ -32,7 +34,8 @@ const Profile = (props : RouteComponentProps) => {
         location: "",
         startDate: "",
         endDate: "",
-        criteria: Array<CriteriaPoint>()
+        criteria: Array<CriteriaPoint>(),
+        public: "public-qclu7ydvobeh5p3o"
     };
     const [projectDetail, setProjectDetail] = useState(defaultProjectDetail);
     const resetCreateProject = () => {
@@ -41,39 +44,75 @@ const Profile = (props : RouteComponentProps) => {
     }; 
     const [showCreateProjectModal, setShowCreateProjectModal] = useState(false);
 
-    const defaultSubmissionDetail: ProposeSubmission = { 
-        challengeId: "",
-        participant: (user as any).party,
-        subName: "",
-        subDesc: "",
-        submission: ""
-    };
-    const [submissionDetail, setSubmissionDetail] = useState(defaultSubmissionDetail);
-    const resetCreateSubmission = () => {
-        setSubmissionDetail(defaultSubmissionDetail);
-    }; 
-    const [showCreateSubmissionModal, setShowCreateSubmissionModal] = useState(false);
-
     const ledger = useLedger();
+    
     const clientInvitationAssets = useStreamQueries(ClientInvitation).contracts;
     console.log('clientInvitationAssets', clientInvitationAssets);
     
     const participantInvitationAssets = useStreamQueries(
         ParticipantInvitation,
         () => ([{participant: (user as any).party}])
-    )
+    ).contracts;
+
+    const judgeInvitationAssets = useStreamQueries(
+        JudgeInvitation,
+        () => ([{judge: (user as any).party}])
+    ).contracts;
+
     const clientProjectAssets = useStreamQueries(ClientProject).contracts; 
     console.log('clientProjectAssets', clientProjectAssets);
-
-    const projectAssets = useStreamQueries(ClientRole).contracts;
-    console.log('projectAssets', projectAssets);
     
-    const submissionAssets = useStreamQueries(ClientProject);
-    console.log('submissionAssets', submissionAssets);
+    const projectAssets = useStreamQueries(ClientRole).contracts;
 
-    const pParticipantSubmission = useStreamQueries(ParticipantSubmission).contracts;
-    console.log('pParticipantSubmission', pParticipantSubmission);
+    const getUserType = (): '' | 'client' | 'participant' | 'judge' => {
+        if(
+            clientProjectAssets.length > 0 &&
+            clientProjectAssets[0].payload.participants.map(p => p.toLowerCase()).filter(p => p === (user as any).party.toLowerCase()).length > 0
+        ){
+            return 'participant';
+        }        
+        if(projectAssets.filter((c: any) => (user as any).party === c.payload.client).length > 0){
+            return 'client'
+        }
 
+        return ''
+    }
+
+    console.log('getUserType', getUserType());
+    
+
+    const SubmissionToAcceptComponent = (props: any) => {
+        const participantSubmissionProposalAssets = useStreamQueries(ParticipantSubmissionProposal, () => ([{projectId: props.projectId}])).contracts;
+        console.log('participantSubmissionProposalAssets', participantSubmissionProposalAssets);
+        const els = participantSubmissionProposalAssets.map(c => 
+            (
+                <IonItem>
+                    <IonLabel>
+                        <h2>Submission Name: {c.payload.subName}</h2>
+                        <p>Submission Description: {c.payload.subDesc}</p>
+                        <p>Submission Content: {c.payload.submission}</p>
+                        <p>Challenge Id: {c.payload.challengeId}</p>
+                    </IonLabel>
+                    <IonButton slot="end" onClick={e =>
+                        {
+                            e.stopPropagation();
+                            e.preventDefault();
+                            const d = new Date();
+                            const submissionId = c.payload.subName.replace(/\W/g,'_')+'_'+(d.getSeconds()+d.getMinutes()+d.getMilliseconds());                            
+                            ledger.exercise(ParticipantSubmissionProposal.AcceptSubmission, c.contractId, {submissionId})
+                            .then(_ => alert('Submission Accepted!'))
+                            .catch(err => alert(JSON.stringify(err.errors || [])))
+                            
+                        }
+                    }>
+                        Accept {c.payload.participant} Submission
+                    </IonButton> 
+                </IonItem>
+                
+            )
+        )
+        return els.length > 0 ? <div>{els}</div> : null;
+    }
 
     const handleCreateProject = async (evt: any) => {
         evt.preventDefault();
@@ -90,24 +129,6 @@ const Profile = (props : RouteComponentProps) => {
             setShowCreateProjectModal(false);
             alert('Error: '+JSON.stringify(err));
         })
-    };
-
-    const handleCreateSubmission = async (evt: any) => {
-        evt.preventDefault();
-        ledger.exercise(ClientProject.ProposeSubmission, submissionAssets.contracts[0].contractId, submissionDetail)
-        .then(() => {
-            setShowCreateSubmissionModal(false);
-            alert('Submission Created Successfully!');
-            // reset project detail info
-            setTimeout(() => {
-                resetCreateSubmission();
-            }, 250);
-        })
-        .catch((err: any) => {
-            setShowCreateSubmissionModal(false);
-            alert('Error: '+JSON.stringify(err));
-        })
-
     };
     if(!user.isAuthenticated){
         return null;
@@ -235,37 +256,6 @@ const Profile = (props : RouteComponentProps) => {
                                     <IonIcon icon={close}></IonIcon>
                                 </IonButton>
                             </IonModal>
-                            <IonModal isOpen={showCreateSubmissionModal} onDidDismiss={() => setShowCreateSubmissionModal(false) } cssClass='my-custom-class'>
-                                <div className="content create-project-modal-content">
-                                    <form onSubmit={handleCreateSubmission}>
-                                        <h1>Propose Submission</h1>{/*subName: "", subDesc: "", submission: "" */}
-                                        <IonItem>
-                                            <IonLabel position="floating">Submission Name</IonLabel>
-                                            <IonInput required={true} value={submissionDetail.subName} onIonChange={e => setSubmissionDetail({...submissionDetail, subName: e.detail.value!})}></IonInput>
-                                        </IonItem>
-                                        <IonItem>
-                                            <IonLabel position="floating">Submission Description</IonLabel>
-                                            <IonInput required={true} value={submissionDetail.subDesc} onIonChange={e => setSubmissionDetail({...submissionDetail, subDesc: e.detail.value!})}></IonInput>
-                                        </IonItem>
-                                        <IonItem>
-                                            <IonLabel position="floating">Submission</IonLabel>
-                                            <IonInput required={true} value={submissionDetail.submission} onIonChange={e => setSubmissionDetail({...submissionDetail, submission: e.detail.value!})}></IonInput>
-                                        </IonItem>
-                                        <IonItem>
-                                            <IonLabel position="floating">Challenge Id</IonLabel>
-                                            <IonInput required={true} value={submissionDetail.submission} onIonChange={e => setSubmissionDetail({...submissionDetail, challengeId: e.detail.value!})}></IonInput>
-                                        </IonItem>
-                                        
-                                        <IonButton className="submit-button" type="submit">Create</IonButton>
-                                    </form>
-                                </div>
-                                <IonButton className="modal-default-close-btn" fill="clear" color="danger" onClick={() =>{
-                                    resetCreateProject();
-                                    setShowCreateProjectModal(false) 
-                                }}>
-                                    <IonIcon icon={close}></IonIcon>
-                                </IonButton>
-                            </IonModal>
                             <div className="wrapper">
                                 <div className="profile-info-container">
                                     <div className="profile-img-container">
@@ -286,7 +276,7 @@ const Profile = (props : RouteComponentProps) => {
                                                 ))
                                             }
                                             {
-                                                (participantInvitationAssets.contracts || []).filter(c => (user as any).party === c.payload.participant).map(a => (
+                                                participantInvitationAssets.filter(c => (user as any).party === c.payload.participant).map(a => (
                                                     <IonButton
                                                     onClick={async e => {
                                                         await ledger.exercise(ParticipantInvitation.AcceptParticipantRequest, a.contractId, AcceptRequest);
@@ -294,6 +284,17 @@ const Profile = (props : RouteComponentProps) => {
                                                     }
                                                     }
                                                     > Accept Invitation As Participant</IonButton>
+                                                ))
+                                            }
+                                            {
+                                                judgeInvitationAssets.filter(c => (user as any).party === c.payload.judge).map(a => (
+                                                    <IonButton
+                                                    onClick={async e => {
+                                                        await ledger.exercise(JudgeInvitation.AcceptjudgeRequest, a.contractId, AcceptRequest);
+                                                        alert('Your request accepted successfully!');
+                                                    }
+                                                    }
+                                                    > Accept Invitation As Judge</IonButton>
                                                 ))
                                             }
                                             </IonLabel>
@@ -305,51 +306,65 @@ const Profile = (props : RouteComponentProps) => {
                                             <p>Linkedin: <a href="#">Information here</a></p>
                                             <p>Github: <a href="#">Information here</a></p>
                                             {
-                                                projectAssets.filter((c: any) => (user as any).party === c.payload.client).map((a: any) => {
-                                                    return (
-                                                        <IonButton 
+                                                getUserType() === 'client' ? 
+                                                (
+                                                    <IonButton 
                                                         onClick={() => setShowCreateProjectModal(true)}
                                                         className="create-project-button"> Create New Project </IonButton>
-                                                    )
-                                                })
-                                            }
-                                            {
-                                                submissionAssets.contracts.filter(c => (c.payload.participants || []).indexOf((user as any).party) >= 0).map((a: any) => {
-                                                    return (
-                                                        <IonButton 
-                                                        onClick={() => setShowCreateSubmissionModal(true)}
-                                                        className="create-project-button"> Create New Submission </IonButton>
-                                                    )
-                                                })
+                                                ) : null
                                             }
                                         </div>
                                     </div>
                                 </div>
                                 {
-                                    (clientProjectAssets.filter((c: any) => (user as any).party === c.payload.client).length > 0) ? (
+                                    getUserType() === 'client' ?  (
+                                        clientProjectAssets.filter(c => (user as any).party === c.payload.client).length > 0 ? (
+                                            <IonList>
+                                                <IonListHeader>
+                                                    Created Projects
+                                                </IonListHeader>
+                                                {
+                                                    clientProjectAssets.filter(c => (user as any).party === c.payload.client).map(p => (
+                                                            <IonItem onClick={ e => {
+                                                                e.preventDefault();
+                                                                console.log('the selected::', p);
+                                                                
+                                                                setSelectedProject(p);
+                                                                props.history.push('/main/project?id='+p.payload.projectId);
+                                                            }
+                                                            }>
+                                                                <IonIcon slot="start" icon={open}></IonIcon>
+                                                                <IonLabel className="project-info">
+                                                                    name: {p.payload.name}, id: {p.payload.projectId} 
+                                                                    <SubmissionToAcceptComponent contractId={p.contractId} projectId={p.payload.projectId}></SubmissionToAcceptComponent>
+                                                                </IonLabel>
+                                                            </IonItem> 
+                                                    ))
+                                                }
+                                            </IonList>
+                                        ) : null
+                                    ) :  (
                                         <IonList>
                                             <IonListHeader>
-                                                Created Projects
+                                                Projects: 
                                             </IonListHeader>
-                                            {
-                                                clientProjectAssets.filter((c: any) => (user as any).party === c.payload.client).map(p => {
-                                                    return (
-                                                        <IonItem onClick={ e => {
-                                                            e.preventDefault();
-                                                            console.log('the selected::', p);
-                                                            
-                                                            setSelectedProject(p);
-                                                            props.history.push('/main/project?id='+p.payload.projectId);
-                                                        }
-                                                        }>
-                                                            <IonIcon slot="start" icon={open}></IonIcon>
-                                                            <IonLabel className="project-info">name: {p.payload.name}, id: {p.payload.projectId}</IonLabel>
-                                                        </IonItem> 
-                                                    )
-                                                })
-                                            }
+                                                {
+                                                    clientProjectAssets.map(p => {
+                                                        return (
+                                                            <IonItem onClick={ e => {
+                                                                e.preventDefault();                                                                
+                                                                setSelectedProject(p);
+                                                                props.history.push('/main/project?id='+p.payload.projectId);
+                                                            }
+                                                            }>
+                                                                <IonIcon slot="start" icon={open}></IonIcon>
+                                                                <IonLabel className="project-info">name: {p.payload.name}, id: {p.payload.projectId}</IonLabel>
+                                                            </IonItem> 
+                                                        )
+                                                    })
+                                                }
                                         </IonList>
-                                    ) : null
+                                    )  
                                 }
                             </div>
                         </IonPage>

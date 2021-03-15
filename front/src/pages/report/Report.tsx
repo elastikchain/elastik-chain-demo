@@ -149,7 +149,7 @@ export default function Report() {
   const defaultCreateProjectProps : InputDialogProps<CreateProject> = {
     open: false,
     title: "Create Project",
-    defaultValue: { name : "", projectId: "", startDate: "", endDate: "", location: "", desc: "", criteria: []},
+    defaultValue: { name : "", projectId: "", startDate: "", endDate: "", location: "", desc: "", criteria: [], public: "public"},
     fields: {
       name : {
         label: "Project Name",
@@ -178,6 +178,10 @@ export default function Report() {
       criteria: {
         label: "Project criteria",
         type: "text"
+      },
+      public: {
+        label: "Public party",
+        type: "text"
       }
     },
     onClose: async function() {}
@@ -196,7 +200,7 @@ export default function Report() {
   const defaultAddUpdateChallengeProps : InputDialogProps<AddChallenge> = {
     open: false,
     title: "Add Challenge",
-    defaultValue: { challengeId: "", nameOf: "", prize: ""},
+    defaultValue: { challengeId: "", nameOf: "", prize: "", participant: "Andy", judge: "Yuling"},
     fields: {
       challengeId: {
         label: "Challenge Id",
@@ -208,6 +212,14 @@ export default function Report() {
       },
       prize: {
         label: "prize",
+        type: "text" 
+      },
+      participant: {
+        label: "participant",
+        type: "text" 
+      },
+      judge: {
+        label: "judge",
         type: "text" 
       }
     },
@@ -228,7 +240,7 @@ export default function Report() {
     open: false,
     title: "Submission",
     defaultValue: { 
-      participant: party, subName: "", subDesc: "", submission: "", challengeId: ""
+      participant: party, subName: "", subDesc: "", submission: "", challengeId: "", judge: "Yuling"
     },
     fields: {
       participant: {
@@ -249,6 +261,10 @@ export default function Report() {
       },
       challengeId: {
         label: "Challenge Id",
+        type: "text" 
+      },
+      judge: {
+        label: "judge",
         type: "text" 
       }
     },

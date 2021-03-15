@@ -195,8 +195,9 @@ template ClientRole
           endDate: Time
           location: Text
           criteria: [CriteriaPoint]
+          public: Party
         do 
-          create ClientProject with operator, client, projectId, location, startDate, endDate, name, desc, criteria, challenges = [], participants = [], judges = [],projects=[]
+          create ClientProject with operator, client, projectId, location, startDate, endDate, name, desc, criteria, challenges = [], participants = [], judges = [], projects=[],public 
 
 --  ----------------------------------------------------------------
 
@@ -216,13 +217,10 @@ template ClientProject
     participants: [Party]
     judges: [Party]
     projects:[Text]
-    -- public :Party
+    public :Party
   where
     signatory client 
-    -- observer participants,public
-    observer participants
-    observer judges
-    
+    observer participants,judges,public 
     
     key (client,projectId): (Party, Text)
     maintainer key._1
@@ -245,8 +243,10 @@ template ClientProject
           challengeId: Text 
           nameOf:Text
           prize: Text
+          participant: Party
+          judge: Party
         do 
-          id <- create Challenge with client,nameOf,prize,challengeId
+          id <- create Challenge with client,judges,participants,participant,judge,nameOf,prize,challengeId
           create this with challenges = challengeId::challenges
 
     controller client can 
@@ -276,9 +276,10 @@ template ClientProject
           subDesc:  Text
           submission: Text
           challengeId: Text
+          judge: Party
         controller participant
         do
-          create ParticipantSubmissionProposal with participant,subName,subDesc,submission,client,projectId,challengeId,operator
+          create ParticipantSubmissionProposal with participant,judge,subName,subDesc,submission,client,projectId,challengeId,operator
           -- proj <- fetch p
           -- create this with projects = proj::projects 
 
@@ -288,13 +289,12 @@ template ClientProject
           submissionId: Text 
         do create this with projects = submissionId::projects 
 
-    -- choice AddJudgingPoint: ContractId ClientProject
-    --   with
-    --     judge: Party
-    --     criteria:CriteriaPoint
-    --   controller judge
-    --   do create
-
+    -- choice AddJudgingPoint: ContractId ParticipantSubmission
+    --     with
+    --      judger: Party
+    --      criteria1:CriteriaPoint
+    --     controller judger
+    --     do create this with judge=judger, criteria=criteria::criteria1
 
           
 
@@ -308,6 +308,7 @@ template ParticipantSubmissionProposal
     submission: Text
     client: Party
     operator: Party
+    judge:Party
   where 
     signatory participant
 
@@ -317,7 +318,7 @@ template ParticipantSubmissionProposal
           submissionId:Text
         do 
           exerciseByKey @ClientProject (client, projectId) AddSubmissionToList with submissionId
-          create ParticipantSubmission with name=subName,participant,desc=subDesc,submission,client,participants=[],submissionId,challengeId,operator
+          create ParticipantSubmission with name=subName,participant,desc=subDesc,submission,client,judge,participants=[],submissionId,challengeId,operator
           
 
 
@@ -329,9 +330,15 @@ template Challenge
     nameOf: Text 
     prize: Text 
     client: Party
+    participants: [Party]
+    judges: [Party]
+    participant:Party
+    judge: Party
+
   where
     signatory client
-
+    observer participants,participant,judge
+    
     controller client can 
       ModifieChallenge: ContractId Challenge
         with
@@ -359,11 +366,11 @@ template ParticipantSubmission
     submission: Text
     -- challenges: [Text]
     participants: [Party]
+    judge: Party
     operator: Party
   where
     signatory participant,client 
-    observer participants
-    observer client
+    observer participants,judge,client
     
     key (participant,submissionId): (Party, Text)
     maintainer key._1
