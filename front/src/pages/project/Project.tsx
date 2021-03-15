@@ -111,7 +111,7 @@ const Project = (props : RouteComponentProps) => {
             return (
                 <IonCard>
                     <div className="d-flex">
-                        <img src="https://via.placeholder.com/450x308.png" alt="challenge image"/>
+                        <img src="../../assets/img/img-asx2.jpeg" alt="challenge image"/>
                         <IonCardContent>
                             <h1 className="proj-chall-name">{stream.contracts[0].payload.nameOf} <IonNote>Id: {props.challengeId}</IonNote></h1>
                             <h2 className="proj-chall-example">Dolor sit amet</h2>
@@ -176,7 +176,7 @@ const Project = (props : RouteComponentProps) => {
                         Back
                     </IonButton>
                     <IonCard>
-                        <img src="https://via.placeholder.com/1920x600.png" alt="project image"/>
+                        <img src="../../assets/img/img-asx.jpeg" alt="project image"/>
                         <IonCardContent>
                             <div className="d-flex align-items-center justify-content-space-between">
                                 <IonLabel>
@@ -249,7 +249,7 @@ const Project = (props : RouteComponentProps) => {
                                             }
                                         }>
                                             <div className="d-flex">
-                                                <img src="https://via.placeholder.com/450x308.png" alt="challenge image"/>
+                                                <img src="../../assets/img/img-daml.jpeg" alt="challenge image"/>
                                                 <IonCardContent>
                                                     <h1 className="proj-chall-name">{sc.payload.submissionId}</h1>
                                                     <h2 className="proj-chall-example">Dolor sit amet</h2>
