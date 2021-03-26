@@ -163,32 +163,29 @@ template ParticipantInvitation
 
     controller participant can
       AcceptParticipantRequest: ContractId ParticipantRole
-        with
-          participantProfile: ProfileData
         do create ParticipantRole with ..
 
 template ParticipantRole
   with 
     participant: Party 
     operator: Party
-    participantProfile: ProfileData
   where 
     signatory participant, operator 
 
-    key (participant,participantProfile.email):(Party,Text)
-    maintainer key._1
+    -- key (participant,participantProfile.email):(Party,Text)
+    -- maintainer key._1
 
-    controller participant can 
-      UpdateParProfile: ContractId ParticipantRole
-        with
-          first:Text
-          last:Text
-          job:Text
-          company:Text
-          about:Text
-        do
-          let o1 = participantProfile with first,last,job,company,about,email = participantProfile.email
-          create this with participant,operator, participantProfile = o1
+    -- controller participant can 
+    --   UpdateParProfile: ContractId ParticipantRole
+    --     with
+    --       first:Text
+    --       last:Text
+    --       job:Text
+    --       company:Text
+    --       about:Text
+    --     do
+    --       let o1 = participantProfile with first,last,job,company,about,email = participantProfile.email
+    --       create this with participant,operator, participantProfile = o1
 
     controller participant can 
       nonconsuming RegisterForProject: ContractId RequestToJoinProject
@@ -384,7 +381,7 @@ template ParticipantSubmissionProposal
           submissionId:Text
         do 
           exerciseByKey @ClientProject (client, projectId) AddSubmissionToList with submissionId
-          create ParticipantSubmission with name=subName,participant,desc=subDesc,submission,client,judge,participants=[],submissionId,challengeId,operator,criteria
+          create ParticipantSubmission with name=subName,participant,desc=subDesc,submission,client,judge,participants=[],submissionId,challengeId,operator,criteria,judges=[]
           
 
 
@@ -425,7 +422,8 @@ template ParticipantSubmission
     submission: Text
     -- challenges: [Text]
     participants: [Party]
-    judge: [Party]
+    judge: Party
+    judges: [Party]
     operator: Party
     criteria: [CriteriaPoint] -- should be invisble to the participant
   where
@@ -461,17 +459,24 @@ template ParticipantSubmission
         -- create this with participants=participantToAdd::participants
           create TeammateProposal with email,operator,teammate=participantToAdd,submissionId,participant
 
-    controller  operator can
+    controller  participant can
       AddTeammate : ContractId ParticipantSubmission
         with p : Party
         do create this with  participants=p::participants
     
-    controller  judge can
-      JudgeProject : ContractId ParticipantSubmission
+    -- controller  judge can
+    --   JudgeProject : ContractId ParticipantSubmission
+    --     with 
+    --       p : Party
+    --       subId: Text
+    --       newCriteriaPoint: CriteriaPoint
+    --     do create Scorecard with scorecard=newCriteriaPoint::criteria,client, submissionId=subId, scorecard, judge 
+
+    nonconsuming choice SubmitScorecard: ContractId Scorecard 
         with 
-          p : Party
-          newCriteriaPoint: CriteriaPoint 
-        do create this with criteria=newCriteriaPoint::criteria
+          scores: [CriteriaPoint] 
+        controller judge 
+          do create Scorecard with client, submissionId, scoretable=scores, judge
           
 --  ----------------------------------------------------------------
 
@@ -486,9 +491,9 @@ template TeammateProposal
     participant: Party
     email: Text
   where
-    signatory teammate
+    signatory participant
 
-    controller operator can 
+    controller teammate can 
       AcceptTeammateProposal: ()
         do 
           -- (c1,co) <- fetchByKey @ParticipantProfile (teammate,email) 
@@ -576,6 +581,20 @@ template ClosedClientProject
   where
     signatory client 
     observer operator
+        
+template Scorecard
+    with 
+        client: Party 
+        submissionId : Text
+        -- participant: Party 
+        judge: Party 
+        scoretable: [CriteriaPoint]
+     where 
+        signatory judge  
+        observer client 
+        key (judge, submissionId): (Party, Text)
+        maintainer key._1
+
 
 
 setup = script do
@@ -594,6 +613,12 @@ setup = script do
     exerciseCmd platform InviteParticipant with
       participant = andy
   participant <- submit andy do
+    exerciseCmd invite AcceptParticipantRequest 
+
+  invite <- submit elastik do
+    exerciseCmd platform InviteParticipant with
+      participant = mohammed
+  participant <- submit mohammed do
     exerciseCmd invite AcceptParticipantRequest 
 
   invite <- submit elastik do
