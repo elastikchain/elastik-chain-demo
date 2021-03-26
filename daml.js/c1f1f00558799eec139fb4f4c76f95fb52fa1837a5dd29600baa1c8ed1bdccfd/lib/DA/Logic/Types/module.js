@@ -15,5 +15,15 @@ var damlLedger = require('@daml/ledger');
 
 exports.Formula = function (a) { return ({
   decoder: damlTypes.lazyMemo(function () { return jtv.oneOf(jtv.object({tag: jtv.constant('Proposition'), value: a.decoder, }), jtv.object({tag: jtv.constant('Negation'), value: exports.Formula(a).decoder, }), jtv.object({tag: jtv.constant('Conjunction'), value: damlTypes.List(exports.Formula(a)).decoder, }), jtv.object({tag: jtv.constant('Disjunction'), value: damlTypes.List(exports.Formula(a)).decoder, })); }),
+  encode: function (__typed__) {
+  switch(__typed__.tag) {
+    case 'Proposition': return {tag: __typed__.tag, value: a.encode(__typed__.value)};
+    case 'Negation': return {tag: __typed__.tag, value: exports.Formula(a).encode(__typed__.value)};
+    case 'Conjunction': return {tag: __typed__.tag, value: damlTypes.List(exports.Formula(a)).encode(__typed__.value)};
+    case 'Disjunction': return {tag: __typed__.tag, value: damlTypes.List(exports.Formula(a)).encode(__typed__.value)};
+    default: throw 'unrecognized type tag: ' + __typed__.tag + ' while serializing a value of type Formula';
+  }
+}
+,
 }); };
 

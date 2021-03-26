@@ -4,6 +4,7 @@
   "private": true,
   "dependencies": {
     "@daml.js/cosmart-0.0.1": "file:../daml.js/cosmart-0.0.1",
+    "@daml/hub-react": "^0.1.0",
     "@daml/ledger": "1.7.0",
     "@daml/react": "1.7.0",
     "@daml/types": "1.7.0",

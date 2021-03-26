@@ -15,5 +15,10 @@ var damlLedger = require('@daml/ledger');
 
 exports.Archive = {
   decoder: damlTypes.lazyMemo(function () { return jtv.object({}); }),
+  encode: function (__typed__) {
+  return {
+  };
+}
+,
 };
 

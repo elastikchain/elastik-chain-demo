@@ -15,5 +15,11 @@ var damlLedger = require('@daml/ledger');
 
 exports.RelTime = {
   decoder: damlTypes.lazyMemo(function () { return jtv.object({microseconds: damlTypes.Int.decoder, }); }),
+  encode: function (__typed__) {
+  return {
+    microseconds: damlTypes.Int.encode(__typed__.microseconds),
+  };
+}
+,
 };
 

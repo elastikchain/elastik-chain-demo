@@ -15,11 +15,23 @@ var damlLedger = require('@daml/ledger');
 
 exports.Min = function (a) { return ({
   decoder: damlTypes.lazyMemo(function () { return jtv.object({unpack: a.decoder, }); }),
+  encode: function (__typed__) {
+  return {
+    unpack: a.encode(__typed__.unpack),
+  };
+}
+,
 }); };
 
 
 
 exports.Max = function (a) { return ({
   decoder: damlTypes.lazyMemo(function () { return jtv.object({unpack: a.decoder, }); }),
+  encode: function (__typed__) {
+  return {
+    unpack: a.encode(__typed__.unpack),
+  };
+}
+,
 }); };
 

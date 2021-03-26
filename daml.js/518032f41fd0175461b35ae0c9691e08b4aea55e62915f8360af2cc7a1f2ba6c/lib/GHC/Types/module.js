@@ -19,5 +19,6 @@ exports.Ordering = {
   GT: 'GT',
   keys: ['LT','EQ','GT',],
   decoder: damlTypes.lazyMemo(function () { return jtv.oneOf(jtv.constant(exports.Ordering.LT), jtv.constant(exports.Ordering.EQ), jtv.constant(exports.Ordering.GT)); }),
+  encode: function (__typed__) { return __typed__; },
 };
 

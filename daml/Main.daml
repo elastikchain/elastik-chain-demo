@@ -1,6 +1,5 @@
 module Main where
 
-
 -- Expected workflow :
 --  operator(Elastik)-->InviteParticipant/InviteClient / AddParticipantToProject / InviteJudge / JudgeCriteria
 --  participant-->AcceptParticipantRequest / AddEditProfile / AddEditsubmission / Addteammate / 
@@ -196,6 +195,7 @@ template ClientRole
           location: Text
           criteria: [CriteriaPoint]
           public: Party
+
         do 
           create ClientProject with operator, client, projectId, location, startDate, endDate, name, desc, criteria, challenges = [], participants = [], judges = [], projects=[],public 
 
@@ -276,6 +276,7 @@ template ClientProject
           subDesc:  Text
           submission: Text
           challengeId: Text
+          youtubeLink: Text
           judge: Party
         controller participant
         do

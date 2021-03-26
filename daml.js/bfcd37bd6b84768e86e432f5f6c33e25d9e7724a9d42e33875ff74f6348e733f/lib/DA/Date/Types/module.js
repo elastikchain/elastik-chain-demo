@@ -23,6 +23,7 @@ exports.DayOfWeek = {
   Sunday: 'Sunday',
   keys: ['Monday','Tuesday','Wednesday','Thursday','Friday','Saturday','Sunday',],
   decoder: damlTypes.lazyMemo(function () { return jtv.oneOf(jtv.constant(exports.DayOfWeek.Monday), jtv.constant(exports.DayOfWeek.Tuesday), jtv.constant(exports.DayOfWeek.Wednesday), jtv.constant(exports.DayOfWeek.Thursday), jtv.constant(exports.DayOfWeek.Friday), jtv.constant(exports.DayOfWeek.Saturday), jtv.constant(exports.DayOfWeek.Sunday)); }),
+  encode: function (__typed__) { return __typed__; },
 };
 
 
@@ -42,5 +43,6 @@ exports.Month = {
   Dec: 'Dec',
   keys: ['Jan','Feb','Mar','Apr','May','Jun','Jul','Aug','Sep','Oct','Nov','Dec',],
   decoder: damlTypes.lazyMemo(function () { return jtv.oneOf(jtv.constant(exports.Month.Jan), jtv.constant(exports.Month.Feb), jtv.constant(exports.Month.Mar), jtv.constant(exports.Month.Apr), jtv.constant(exports.Month.May), jtv.constant(exports.Month.Jun), jtv.constant(exports.Month.Jul), jtv.constant(exports.Month.Aug), jtv.constant(exports.Month.Sep), jtv.constant(exports.Month.Oct), jtv.constant(exports.Month.Nov), jtv.constant(exports.Month.Dec)); }),
+  encode: function (__typed__) { return __typed__; },
 };
 
