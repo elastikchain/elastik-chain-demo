@@ -4,22 +4,55 @@ module Main where
 --  operator(Elastik)-->InviteParticipant/InviteClient / AddParticipantToProject / InviteJudge / JudgeCriteria
 --  participant-->AcceptParticipantRequest / AddEditProfile / AddEditsubmission / Addteammate / 
 --  client--> CreateProject / CreatChallenge / AddEditProfile / AddJudgeToProject by client
---  judgs -->  *VoteForProject(SpecifyRating) 
+--  judgs -->  VoteForProject(SpecifyRating) 
 
 -- anybody can be an operator ?? specify only one operator => once in production auth will fix the issue
 -- participant should not be invited multiple times !! // auth will solve it
 -- shoud not have two profiles // nonconsuming
+-- *code optimization for profile
 
 import Daml.Script
 -- import DA.Date
-
--- data Challenge = Challenge
---   with
---     name: Text 
---     prize: Text 
---   deriving(Eq, Show)
 -- import DA.Set (Set)
 -- import DA.Set qualified as S
+
+-- All data in on place
+
+data ClientProjectData =  ClientProjectData
+  with
+    client: Party 
+    operator: Party 
+    projectId: Text
+    name: Text 
+    desc: Text
+    location: Text
+    startDate: Time
+    endDate: Time
+    criteria: [CriteriaPoint]
+    challenges: [Text]
+    participants: [Party]
+    judges: [Party]
+    projects:[Text]
+    public :Party
+  deriving(Eq, Show)
+
+data ChallengeData = ChallengeData
+  with
+    challengeId: Text 
+    nameOf:Text
+    prize: Text
+    participant: Party
+    judge: Party 
+  deriving(Eq, Show)
+  
+data ParticipantSubmissionData =  ParticipantSubmissionData
+  with
+    participant: Party 
+    subName: Text 
+    subDesc:  Text
+    submission: Text
+    challengeId: Text
+  deriving(Eq, Show)
 
 data CriteriaPoint = CriteriaPoint
   with
@@ -27,7 +60,19 @@ data CriteriaPoint = CriteriaPoint
     point:Decimal
   deriving(Eq, Show)
 
--- invite all parties
+data ProfileData = ProfileData
+  with
+    first:Text
+    last:Text
+    email:Text
+    job:Text
+    company:Text
+    about:Text
+  deriving(Eq, Show)
+
+--  ----------------------------------------------------------------
+
+-- Invite all parties by operator
 template Platform 
   with 
     operator: Party 
@@ -79,6 +124,9 @@ template JudgeRole
           first:Text
           last:Text
           email:Text
+          job:Text
+          company:Text
+          about:Text
         do
           create JudgeProfile with ..
 
@@ -120,18 +168,24 @@ template ParticipantInvitation
 template ParticipantRole
   with 
     participant: Party 
-    operator: Party 
+    operator: Party
   where 
     signatory participant, operator 
 
-    controller participant can 
-      AddParProfile: ContractId ParticipantProfile
-        with
-          first:Text
-          last:Text
-          email:Text
-        do
-          create ParticipantProfile with ..
+    -- key (participant,participantProfile.email):(Party,Text)
+    -- maintainer key._1
+
+    -- controller participant can 
+    --   UpdateParProfile: ContractId ParticipantRole
+    --     with
+    --       first:Text
+    --       last:Text
+    --       job:Text
+    --       company:Text
+    --       about:Text
+    --     do
+    --       let o1 = participantProfile with first,last,job,company,about,email = participantProfile.email
+    --       create this with participant,operator, participantProfile = o1
 
     controller participant can 
       nonconsuming RegisterForProject: ContractId RequestToJoinProject
@@ -181,6 +235,9 @@ template ClientRole
           first:Text
           last:Text
           email:Text
+          job:Text
+          company:Text
+          about:Text
         do
           create ClientProfile with ..
 
@@ -249,6 +306,12 @@ template ClientProject
           id <- create Challenge with client,judges,participants,participant,judge,nameOf,prize,challengeId
           create this with challenges = challengeId::challenges
 
+    choice RemoveClientProject: ContractId ClosedClientProject
+        with
+          comment: Text
+        controller client
+        do create ClosedClientProject with ..
+
     controller client can 
        RemoveChallenge: ContractId ClientProject 
         with 
@@ -280,12 +343,12 @@ template ClientProject
           judge: Party
         controller participant
         do
-          create ParticipantSubmissionProposal with participant,judge,subName,subDesc,submission,client,projectId,challengeId,operator
+          create ParticipantSubmissionProposal with participant,judge,subName,subDesc,submission,client,projectId,challengeId,operator,criteria
           -- proj <- fetch p
           -- create this with projects = proj::projects 
-
+        
     controller client can 
-       AddSubmissionToList: ContractId ClientProject 
+      AddSubmissionToList: ContractId ClientProject 
         with 
           submissionId: Text 
         do create this with projects = submissionId::projects 
@@ -310,6 +373,7 @@ template ParticipantSubmissionProposal
     client: Party
     operator: Party
     judge:Party
+    criteria: [CriteriaPoint]
   where 
     signatory participant
 
@@ -319,9 +383,8 @@ template ParticipantSubmissionProposal
           submissionId:Text
         do 
           exerciseByKey @ClientProject (client, projectId) AddSubmissionToList with submissionId
-          create ParticipantSubmission with name=subName,participant,desc=subDesc,submission,client,judge,participants=[],submissionId,challengeId,operator
+          create ParticipantSubmission with name=subName,participant,desc=subDesc,submission,client,judge,participants=[],submissionId,challengeId,operator,criteria,judges=[]
           
-
 
 
 
@@ -346,12 +409,6 @@ template Challenge
           name1:Text
           prize1:Text
         do create this with nameOf = name1,prize=prize1, client, challengeId
-    
-
-  
-
-
-
 
 --  ----------------------------------------------------------------
 
@@ -368,7 +425,9 @@ template ParticipantSubmission
     -- challenges: [Text]
     participants: [Party]
     judge: Party
+    judges: [Party]
     operator: Party
+    criteria: [CriteriaPoint] -- should be invisble to the participant
   where
     signatory participant,client 
     observer participants,judge,client
@@ -381,52 +440,69 @@ template ParticipantSubmission
         with 
           newDesc: Text 
           newName: Text 
-
-        do create this with  name=newName, desc=newDesc
-  
-    -- choice RemoveSubmission: ContractId ClientProject
-    --     with
-    --       participant: Party 
-    --       subName: Text 
-    --       subDesc:  Text
-    --       submission: Text
-    --       challengeId: Text
-    --     controller participant
-    --     do
+          newchallengeId: Text
+        do create this with  name=newName, desc=newDesc,challengeId=newchallengeId
+       
+    choice RemoveSubmission: ContractId ClosedParticipantSubmission
+        with
+          comment: Text
+        controller participant
+        do create ClosedParticipantSubmission with ..
     --       p <- create ParticipantSubmission with participant,name= subName,desc= subDesc,submission,challengeId,client,participants
     --       proj <- fetch p
     --       create this with projects = proj::projects 
     
     controller participant can 
-      nonconsuming ProposeTeammate: ContractId AddTeammateProposal 
+      nonconsuming ProposeTeammate: ContractId TeammateProposal 
         with 
-          -- participantToAdd: Party
+          participantToAdd: Party
           email: Text
         do 
         -- create this with participants=participantToAdd::participants
-          create AddTeammateProposal with email,operator,participant,submissionId
+          create TeammateProposal with email,operator,teammate=participantToAdd,submissionId,participant
 
-    controller  operator can
+    controller  participant can
       AddTeammate : ContractId ParticipantSubmission
         with p : Party
         do create this with  participants=p::participants
-          
+    
+    -- controller  judge can
+    --   JudgeProject : ContractId ParticipantSubmission
+    --     with 
+    --       p : Party
+    --       subId: Text
+    --       newCriteriaPoint: CriteriaPoint
+    --     do create Scorecard with scorecard=newCriteriaPoint::criteria,client, submissionId=subId, scorecard, judge 
 
-template AddTeammateProposal  
+    nonconsuming choice SubmitScorecard: ContractId Scorecard 
+        with 
+          scores: [CriteriaPoint] 
+        controller judge 
+          do create Scorecard with client, submissionId, scoretable=scores, judge
+          
+--  ----------------------------------------------------------------
+
+-- Add teammate
+
+template TeammateProposal  
   with
-    email: Text
+    -- email: Text
     operator: Party
-    participant: Party
+    teammate: Party
     submissionId: Text
+    participant: Party
+    email: Text
   where
     signatory participant
 
-    controller operator can 
+    controller teammate can 
       AcceptTeammateProposal: ()
         do 
-          (c1,co) <- fetchByKey @ParticipantProfile (participant,email) 
-          exerciseByKey @ParticipantSubmission (participant,submissionId) AddTeammate with p=co.participant 
-          return ()     
+          -- (c1,co) <- fetchByKey @ParticipantProfile (teammate,email) 
+          exerciseByKey @ParticipantSubmission (participant,submissionId) AddTeammate with p=teammate 
+          return ()
+
+
 
 --  ----------------------------------------------------------------
 
@@ -441,28 +517,15 @@ template ClientProfile
   where 
     signatory client
 
-template ParticipantProfile
-  with 
-    participant: Party 
-    operator: Party
-    first: Text 
-    last:  Text
-    email: Text
-
-  where 
-    signatory participant
-    observer operator
-
-    -- to add a teammate
-    key (participant,email):(Party,Text)
-    maintainer key._1
-
 template JudgeProfile
   with 
     judge: Party 
     first: Text 
     last:  Text
     email: Text
+    job:Text
+    company:Text
+    about:Text
   where 
     signatory judge
 
@@ -478,19 +541,113 @@ template Criteria
   where
     signatory judge
 
+--  ----------------------------------------------------------------
 
+-- Client / Participant removed project 
 
+template ClosedParticipantSubmission
+  with 
+    participant: Party 
+    client: Party
+    submissionId: Text
+    challengeId: Text
+    name: Text 
+    desc:  Text
+    submission: Text
+    -- challenges: [Text]
+    participants: [Party]
+    judge: Party
+    operator: Party
+    comment:Text
+  where
+    signatory participant
+    observer operator
 
+template ClosedClientProject
+  with  
+    client: Party 
+    operator: Party 
+    projectId: Text
+    name: Text 
+    desc: Text
+    location: Text
+    startDate: Time
+    endDate: Time
+    criteria: [CriteriaPoint]
+    challenges: [Text]
+    participants: [Party]
+    judges: [Party]
+    projects:[Text]
+    public :Party
+    comment:Text
+  where
+    signatory client 
+    observer operator
+        
+template Scorecard
+    with 
+        client: Party 
+        submissionId : Text
+        -- participant: Party 
+        judge: Party 
+        scoretable: [CriteriaPoint]
+     where 
+        signatory judge  
+        observer client 
+        key (judge, submissionId): (Party, Text)
+        maintainer key._1
 
 
 
 setup = script do
   elastik <- allocatePartyWithHint "Elastik" (PartyIdHint "Elastik")
-  -- bob <- allocatePartyWithHint "Bob" (PartyIdHint "Bob")
+  andy <- allocatePartyWithHint "Andy" (PartyIdHint "Andy")
+  asx <- allocatePartyWithHint "Asx" (PartyIdHint "Asx")
+  mohammed <- allocatePartyWithHint "Mohammed" (PartyIdHint "Mohammed")
 
-  aliceTV <- submit elastik do
+
+
+  platform <- submit elastik do
     createCmd Platform with
       operator = elastik
+
+  invite <- submit elastik do
+    exerciseCmd platform InviteParticipant with
+      participant = andy
+  participant <- submit andy do
+    exerciseCmd invite AcceptParticipantRequest 
+
+  invite <- submit elastik do
+    exerciseCmd platform InviteParticipant with
+      participant = mohammed
+  participant <- submit mohammed do
+    exerciseCmd invite AcceptParticipantRequest 
+
+  invite <- submit elastik do
+    exerciseCmd platform InviteClient with
+      client = asx
+  client <- submit asx do
+    exerciseCmd invite AcceptRequest
+  -- client <- submit asx do
+  --   exerciseCmd ClientInvitation CreateProject with
+  --   let name = "Text"
+  --   let desc = "Text"
+  --   let projectId = "Text"
+  --   let startDate = "Time"
+  --   let endDate = "Time"
+  --   let location = "online"
+
+  invite <- submit elastik do
+    exerciseCmd platform InviteJudge with
+      judge = mohammed
+  judge <- submit mohammed do
+    exerciseCmd invite AcceptjudgeRequest
+
+  -- invite <- submit elastik do
+  --   exerciseCmd ClientInvitation CreateProject with
+  --     client = asx
+  -- client <- submit asx do
+  --   exerciseCmd invite AcceptRequest
   pure ()
 
   -- bobTV <- submit alice do
@@ -498,3 +655,5 @@ setup = script do
 
   -- submit bob do
   --   exerciseCmd bobTV Give with newOwner = alice
+
+
