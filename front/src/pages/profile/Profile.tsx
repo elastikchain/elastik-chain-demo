@@ -8,13 +8,15 @@ import { RouteComponentProps } from "react-router-dom";
 import logo from '../../assets/img/logo-combination.svg';
 import menuItemImg from '../../assets/img/img-menu-item.png';
 
+import firebase from 'firebase/app';
+
 import './Profile.scss';
 import { useLedger, useStreamQueries } from "@daml/react";
-import { signOut, useUserDispatch, useUserState } from "../../context/UserContext";
+import { publicParty, signOut, useUserDispatch, useUserState } from "../../context/UserContext";
 import { ClientRole, ClientProject, ClientInvitation, AcceptRequest, ParticipantInvitation, ProposeSubmission, CreateProject, ParticipantSubmissionProposal, ParticipantSubmission, AcceptSubmission, JudgeInvitation } from "@daml.js/cosmart-0.0.1/lib/Main";
 import { setSelectedProject } from "../../context/SharedContext";
-import * as damlTypes from '@daml/types';
 import CriteriaTagsInput from "../../components/CriteriaTagsInput/CriteriaTagsInput";
+import * as damlTypes from '@daml/types';
 import DamlLedger from "@daml/react";
 import { httpBaseUrl, wsBaseUrl } from "../../config";
 import { useStreamQueriesAsPublic } from "@daml/hub-react/lib";
@@ -22,19 +24,6 @@ import { Template } from "@daml/types";
 interface CriteriaPoint {
     name: string;
     point: damlTypes.Numeric;
-}
-const ProjectComponent = (props: any) => {
-    const clientProjectAssets = useStreamQueries(ClientProject).contracts; 
-    console.log('ProjectComponent::clientProjectAssets', clientProjectAssets);
-    return (
-        <DamlLedger 
-        party="public-qclu7ydvobeh5p3o" 
-        token=""
-        // token="eyJ0eXAiOiJKV1QiLCJhbGciOiJSUzI1NiIsImtpZCI6ImRhYmwtODA0YWEzN2ItNzdiZC00OWE0LTg3MjMtMTY0M2ZmOTY5NzNiIn0.eyJpc3MiOiJwcm9qZWN0ZGFibC5jb20vbG9naW4iLCJzdWIiOiJhbm9ueW1vdXMiLCJleHAiOjE2MTYyNjY2MzIsImh0dHBzOi8vZGFtbC5jb20vbGVkZ2VyLWFwaSI6eyJhY3RBcyI6WyJwdWJsaWMtcWNsdTd5ZHZvYmVoNXAzbyJdLCJhcHBsaWNhdGlvbklkIjoiREFCTCIsImxlZGdlcklkIjoicWNsdTd5ZHZvYmVoNXAzbyIsInJlYWRBcyI6WyJwdWJsaWMtcWNsdTd5ZHZvYmVoNXAzbyJdfSwib3duZXIiOiIiLCJwYXJ0eU5hbWUiOiJQdWJsaWMifQ.OxskjD3b6wEBrMfO2nBBRVH4iXwdq2ekh7pT1HED50XNOvvB6KfmDPBZBJrDlRHImoM6h6VF31aAas5x8A5Awya9Jroofcs6rJYDVj0ogMN9fES0h8ppFtNtAbgqn5uewJGqUryCauEEE4B4r0H1bR7k78B5tWNBQgN4JHG_f-A" 
-        httpBaseUrl={httpBaseUrl} wsBaseUrl={wsBaseUrl}>
-            <div>{JSON.stringify(props)}</div>
-        </DamlLedger>
-    )
 }
 const Profile = (props : RouteComponentProps) => {
     var userDispatch = useUserDispatch();
@@ -49,7 +38,7 @@ const Profile = (props : RouteComponentProps) => {
         startDate: "",
         endDate: "",
         criteria: Array<CriteriaPoint>(),
-        public: "public"
+        public: publicParty
     };
     const [projectDetail, setProjectDetail] = useState(defaultProjectDetail);
     const resetCreateProject = () => {
@@ -145,6 +134,19 @@ const Profile = (props : RouteComponentProps) => {
             alert('Error: '+JSON.stringify(err));
         })
     };
+
+    const handleUploadError = (err: any) => {
+        console.log(err);
+    };
+    const handleUploadSuccess = async (filename: string) => {
+        console.log('success upload');
+        const downloadURL = await firebase
+        .storage()
+        .ref("images")
+        .child(filename)
+        .getDownloadURL();
+        console.log('downloadURL', downloadURL);
+    };
     if(!user.isAuthenticated){
         return null;
     } else {
@@ -178,7 +180,6 @@ const Profile = (props : RouteComponentProps) => {
                     </IonToolbar>
                 </IonHeader>
                 <IonContent>
-                    <ProjectComponent></ProjectComponent>
                     <IonSplitPane className="menu-container" contentId="main">
                         {/*--  the side menu  --*/}
                         <IonMenu contentId="main">
@@ -276,6 +277,11 @@ const Profile = (props : RouteComponentProps) => {
                                 <div className="profile-info-container">
                                     <div className="profile-img-container">
                                         <img src="https://via.placeholder.com/214x198.png" alt="profile image"/>
+                                        <input
+                                        className="profile-picture-input"
+                                        type="file"
+                                        accept="image/*"
+                                        />
                                     </div>
                                     <div className="profile-info">
                                         <div className="profile-header">

@@ -16,6 +16,7 @@ import Daml.Script
 -- import DA.Set (Set)
 -- import DA.Set qualified as S
 
+
 -- All data in on place
 
 data ClientProjectData =  ClientProjectData
@@ -62,12 +63,13 @@ data CriteriaPoint = CriteriaPoint
 
 data ProfileData = ProfileData
   with
-    first:Text
-    last:Text
-    email:Text
+    firstName:Text
+    lastName:Text
+    profileEmail:Text
     job:Text
     company:Text
     about:Text
+    pictureUrl:Text
   deriving(Eq, Show)
 
 --  ----------------------------------------------------------------
@@ -121,12 +123,7 @@ template JudgeRole
     controller judge can 
       nonconsuming AddEditJudProfile: ContractId JudgeProfile
         with
-          first:Text
-          last:Text
-          email:Text
-          job:Text
-          company:Text
-          about:Text
+          judgeProfile:ProfileData
         do
           create JudgeProfile with ..
 
@@ -178,15 +175,22 @@ template ParticipantRole
     -- controller participant can 
     --   UpdateParProfile: ContractId ParticipantRole
     --     with
-    --       first:Text
-    --       last:Text
+    --       firstName:Text
+    --       lastName:Text
     --       job:Text
     --       company:Text
     --       about:Text
     --     do
-    --       let o1 = participantProfile with first,last,job,company,about,email = participantProfile.email
+    --       let o1 = participantProfile with firstName,lastName,job,company,about,email = participantProfile.email
     --       create this with participant,operator, participantProfile = o1
 
+    controller participant can 
+      nonconsuming AddParProfile: ContractId ParticipantProfile
+        with
+          participantProfile:ProfileData
+        do
+          create ParticipantProfile with ..
+    
     controller participant can 
       nonconsuming RegisterForProject: ContractId RequestToJoinProject
         with 
@@ -232,12 +236,7 @@ template ClientRole
     controller client can 
       nonconsuming AddEditCliProfile: ContractId ClientProfile
         with
-          first:Text
-          last:Text
-          email:Text
-          job:Text
-          company:Text
-          about:Text
+          clientProfile:ProfileData
         do
           create ClientProfile with ..
 
@@ -252,9 +251,10 @@ template ClientRole
           location: Text
           criteria: [CriteriaPoint]
           public: Party
+          pictureUrl:Text
 
         do 
-          create ClientProject with operator, client, projectId, location, startDate, endDate, name, desc, criteria, challenges = [], participants = [], judges = [], projects=[],public 
+          create ClientProject with operator, client, projectId, location, startDate, endDate, name, desc, criteria,pictureUrl,challenges = [], participants = [], judges = [], projects=[],public 
 
 --  ----------------------------------------------------------------
 
@@ -275,6 +275,7 @@ template ClientProject
     judges: [Party]
     projects:[Text]
     public :Party
+    pictureUrl:Text
   where
     signatory client 
     observer participants,judges,public 
@@ -300,6 +301,7 @@ template ClientProject
           challengeId: Text 
           nameOf:Text
           prize: Text
+          description: Text
           participant: Party
           judge: Party
         do 
@@ -338,12 +340,14 @@ template ClientProject
           subName: Text 
           subDesc:  Text
           submission: Text
+          videoLink: Text
+          presentation: Text
           challengeId: Text
           youtubeLink: Text
           judge: Party
         controller participant
         do
-          create ParticipantSubmissionProposal with participant,judge,subName,subDesc,submission,client,projectId,challengeId,operator,criteria
+          create ParticipantSubmissionProposal with participant,judge,subName,subDesc,submission,client,projectId,challengeId,operator,criteria,videoLink,presentation
           -- proj <- fetch p
           -- create this with projects = proj::projects 
         
@@ -370,6 +374,8 @@ template ParticipantSubmissionProposal
     subName: Text 
     subDesc:  Text
     submission: Text
+    videoLink: Text
+    presentation: Text
     client: Party
     operator: Party
     judge:Party
@@ -383,7 +389,7 @@ template ParticipantSubmissionProposal
           submissionId:Text
         do 
           exerciseByKey @ClientProject (client, projectId) AddSubmissionToList with submissionId
-          create ParticipantSubmission with name=subName,participant,desc=subDesc,submission,client,judge,participants=[],submissionId,challengeId,operator,criteria,judges=[]
+          create ParticipantSubmission with name=subName,participant,desc=subDesc,submission,client,judge,participants=[],submissionId,challengeId,operator,criteria,judges=[],videoLink,presentation
           
 
 
@@ -422,6 +428,8 @@ template ParticipantSubmission
     name: Text 
     desc:  Text
     submission: Text
+    videoLink: Text
+    presentation: Text
     -- challenges: [Text]
     participants: [Party]
     judge: Party
@@ -461,7 +469,7 @@ template ParticipantSubmission
         -- create this with participants=participantToAdd::participants
           create TeammateProposal with email,operator,teammate=participantToAdd,submissionId,participant
 
-    controller  participant can
+    controller participant can
       AddTeammate : ContractId ParticipantSubmission
         with p : Party
         do create this with  participants=p::participants
@@ -493,7 +501,7 @@ template TeammateProposal
     participant: Party
     email: Text
   where
-    signatory participant
+    signatory teammate
 
     controller teammate can 
       AcceptTeammateProposal: ()
@@ -501,7 +509,7 @@ template TeammateProposal
           -- (c1,co) <- fetchByKey @ParticipantProfile (teammate,email) 
           exerciseByKey @ParticipantSubmission (participant,submissionId) AddTeammate with p=teammate 
           return ()
-
+          
 
 
 --  ----------------------------------------------------------------
@@ -510,24 +518,45 @@ template TeammateProposal
 
 template ClientProfile
   with 
-    client: Party 
-    first: Text 
-    last:  Text
-    email: Text
+    client: Party
+    clientProfile:ProfileData
   where 
     signatory client
+
+    -- choice RemoveClientProfile: ContractId ClosedClientProfile
+    --     with
+    --       operator: Party
+    --       comment: Text
+    --     controller client
+    --     do create ClosedClientProfile with ..
 
 template JudgeProfile
   with 
     judge: Party 
-    first: Text 
-    last:  Text
-    email: Text
-    job:Text
-    company:Text
-    about:Text
+    judgeProfile:ProfileData
   where 
     signatory judge
+
+    -- choice RemoveJudgeProfile: ContractId ClosedJudgeProfile
+    --     with
+    --       operator: Party
+    --       comment: Text
+    --     controller judge
+    --     do create ClosedJudgeProfile with ..
+
+template ParticipantProfile
+  with 
+    participant: Party 
+    participantProfile:ProfileData
+  where 
+    signatory participant
+
+    -- choice RemoveParticipantProfile: ContractId ClosedParticipantProfile
+    --     with
+    --       operator: Party
+    --       comment: Text
+    --     controller participant
+    --     do create ClosedParticipantProfile with ..
 
 
 -- add the voting 
@@ -554,6 +583,8 @@ template ClosedParticipantSubmission
     name: Text 
     desc:  Text
     submission: Text
+    videoLink: Text
+    presentation: Text
     -- challenges: [Text]
     participants: [Party]
     judge: Party
@@ -583,6 +614,37 @@ template ClosedClientProject
   where
     signatory client 
     observer operator
+
+template ClosedClientProfile
+  with 
+    client: Party
+    operator: Party
+    clientProfile:ProfileData
+    comment:Text
+  where
+    signatory client 
+    observer operator
+
+template ClosedJudgeProfile
+  with 
+    judge: Party
+    operator: Party
+    judgeProfile:ProfileData
+    comment:Text
+  where
+    signatory judge 
+    observer operator
+
+template ClosedParticipantProfile
+  with 
+    participant: Party
+    operator: Party
+    participantProfile:ProfileData
+    comment:Text
+  where
+    signatory participant 
+    observer operator
+--  ----------------------------------------------------------------
         
 template Scorecard
     with 
@@ -604,6 +666,8 @@ setup = script do
   andy <- allocatePartyWithHint "Andy" (PartyIdHint "Andy")
   asx <- allocatePartyWithHint "Asx" (PartyIdHint "Asx")
   mohammed <- allocatePartyWithHint "Mohammed" (PartyIdHint "Mohammed")
+  yuling <- allocatePartyWithHint "Yuling" (PartyIdHint "Yuling")
+
 
 
 
@@ -628,19 +692,11 @@ setup = script do
       client = asx
   client <- submit asx do
     exerciseCmd invite AcceptRequest
-  -- client <- submit asx do
-  --   exerciseCmd ClientInvitation CreateProject with
-  --   let name = "Text"
-  --   let desc = "Text"
-  --   let projectId = "Text"
-  --   let startDate = "Time"
-  --   let endDate = "Time"
-  --   let location = "online"
 
   invite <- submit elastik do
     exerciseCmd platform InviteJudge with
-      judge = mohammed
-  judge <- submit mohammed do
+      judge = yuling
+  judge <- submit yuling do
     exerciseCmd invite AcceptjudgeRequest
 
   -- invite <- submit elastik do
@@ -649,6 +705,9 @@ setup = script do
   -- client <- submit asx do
   --   exerciseCmd invite AcceptRequest
   pure ()
+
+
+
 
   -- bobTV <- submit alice do
   --   exerciseCmd aliceTV Give with newOwner = bob

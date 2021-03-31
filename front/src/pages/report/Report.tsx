@@ -19,7 +19,7 @@ import { InviteClient, Platform,
 } from "@daml.js/cosmart-0.0.1/lib/Main";
 import { InputDialog, InputDialogProps } from "./InputDialog";
 import useStyles from "./styles";
-import { useUserState } from "../../context/UserContext";
+import { publicParty, useUserState } from "../../context/UserContext";
 
 export default function Report() {
   const classes = useStyles();
@@ -149,7 +149,7 @@ export default function Report() {
   const defaultCreateProjectProps : InputDialogProps<CreateProject> = {
     open: false,
     title: "Create Project",
-    defaultValue: { name : "", projectId: "", startDate: "", endDate: "", location: "", desc: "", criteria: [], public: "public"},
+    defaultValue: { name : "", projectId: "", startDate: "", endDate: "", location: "", desc: "", criteria: [], public: publicParty},
     fields: {
       name : {
         label: "Project Name",
@@ -240,7 +240,7 @@ export default function Report() {
     open: false,
     title: "Submission",
     defaultValue: { 
-      participant: party, subName: "", subDesc: "", submission: "", challengeId: "", judge: "Yuling"
+      participant: party, subName: "", subDesc: "", submission: "", challengeId: "", judge: "Yuling", youtubeLink: ""
     },
     fields: {
       participant: {
@@ -257,6 +257,10 @@ export default function Report() {
       },
       submission: {
         label: "Submission",
+        type: "text" 
+      },
+      youtubeLink: {
+        label: "Youtube Link",
         type: "text" 
       },
       challengeId: {
@@ -285,10 +289,15 @@ export default function Report() {
     open: false,
     title: "Add To The Teammate",
     defaultValue: { 
-      email: ""
+      email: "",
+      participantToAdd: ""
     },
     fields: {
       email: {
+        label: "Participant Email To Add",
+        type: "text" 
+      },
+      participantToAdd: {
         label: "Participant To Add",
         type: "text" 
       }

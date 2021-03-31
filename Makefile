@@ -20,3 +20,6 @@ clean:
 	rm -rf front/node_modules
 	rm -rf front/build
 	rm -rf deploy
+
+start: clean build
+	daml start

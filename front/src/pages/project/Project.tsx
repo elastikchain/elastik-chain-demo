@@ -37,7 +37,8 @@ const Project = (props : RouteComponentProps) => {
         subName: "",
         subDesc: "",
         submission: "",
-        judge: "Yuling"
+        judge: "Yuling",
+        youtubeLink: ""
     };
     const [submissionDetail, setSubmissionDetail] = useState(defaultSubmissionDetail);
     const resetCreateSubmission = () => {
@@ -321,9 +322,14 @@ const Project = (props : RouteComponentProps) => {
                                 <IonInput required={true} value={submissionDetail.submission} onIonChange={e => setSubmissionDetail({...submissionDetail, submission: e.detail.value!})}></IonInput>
                             </IonItem>
                             <IonItem>
+                                <IonLabel position="floating">Youtube Link</IonLabel>
+                                <IonInput value={submissionDetail.youtubeLink} onIonChange={e => setSubmissionDetail({...submissionDetail, youtubeLink: e.detail.value!})}></IonInput>
+                            </IonItem>
+                            <IonItem>
                                 <IonLabel position="floating">Challenge Id</IonLabel>
                                 <IonInput required={true} disabled={true} value={submissionDetail.challengeId || showCreateSubmissionModal.challengeId} onIonChange={e => setSubmissionDetail({...submissionDetail, challengeId: e.detail.value!})}></IonInput>
                             </IonItem>
+                            
                             
                             <IonButton className="submit-button" type="submit">Create</IonButton>
                         </form>

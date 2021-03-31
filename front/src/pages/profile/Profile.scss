@@ -13,11 +13,21 @@
         margin-top: 4.2rem;
         display: flex;
         .profile-img-container{
+            position: relative;
             min-width: 214px;
             max-height: 198px;
             img{
                 width: 100%;
                 height: 100%;
+            }
+            .profile-picture-input{
+                width: 100%;
+                height: 100%;
+                opacity: 0;
+                position: absolute;
+                top: 0;
+                left: 0;
+                z-index: 2;
             }
         }
         .profile-info{

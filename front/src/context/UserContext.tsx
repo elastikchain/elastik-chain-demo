@@ -130,4 +130,13 @@ function signOut(
   }
 }
 
-export { UserProvider, useUserState, useUserDispatch, loginUser, loginDablUser, signOut };
+const publicParty = 'public-icvnrp7h0fsvksen';
+export { 
+  UserProvider,
+  useUserState,
+  useUserDispatch,
+  loginUser,
+  loginDablUser,
+  signOut,
+  publicParty
+};

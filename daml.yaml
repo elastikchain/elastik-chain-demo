@@ -1,12 +1,6 @@
 sdk-version: 1.11.1
 name: cosmart
 source: daml
-parties:
- - Elastik  
- - Asx
- - Yuling
- - Mohammed
- - Andy
 version: 0.0.1
 # init-script: Main:setup
 start-navigator: true
