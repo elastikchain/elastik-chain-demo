@@ -35,15 +35,15 @@ const FrontLayout = (props: any) => {
     } else {
         return (
         <DamlLedger party={user.party} token={user.token} httpBaseUrl={httpBaseUrl} wsBaseUrl={wsBaseUrl}>
-            <WellKnownPartiesProvider>
-                <PublicProvider>
+            {/* <WellKnownPartiesProvider>
+                <PublicProvider> */}
                     <Switch>
                         <Route path="/main/project" component={Project} />
                         <Route path="/main/profile" component={Profile} />
                         <Route path="/main/submission" component={Submission} />
                     </Switch>
-                </PublicProvider>
-            </WellKnownPartiesProvider>
+               {/*  </PublicProvider>
+            </WellKnownPartiesProvider> */}
         </DamlLedger>
         );
     }

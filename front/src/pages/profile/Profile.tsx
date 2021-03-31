@@ -1,6 +1,7 @@
-import { IonPage, IonHeader, IonToolbar, IonSearchbar, IonButtons, IonButton, IonContent, IonMenu, IonSplitPane, IonTitle, IonItem, IonList, IonLabel, IonModal, IonInput, IonListHeader, IonTextarea, IonDatetime, IonNote } from "@ionic/react";
+import { IonPage, IonHeader, IonToolbar, IonSearchbar, IonButtons, IonButton, IonContent, IonMenu, IonSplitPane, IonTitle, IonItem, IonList, IonLabel, IonModal, IonInput, IonListHeader, IonTextarea, IonDatetime, IonNote, IonSpinner } from "@ionic/react";
 import { IonIcon } from '@ionic/react';
 import { open, close } from 'ionicons/icons';
+import firebase from 'firebase/app';
 
 import React from "react";
 import { useState } from "react";
@@ -8,7 +9,6 @@ import { RouteComponentProps } from "react-router-dom";
 import logo from '../../assets/img/logo-combination.svg';
 import menuItemImg from '../../assets/img/img-menu-item.png';
 
-import firebase from 'firebase/app';
 
 import './Profile.scss';
 import { useLedger, useStreamQueries } from "@daml/react";
@@ -30,7 +30,11 @@ const Profile = (props : RouteComponentProps) => {
     const user = useUserState();
     const [searchText, setSearchText] = useState('');
     const [projectIdTouched, setProjectIdTouched] = useState(false);
-    const defaultProjectDetail: CreateProject = { 
+    interface FrontCreateProject extends CreateProject {
+        projectImageFile?: File,
+        loading: boolean
+    }
+    const defaultProjectDetail: FrontCreateProject = { 
         projectId: "",
         name: "",
         desc: "",
@@ -38,7 +42,10 @@ const Profile = (props : RouteComponentProps) => {
         startDate: "",
         endDate: "",
         criteria: Array<CriteriaPoint>(),
-        public: publicParty
+        pictureUrl: "",
+        public: publicParty,
+        projectImageFile: undefined,
+        loading: false
     };
     const [projectDetail, setProjectDetail] = useState(defaultProjectDetail);
     const resetCreateProject = () => {
@@ -84,7 +91,6 @@ const Profile = (props : RouteComponentProps) => {
 
     console.log('getUserType', getUserType());
     
-
     const SubmissionToAcceptComponent = (props: any) => {
         const participantSubmissionProposalAssets = useStreamQueries(ParticipantSubmissionProposal, () => ([{projectId: props.projectId}])).contracts;
         console.log('participantSubmissionProposalAssets', participantSubmissionProposalAssets);
@@ -120,20 +126,68 @@ const Profile = (props : RouteComponentProps) => {
 
     const handleCreateProject = async (evt: any) => {
         evt.preventDefault();
-        ledger.exercise(ClientRole.CreateProject, projectAssets[0].contractId, projectDetail)
-        .then(() => {
-            setShowCreateProjectModal(false);
-            alert('Project Created Successfully!');
-            // reset project detail info
-            setTimeout(() => {
-                resetCreateProject();
-            }, 250);
-        })
-        .catch((err: any) => {
-            setShowCreateProjectModal(false);
-            alert('Error: '+JSON.stringify(err));
-        })
+        const exercise = (cb: () => void) => {
+            const {loading, projectImageFile, ...dataToExercise} = projectDetail;
+            console.log('dataToExercise', dataToExercise);
+            ledger.exercise(ClientRole.CreateProject, projectAssets[0].contractId, dataToExercise)
+            .then(() => {
+                setShowCreateProjectModal(false);
+                alert('Project Created Successfully!');
+                // reset project detail info
+                setTimeout(() => {
+                    resetCreateProject();
+                    cb();
+                }, 250);
+            })
+            .catch((err: any) => {
+                setShowCreateProjectModal(false);
+                alert('Error: '+JSON.stringify(err));
+                cb();
+            })
+        };
+        setProjectDetail({...projectDetail, loading: true});
+        if (projectDetail.projectImageFile){
+            let imgFile = projectDetail.projectImageFile;
+            console.log('imgFile', imgFile);
+            const { name } = imgFile;
+            const filePath = `${new Date().getTime()}_${name}`;
+            const storage = firebase.storage;
+            const reference = storage().ref();
+            const task = reference.child('project_picture_'+filePath);
+            task.put(imgFile)
+            .then(_ => {
+                task.getDownloadURL()
+                .then(urlStr => {
+                    console.log('urlStr', urlStr);
+                    const pd = projectDetail;
+                    pd.pictureUrl = urlStr;
+                    setProjectDetail(pd);
+                    setTimeout(() => {
+                        exercise(() => {
+                            setProjectDetail({...projectDetail, loading: false});
+                        });
+                    }, 500);
+                })
+                .catch(err => {
+                    console.error(err);
+                    alert(JSON.stringify(err));
+                    setProjectDetail({...projectDetail, loading: false});
+                });
+            })
+            .catch(err => {
+                console.error(err);
+                alert(JSON.stringify(err));
+                setProjectDetail({...projectDetail, loading: false});
+            });
+        }else{
+            exercise(() => {
+                setProjectDetail({...projectDetail, loading: false});
+            });
+        }
+        
     };
+
+
 
     const handleUploadError = (err: any) => {
         console.log(err);
@@ -147,6 +201,7 @@ const Profile = (props : RouteComponentProps) => {
         .getDownloadURL();
         console.log('downloadURL', downloadURL);
     };
+
     if(!user.isAuthenticated){
         return null;
     } else {
@@ -263,7 +318,20 @@ const Profile = (props : RouteComponentProps) => {
                                             <IonLabel position="floating">Project Description</IonLabel>
                                             <IonTextarea rows={2} value={projectDetail.desc} onIonChange={e => setProjectDetail({...projectDetail, desc: e.detail.value!})}></IonTextarea>
                                         </IonItem>
-                                        <IonButton className="submit-button" type="submit">Create</IonButton>
+                                        <IonItem>
+                                            <IonLabel position="stacked">Project Image</IonLabel>
+                                            <input disabled={projectDetail.loading} accept="images/*" type="file"
+                                            onChange={e => {
+                                                if (e.target.files && e.target.files.length > 0){
+                                                    setProjectDetail({...projectDetail, projectImageFile: e!.target!.files![0]});
+                                                }else{
+                                                    setProjectDetail({...projectDetail, projectImageFile: undefined});
+                                                }
+                                            }}
+                                            />
+                                        </IonItem>
+                                        <p className="d-flex align-items-center m-left" hidden={!projectDetail.loading}><IonSpinner className="m-right" /> <IonNote>Uploading..</IonNote></p>
+                                        <IonButton disabled={projectDetail.loading} className="submit-button" type="submit">Create</IonButton>
                                     </form>
                                 </div>
                                 <IonButton className="modal-default-close-btn" fill="clear" color="danger" onClick={() =>{

@@ -1,4 +1,4 @@
-import { IonButton, IonButtons, IonCard, IonCardContent, IonContent, IonFab, IonFabButton, IonHeader, IonIcon, IonInput, IonItem, IonLabel, IonList, IonListHeader, IonModal, IonNote, IonPage, IonSearchbar, IonSegment, IonSegmentButton, IonToolbar } from "@ionic/react";
+import { IonButton, IonButtons, IonCard, IonCardContent, IonContent, IonFab, IonFabButton, IonHeader, IonIcon, IonInput, IonItem, IonLabel, IonList, IonListHeader, IonModal, IonNote, IonPage, IonSearchbar, IonSegment, IonSegmentButton, IonSpinner, IonTextarea, IonToolbar } from "@ionic/react";
 import React, { useState } from "react";
 import { RouteComponentProps } from "react-router-dom";
 import { signOut, useUserDispatch, useUserState } from "../../context/UserContext";
@@ -7,7 +7,7 @@ import logo from '../../assets/img/logo-combination.svg';
 import { add, close, arrowBack, time, location, open } from 'ionicons/icons';
 import './Project.scss';
 import { useLedger, useQuery, useStreamQueries } from "@daml/react";
-import { Challenge, ClientProject, ClientRole, ParticipantSubmission, ProposeSubmission } from "@daml.js/cosmart-0.0.1/lib/Main";
+import { AddChallenge, Challenge, ClientProject, ClientRole, ParticipantSubmission, ProposeSubmission } from "@daml.js/cosmart-0.0.1/lib/Main";
 
 const Project = (props : RouteComponentProps) => {
     const user = useUserState();
@@ -31,42 +31,12 @@ const Project = (props : RouteComponentProps) => {
 
     const [searchText, setSearchText] = useState('');
     const [showChallengeModal, setShowChallengeModal] = useState(false);
-    const defaultSubmissionDetail: ProposeSubmission = { 
-        challengeId: "",
-        participant: (user as any).party,
-        subName: "",
-        subDesc: "",
-        submission: "",
-        judge: "Yuling",
-        youtubeLink: ""
-    };
-    const [submissionDetail, setSubmissionDetail] = useState(defaultSubmissionDetail);
-    const resetCreateSubmission = () => {
-        setSubmissionDetail(defaultSubmissionDetail);
-    }; 
-    const [showCreateSubmissionModal, setShowCreateSubmissionModal] = useState({show: false, challengeId : ''} as {show: boolean, challengeId?: string});
-    const handleCreateSubmission = async (evt: any) => {
-        evt.preventDefault();
-        ledger.exercise(ClientProject.ProposeSubmission, selectedProj[0].contractId, submissionDetail)
-        .then(() => {
-            setShowCreateSubmissionModal({show: false});
-            alert('Submission Created Successfully!');
-            // reset project detail info
-            setTimeout(() => {
-                resetCreateSubmission();
-            }, 250);
-        })
-        .catch((err: any) => {
-            setShowCreateSubmissionModal({show: false});
-            alert('Error: '+JSON.stringify(err));
-        })
-
-    };
     
     const [challengeIdTouched, setChallengeIdTouched] = useState(false);
-    const defaultChallengeDetail = { 
+    const defaultChallengeDetail: AddChallenge = { 
         challengeId: '',
         nameOf: '',
+        description: '',
         prize: '',
         participant: 'Andy',
         judge: 'Yuling'
@@ -103,7 +73,8 @@ const Project = (props : RouteComponentProps) => {
         return new Date(dateStr).toLocaleDateString("en-US", dateTimeFormatOptions)
     }
 
-
+    const [selectedChallengeId, setSelectedChallengeId] = useState(0);
+    const [showCreateSubmissionModal, setShowCreateSubmissionModal] = useState({show: false, challengeId : ''} as {show: boolean, challengeId?: string});
     const ChallengeCompoenent  = (props: any) => {
         const stream = useQuery(Challenge, () => ({challengeId: props.challengeId}), [props.challengeId]);
         console.log('Challenge get', stream, 'challengeId: props.challengeId=', props.challengeId);
@@ -112,7 +83,6 @@ const Project = (props : RouteComponentProps) => {
             return (
                 <IonCard>
                     <div className="d-flex">
-                        <img src="../../assets/img/img-asx2.jpeg" alt="challenge image"/>
                         <IonCardContent>
                             <h1 className="proj-chall-name">{stream.contracts[0].payload.nameOf} <IonNote>Id: {props.challengeId}</IonNote></h1>
                             <h2 className="proj-chall-example">Dolor sit amet</h2>
@@ -122,7 +92,7 @@ const Project = (props : RouteComponentProps) => {
                                 getUserType() === 'participant' ? (
                                     <IonButton 
                                         onClick={() => {
-                                            setSubmissionDetail({...submissionDetail, challengeId: props.challengeId});
+                                            setSelectedChallengeId(props.challengeId);
                                             setShowCreateSubmissionModal({show: true, challengeId: props.challengeId});
                                         }}
                                         className="create-project-button"> Create New Submission </IonButton>
@@ -139,6 +109,79 @@ const Project = (props : RouteComponentProps) => {
 
     const getChallengesIds = () => {
         return (selectedProj && selectedProj.length > 0 ? selectedProj[0] : {payload: {}}).payload.challenges || [];
+    }
+
+    const SubmissionFormComponent = (props: any) => {
+        const defaultSubmissionDetail: ProposeSubmission = { 
+            challengeId: "",
+            participant: (user as any).party,
+            subName: "",
+            subDesc: "",
+            submission: "",
+            judge: "Yuling",
+            presentation: "",
+            videoLink: ""
+        };
+        const [submissionDetail, setSubmissionDetail] = useState(defaultSubmissionDetail);
+        const resetCreateSubmission = () => {
+            setSubmissionDetail(defaultSubmissionDetail);
+        }; 
+        const handleCreateSubmission = async (evt: any) => {
+            evt.preventDefault();
+            const dataToExercise = submissionDetail;
+            dataToExercise.challengeId = String(selectedChallengeId || 0);
+            ledger.exercise(ClientProject.ProposeSubmission, selectedProj[0].contractId, dataToExercise)
+            .then(() => {
+                setShowCreateSubmissionModal({show: false});
+                alert('Submission Created Successfully!');
+                // reset project detail info
+                setTimeout(() => {
+                    resetCreateSubmission();
+                }, 250);
+            })
+            .catch((err: any) => {
+                setShowCreateSubmissionModal({show: false});
+                alert('Error: '+JSON.stringify(err));
+            })
+        };
+        return (
+            <><div className="content create-project-modal-content">
+                <form onSubmit={handleCreateSubmission}>
+                    <h1>Propose Submission</h1>
+                    <IonItem>
+                        <IonLabel position="floating">Submission Name*</IonLabel>
+                        <IonInput required={true} value={submissionDetail.subName} onIonChange={e => setSubmissionDetail({ ...submissionDetail, subName: e.detail.value! })}></IonInput>
+                    </IonItem>
+                    <IonItem>
+                        <IonLabel position="floating">Submission Description*</IonLabel>
+                        <IonInput required={true} value={submissionDetail.subDesc} onIonChange={e => setSubmissionDetail({ ...submissionDetail, subDesc: e.detail.value! })}></IonInput>
+                    </IonItem>
+                    <IonItem>
+                        <IonLabel position="floating">Submission*</IonLabel>
+                        <IonInput required={true} value={submissionDetail.submission} onIonChange={e => setSubmissionDetail({ ...submissionDetail, submission: e.detail.value! })}></IonInput>
+                    </IonItem>
+                    <IonItem>
+                        <IonLabel position="floating">Presentation*</IonLabel>
+                        <IonInput required={true} value={submissionDetail.presentation} onIonChange={e => setSubmissionDetail({ ...submissionDetail, presentation: e.detail.value! })}></IonInput>
+                    </IonItem>
+                    <IonItem>
+                        <IonLabel position="floating">Video Link</IonLabel>
+                        <IonInput value={submissionDetail.videoLink} onIonChange={e => setSubmissionDetail({ ...submissionDetail, videoLink: e.detail.value! })}></IonInput>
+                    </IonItem>
+                    <IonItem>
+                        <IonLabel position="floating">Challenge Id</IonLabel>
+                        <IonInput required={true} disabled={true} value={submissionDetail.challengeId || showCreateSubmissionModal.challengeId} onIonChange={e => setSubmissionDetail({ ...submissionDetail, challengeId: e.detail.value! })}></IonInput>
+                    </IonItem>
+                    <IonButton className="submit-button" type="submit">Create</IonButton>
+                </form>
+            </div>
+                <IonButton className="modal-default-close-btn" fill="clear" color="danger" onClick={() => {
+                    resetCreateSubmission();
+                    setShowCreateSubmissionModal({ show: false });
+                } }>
+                    <IonIcon icon={close}></IonIcon>
+                </IonButton></>
+        )
     }
 
     return (
@@ -177,7 +220,7 @@ const Project = (props : RouteComponentProps) => {
                         Back
                     </IonButton>
                     <IonCard>
-                        <img src="../../assets/img/img-asx.jpeg" alt="project image"/>
+                        <img className="project-picture" src={getSelectedProject().payload.pictureUrl} alt="project image"/>
                         <IonCardContent>
                             <div className="d-flex align-items-center justify-content-space-between">
                                 <IonLabel>
@@ -250,7 +293,6 @@ const Project = (props : RouteComponentProps) => {
                                             }
                                         }>
                                             <div className="d-flex">
-                                                <img src="../../assets/img/img-daml.jpeg" alt="challenge image"/>
                                                 <IonCardContent>
                                                     <h1 className="proj-chall-name">{sc.payload.submissionId}</h1>
                                                     <h2 className="proj-chall-example">Dolor sit amet</h2>
@@ -293,6 +335,10 @@ const Project = (props : RouteComponentProps) => {
                                 </IonItem>
                             </div>
                             <IonItem>
+                                <IonLabel position="floating">Challenge Description</IonLabel>
+                                <IonTextarea rows={2} value={challengeDetail.description} onIonChange={e => setChallengeDetail({...challengeDetail, description: e.detail.value!})}></IonTextarea>
+                            </IonItem>
+                            <IonItem>
                                 <IonLabel position="floating">Challenge Prize</IonLabel>
                                 <IonInput required={true} type="number" value={challengeDetail.prize} onIonChange={e => setChallengeDetail({...challengeDetail, prize: e.detail.value!})}></IonInput>
                             </IonItem>
@@ -306,40 +352,7 @@ const Project = (props : RouteComponentProps) => {
                     </div>
                 </IonModal>
                 <IonModal isOpen={showCreateSubmissionModal.show} onDidDismiss={() => setShowCreateSubmissionModal({show: false}) } cssClass='my-custom-class'>
-                    <div className="content create-project-modal-content">
-                        <form onSubmit={handleCreateSubmission}>
-                            <h1>Propose Submission</h1>
-                            <IonItem>
-                                <IonLabel position="floating">Submission Name*</IonLabel>
-                                <IonInput required={true} value={submissionDetail.subName} onIonChange={e => setSubmissionDetail({...submissionDetail, subName: e.detail.value!})}></IonInput>
-                            </IonItem>
-                            <IonItem>
-                                <IonLabel position="floating">Submission Description*</IonLabel>
-                                <IonInput required={true} value={submissionDetail.subDesc} onIonChange={e => setSubmissionDetail({...submissionDetail, subDesc: e.detail.value!})}></IonInput>
-                            </IonItem>
-                            <IonItem>
-                                <IonLabel position="floating">Submission*</IonLabel>
-                                <IonInput required={true} value={submissionDetail.submission} onIonChange={e => setSubmissionDetail({...submissionDetail, submission: e.detail.value!})}></IonInput>
-                            </IonItem>
-                            <IonItem>
-                                <IonLabel position="floating">Youtube Link</IonLabel>
-                                <IonInput value={submissionDetail.youtubeLink} onIonChange={e => setSubmissionDetail({...submissionDetail, youtubeLink: e.detail.value!})}></IonInput>
-                            </IonItem>
-                            <IonItem>
-                                <IonLabel position="floating">Challenge Id</IonLabel>
-                                <IonInput required={true} disabled={true} value={submissionDetail.challengeId || showCreateSubmissionModal.challengeId} onIonChange={e => setSubmissionDetail({...submissionDetail, challengeId: e.detail.value!})}></IonInput>
-                            </IonItem>
-                            
-                            
-                            <IonButton className="submit-button" type="submit">Create</IonButton>
-                        </form>
-                    </div>
-                    <IonButton className="modal-default-close-btn" fill="clear" color="danger" onClick={() =>{
-                        resetCreateSubmission();
-                        setShowCreateSubmissionModal({show: false}) 
-                    }}>
-                        <IonIcon icon={close}></IonIcon>
-                    </IonButton>
+                    <SubmissionFormComponent></SubmissionFormComponent>
                 </IonModal>
             </IonContent>
         </IonPage>

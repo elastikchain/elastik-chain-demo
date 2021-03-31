@@ -1,14 +1,14 @@
-import { IonButton, IonButtons, IonContent, IonFab, IonFabButton, IonHeader, IonIcon, IonPage, IonSearchbar, IonToolbar } from "@ionic/react";
+import { IonButton, IonButtons, IonContent, IonFab, IonFabButton, IonHeader, IonIcon, IonInput, IonItem, IonLabel, IonPage, IonSearchbar, IonToolbar } from "@ionic/react";
 import React, { useState } from "react";
 import { Link, RouteComponentProps } from "react-router-dom";
 import logo from '../../assets/img/logo-combination.svg';
-import { getSelectedSubmission } from '../../context/SharedContext'
+import { getSelectedSubmission, setSelectedSubmission } from '../../context/SharedContext'
 import { arrowBack, add } from 'ionicons/icons';
 import submissionPlaceHolder from '../../assets/img/img-proj-placeholder.png'
 import './Submission.scss'
 import { useLedger, useStreamQueries } from "@daml/react";
 import { ClientProject, ParticipantSubmission, ParticipantSubmissionProposal } from "@daml.js/cosmart-0.0.1/lib/Main";
-import { useUserDispatch, useUserState } from "../../context/UserContext";
+import { signOut, useUserDispatch, useUserState } from "../../context/UserContext";
 
 const Submission = (props : RouteComponentProps) => {
     const [searchText, setSearchText] = useState('');
@@ -29,9 +29,49 @@ const Submission = (props : RouteComponentProps) => {
                 return 'client';
             }
         }
-        return ''
+        return 'judge'
     } 
     console.log('submission', submission);
+
+    const JudgingComponent = (judgingProps: any) => {
+        const [criterias, setCriterias] = useState(getSelectedSubmission().payload.criteria as Array<{name: string, point: string}>);
+        return (
+            <div>
+                {
+                    criterias.map((c, idx) => (
+                            <IonItem>
+                                <IonLabel position="floating">{c.name}</IonLabel>
+                                <IonInput type="number"
+                                 onIonChange={e => {
+                                     const cs = criterias;
+                                     cs[idx].point = e.detail.value!;
+                                     setCriterias(cs);
+                                 }}
+                                 value={Number(c.point)}></IonInput>
+                            </IonItem>
+                    ))
+                }
+                <IonButton onClick={
+                    e => {
+                        ledger.exercise(ParticipantSubmission.SubmitScorecard, submission[0].contractId, {scores: criterias})
+                        .then(r => {
+                            console.log('r', r);
+                            alert("Judging has been sent successfully!");
+                            const ss = getSelectedSubmission();
+                            ss.payload.criteria = criterias;
+                            setSelectedSubmission(ss);
+                        })
+                        .catch(e => {
+                            alert(JSON.stringify(e));
+                        })
+                        
+                    }
+                }>
+                    JUDGE    
+                </IonButton>
+            </div>
+        )
+    }
     
     return (
         <IonPage>
@@ -48,6 +88,16 @@ const Submission = (props : RouteComponentProps) => {
                         <IonButton>
                             Explore
                         </IonButton>
+                        <IonButton onClick={ (evt: any) => {
+                                signOut(
+                                    userDispatch,
+                                    props.history,
+                                    false
+                                )
+                            }
+                            }>
+                                Logout
+                        </IonButton>
                     </div>
                     </IonButtons>
                     </IonToolbar>
@@ -61,7 +111,15 @@ const Submission = (props : RouteComponentProps) => {
                             Back
                         </IonButton>
                         </div>
-                        <IonButton>Edit</IonButton>
+                        {
+                            getCurrentUserType() === 'judge' ? (
+                                <JudgingComponent></JudgingComponent>
+                            ) : (
+                                <IonButton>
+                                    Edit    
+                                </IonButton>
+                            )
+                        }
                     </div>
                     <div className="submission-info-container">
                         <div className="submission-img">

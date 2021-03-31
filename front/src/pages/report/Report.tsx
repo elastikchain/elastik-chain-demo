@@ -149,7 +149,17 @@ export default function Report() {
   const defaultCreateProjectProps : InputDialogProps<CreateProject> = {
     open: false,
     title: "Create Project",
-    defaultValue: { name : "", projectId: "", startDate: "", endDate: "", location: "", desc: "", criteria: [], public: publicParty},
+    defaultValue: { 
+      name : "", 
+      projectId: "", 
+      startDate: "", 
+      endDate: "", 
+      location: "", 
+      desc: "", 
+      criteria: [], 
+      pictureUrl: "",
+      public: publicParty
+    },
     fields: {
       name : {
         label: "Project Name",
@@ -182,6 +192,10 @@ export default function Report() {
       public: {
         label: "Public party",
         type: "text"
+      },
+      pictureUrl: {
+        label: "Project Picture url",
+        type: "text"
       }
     },
     onClose: async function() {}
@@ -200,7 +214,7 @@ export default function Report() {
   const defaultAddUpdateChallengeProps : InputDialogProps<AddChallenge> = {
     open: false,
     title: "Add Challenge",
-    defaultValue: { challengeId: "", nameOf: "", prize: "", participant: "Andy", judge: "Yuling"},
+    defaultValue: { challengeId: "", description: "",nameOf: "", prize: "", participant: "Andy", judge: "Yuling"},
     fields: {
       challengeId: {
         label: "Challenge Id",
@@ -213,6 +227,10 @@ export default function Report() {
       prize: {
         label: "prize",
         type: "text" 
+      },
+      description: {
+        label: "description",
+        type: "text"
       },
       participant: {
         label: "participant",
@@ -240,7 +258,7 @@ export default function Report() {
     open: false,
     title: "Submission",
     defaultValue: { 
-      participant: party, subName: "", subDesc: "", submission: "", challengeId: "", judge: "Yuling", youtubeLink: ""
+      participant: party, subName: "", subDesc: "", presentation: "", submission: "", challengeId: "", judge: "Yuling", videoLink: ""
     },
     fields: {
       participant: {
@@ -259,8 +277,12 @@ export default function Report() {
         label: "Submission",
         type: "text" 
       },
-      youtubeLink: {
-        label: "Youtube Link",
+      presentation: {
+        label: "Presentation",
+        type: "text" 
+      },
+      videoLink: {
+        label: "Video Link",
         type: "text" 
       },
       challengeId: {

@@ -343,7 +343,6 @@ template ClientProject
           videoLink: Text
           presentation: Text
           challengeId: Text
-          youtubeLink: Text
           judge: Party
         controller participant
         do
