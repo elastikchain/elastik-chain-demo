@@ -518,12 +518,12 @@ template ClientProfile
   where 
     signatory client
 
-    choice RemoveClientProfile: ContractId ClosedClientProfile
-        with
-          operator: Party
-          comment: Text
-        controller client
-        do create ClosedClientProfile with ..
+    -- choice RemoveClientProfile: ContractId ClosedClientProfile
+    --     with
+    --       operator: Party
+    --       comment: Text
+    --     controller client
+    --     do create ClosedClientProfile with ..
 
 template JudgeProfile
   with 
@@ -532,12 +532,12 @@ template JudgeProfile
   where 
     signatory judge
 
-    choice RemoveJudgeProfile: ContractId ClosedJudgeProfile
-        with
-          operator: Party
-          comment: Text
-        controller judge
-        do create ClosedJudgeProfile with ..
+    -- choice RemoveJudgeProfile: ContractId ClosedJudgeProfile
+    --     with
+    --       operator: Party
+    --       comment: Text
+    --     controller judge
+    --     do create ClosedJudgeProfile with ..
 
 template ParticipantProfile
   with 
@@ -546,12 +546,12 @@ template ParticipantProfile
   where 
     signatory participant
 
-    choice RemoveParticipantProfile: ContractId ClosedParticipantProfile
-        with
-          operator: Party
-          comment: Text
-        controller participant
-        do create ClosedParticipantProfile with ..
+    -- choice RemoveParticipantProfile: ContractId ClosedParticipantProfile
+    --     with
+    --       operator: Party
+    --       comment: Text
+    --     controller participant
+    --     do create ClosedParticipantProfile with ..
 
 
 -- add the voting 
