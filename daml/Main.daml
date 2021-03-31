@@ -297,6 +297,7 @@ template ClientProject
           challengeId: Text 
           nameOf:Text
           prize: Text
+          description: Text
           participant: Party
           judge: Party
         do 
@@ -335,11 +336,13 @@ template ClientProject
           subName: Text 
           subDesc:  Text
           submission: Text
+          videoLink: Text
+          presentation: Text
           challengeId: Text
           judge: Party
         controller participant
         do
-          create ParticipantSubmissionProposal with participant,judge,subName,subDesc,submission,client,projectId,challengeId,operator,criteria
+          create ParticipantSubmissionProposal with participant,judge,subName,subDesc,submission,client,projectId,challengeId,operator,criteria,videoLink,presentation
           -- proj <- fetch p
           -- create this with projects = proj::projects 
         
@@ -366,6 +369,8 @@ template ParticipantSubmissionProposal
     subName: Text 
     subDesc:  Text
     submission: Text
+    videoLink: Text
+    presentation: Text
     client: Party
     operator: Party
     judge:Party
@@ -379,7 +384,7 @@ template ParticipantSubmissionProposal
           submissionId:Text
         do 
           exerciseByKey @ClientProject (client, projectId) AddSubmissionToList with submissionId
-          create ParticipantSubmission with name=subName,participant,desc=subDesc,submission,client,judge,participants=[],submissionId,challengeId,operator,criteria,judges=[]
+          create ParticipantSubmission with name=subName,participant,desc=subDesc,submission,client,judge,participants=[],submissionId,challengeId,operator,criteria,judges=[],videoLink,presentation
           
 
 
@@ -418,6 +423,8 @@ template ParticipantSubmission
     name: Text 
     desc:  Text
     submission: Text
+    videoLink: Text
+    presentation: Text
     -- challenges: [Text]
     participants: [Party]
     judge: Party
@@ -571,6 +578,8 @@ template ClosedParticipantSubmission
     name: Text 
     desc:  Text
     submission: Text
+    videoLink: Text
+    presentation: Text
     -- challenges: [Text]
     participants: [Party]
     judge: Party
