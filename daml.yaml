@@ -8,7 +8,7 @@ parties:
  - Mohammed
  - Andy
 version: 0.0.1
-# init-script: Main:setup
+init-script: Main:setup
 start-navigator: true
 sandbox-options:
   - --ledgerid=cosmart
