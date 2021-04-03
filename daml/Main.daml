@@ -4,7 +4,7 @@ module Main where
 --  operator(Elastik)-->InviteParticipant/InviteClient / AddParticipantToProject / InviteJudge / JudgeCriteria
 --  participant-->AcceptParticipantRequest / AddEditProfile / AddEditsubmission / Addteammate / 
 --  client--> CreateProject / CreatChallenge / AddEditProfile / AddJudgeToProject by client
---  judgs -->  VoteForProject(SpecifyRating) 
+--  judgs -->  VoteForProject(scorecard) 
 
 -- anybody can be an operator ?? specify only one operator => once in production auth will fix the issue
 -- participant should not be invited multiple times !! // auth will solve it
@@ -65,7 +65,7 @@ data ProfileData = ProfileData
   with
     firstName:Text
     lastName:Text
-    profileEmail:Text
+    email:Text
     job:Text
     company:Text
     about:Text
@@ -143,7 +143,7 @@ template RequestToJudgeProject
   where 
     signatory judge 
 
-    controller judge can 
+    controller operator can 
       AddJudgeToProject: ContractId ClientProject 
         do 
           exerciseByKey @ClientProject (client, projectId) AddJudge with judge
@@ -160,17 +160,23 @@ template ParticipantInvitation
 
     controller participant can
       AcceptParticipantRequest: ContractId ParticipantRole
-        do create ParticipantRole with ..
+        with  
+          participantProfile:ProfileData 
+          -- email: Text
+            do create ParticipantRole with ..
 
 template ParticipantRole
   with 
     participant: Party 
     operator: Party
+    participantProfile:ProfileData
+    -- email: Text
   where 
     signatory participant, operator 
 
-    -- key (participant,participantProfile.email):(Party,Text)
-    -- maintainer key._1
+    key (operator,participantProfile.email):(Party,Text)
+    -- key (operator,email):(Party,Text)
+    maintainer key._1
 
     -- controller participant can 
     --   UpdateParProfile: ContractId ParticipantRole
@@ -185,11 +191,11 @@ template ParticipantRole
     --       create this with participant,operator, participantProfile = o1
 
     controller participant can 
-      nonconsuming AddParProfile: ContractId ParticipantProfile
+      UpdateParProfile: ContractId ParticipantRole
         with
-          participantProfile:ProfileData
+          participantProfile1:ProfileData
         do
-          create ParticipantProfile with ..
+          create ParticipantRole with participantProfile=participantProfile1,participant,operator
     
     controller participant can 
       nonconsuming RegisterForProject: ContractId RequestToJoinProject
@@ -302,10 +308,10 @@ template ClientProject
           nameOf:Text
           prize: Text
           description: Text
-          participant: Party
-          judge: Party
+          -- participant: Party
+          -- judge: Party
         do 
-          id <- create Challenge with client,judges,participants,participant,judge,nameOf,prize,challengeId
+          id <- create Challenge with client,judges,participants,nameOf,prize,challengeId
           create this with challenges = challengeId::challenges
 
     choice RemoveClientProject: ContractId ClosedClientProject
@@ -401,13 +407,13 @@ template Challenge
     client: Party
     participants: [Party]
     judges: [Party]
-    participant:Party
-    judge: Party
+    -- participant:Party
+    -- judge: Party
 
   where
     signatory client
-    observer participants,participant,judge
-    
+    observer participants
+
     controller client can 
       ModifieChallenge: ContractId Challenge
         with
@@ -437,7 +443,7 @@ template ParticipantSubmission
     criteria: [CriteriaPoint] -- should be invisble to the participant
   where
     signatory participant,client 
-    observer participants,judge,client
+    observer participants,judge,client,operator
     
     key (participant,submissionId): (Party, Text)
     maintainer key._1
@@ -462,16 +468,17 @@ template ParticipantSubmission
     controller participant can 
       nonconsuming ProposeTeammate: ContractId TeammateProposal 
         with 
-          participantToAdd: Party
           email: Text
         do 
         -- create this with participants=participantToAdd::participants
-          create TeammateProposal with email,operator,teammate=participantToAdd,submissionId,participant
+          create TeammateProposal with email,operator,submissionId,participant
 
-    controller participant can
-      AddTeammate : ContractId ParticipantSubmission
-        with p : Party
-        do create this with  participants=p::participants
+    choice AddTeammate : ContractId ParticipantSubmission
+        with 
+          participantToAdd : Party
+          leaderParticipant: Party
+        controller leaderParticipant 
+        do create this with  participants=participantToAdd::participants
     
     -- controller  judge can
     --   JudgeProject : ContractId ParticipantSubmission
@@ -493,20 +500,18 @@ template ParticipantSubmission
 
 template TeammateProposal  
   with
-    -- email: Text
     operator: Party
-    teammate: Party
     submissionId: Text
     participant: Party
     email: Text
   where
-    signatory teammate
+    signatory participant
 
-    controller teammate can 
+    controller operator can 
       AcceptTeammateProposal: ()
         do 
-          -- (c1,co) <- fetchByKey @ParticipantProfile (teammate,email) 
-          exerciseByKey @ParticipantSubmission (participant,submissionId) AddTeammate with p=teammate 
+          (c1,co) <- fetchByKey @ParticipantRole (operator,email) 
+          exerciseByKey @ParticipantSubmission (participant,submissionId) AddTeammate with participantToAdd=co.participant,leaderParticipant=operator
           return ()
           
 
@@ -549,6 +554,7 @@ template ParticipantProfile
     participantProfile:ProfileData
   where 
     signatory participant
+
 
     -- choice RemoveParticipantProfile: ContractId ClosedParticipantProfile
     --     with
@@ -666,6 +672,7 @@ setup = script do
   asx <- allocatePartyWithHint "Asx" (PartyIdHint "Asx")
   mohammed <- allocatePartyWithHint "Mohammed" (PartyIdHint "Mohammed")
   yuling <- allocatePartyWithHint "Yuling" (PartyIdHint "Yuling")
+  let participantProfile = ProfileData with firstName="Andy",lastName="ke",email="andy@dabl.com",job="engineer",company="",about="",pictureUrl=""
 
 
 
@@ -678,13 +685,14 @@ setup = script do
     exerciseCmd platform InviteParticipant with
       participant = andy
   participant <- submit andy do
-    exerciseCmd invite AcceptParticipantRequest 
+    exerciseCmd invite AcceptParticipantRequest with participantProfile 
 
   invite <- submit elastik do
     exerciseCmd platform InviteParticipant with
       participant = mohammed
+  let participantProfile = ProfileData with firstName="Mohammed",lastName="ke",email="med@dabl.com",job="engineer",company="",about="",pictureUrl=""
   participant <- submit mohammed do
-    exerciseCmd invite AcceptParticipantRequest 
+    exerciseCmd invite AcceptParticipantRequest with participantProfile
 
   invite <- submit elastik do
     exerciseCmd platform InviteClient with
@@ -713,5 +721,4 @@ setup = script do
 
   -- submit bob do
   --   exerciseCmd bobTV Give with newOwner = alice
-
 
