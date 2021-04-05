@@ -74,7 +74,7 @@ const Project = (props : RouteComponentProps) => {
     const [selectedChallengeId, setSelectedChallengeId] = useState(0);
     const [showCreateSubmissionModal, setShowCreateSubmissionModal] = useState({show: false, challengeId : ''} as {show: boolean, challengeId?: string});
     const ChallengeCompoenent  = (props: any) => {
-        const stream = useQuery(Challenge, () => ({challengeId: props.challengeId}), [props.challengeId]);
+        const stream = useQuery(Challenge, () => ({challengeId: props.challengeId}), []);
         console.log('Challenge get', stream, 'challengeId: props.challengeId=', props.challengeId);
         
         if ((stream.contracts || []).length > 0){

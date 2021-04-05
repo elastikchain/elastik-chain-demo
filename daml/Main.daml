@@ -398,7 +398,7 @@ template ParticipantSubmissionProposal
           
 
 
-
+-- Should create a challenge after all participants join the client hackathon
 template Challenge
    with
     challengeId : Text
