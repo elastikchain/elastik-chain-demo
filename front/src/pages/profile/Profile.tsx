@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from "react";
+import React, { useEffect, useState } from "react";
 import { RouteComponentProps } from "react-router-dom";
 import firebase from "firebase/app";
 import { useLedger, useStreamQueries } from "@daml/react";
@@ -15,6 +15,8 @@ import {
   ParticipantSubmission,
   AcceptSubmission,
   JudgeInvitation,
+  RequestToJoinProject,
+  ParticipantRole,
 } from "@daml.js/cosmart-0.0.1/lib/Main";
 
 import {
@@ -94,11 +96,6 @@ const Profile = (props: RouteComponentProps) => {
   const [projectIdTouched, setProjectIdTouched] = useState(false);
   const [showCreateProjectModal, setShowCreateProjectModal] = useState(false);
   const [showRequestModal, setShowRequestModal] = useState(false);
-
-  // useEffect(() => {
-  //   console.log(JSON.stringify(registerProjectId));
-  //   console.log(registerProjectId, registerProjectClient)
-  // }, [registerProjectId, registerProjectClient]);
 
   const resetCreateProject = () => {
     setProjectDetail(defaultProjectDetail);
@@ -259,18 +256,29 @@ const Profile = (props: RouteComponentProps) => {
     }
   };
 
+
+  const participantRoleAssets = useStreamQueries(ParticipantRole).contracts;
+
   const handleJoinProject = async (evt: any) => {
     evt.preventDefault();
-    const formData = {
-      registerProjectId,
-      registerProjectClient
-    }
-    console.log('formData request', formData);
+      
+     const formData = {
+      participant: user,
+      client: registerProjectClient,
+      operator: "Elastik",
+      projectId: registerProjectId,
+    };
+
+    ledger.exercise(ParticipantRole.RegisterForProject, participantRoleAssets[0].contractId, formData)
+    .then(data=>console.log(data));
   };
+
+  
 
   const handleUploadError = (err: any) => {
     console.log(err);
   };
+
   const handleUploadSuccess = async (filename: string) => {
     console.log("success upload");
     const downloadURL = await firebase
@@ -754,3 +762,7 @@ const Profile = (props: RouteComponentProps) => {
   }
 };
 export default Profile;
+function dbdb90d7bcad5c3e9b0cff213c7b254a8270cd6275adcdb4c51ff85078d4f7(AddParticipantToProject: damlTypes.Choice<RequestToJoinProject, import("@daml.js/cosmart-0.0.1/lib/Main").AddParticipantToProject, damlTypes.ContractId<ClientProject>, undefined>, arg1: number, dbdb90d7bcad5c3e9b0cff213c7b254a8270cd6275adcdb4c51ff85078d4f7: any, formData: { participant: { isAuthenticated: false; } | { isAuthenticated: true; token: string; party: string; }; client: string; operator: string; projectId: string; }) {
+  throw new Error("Function not implemented.");
+}
+
