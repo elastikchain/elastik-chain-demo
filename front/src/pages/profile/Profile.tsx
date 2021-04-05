@@ -13,7 +13,7 @@ import menuItemImg from '../../assets/img/img-menu-item.png';
 import './Profile.scss';
 import { useLedger, useStreamQueries } from "@daml/react";
 import { publicParty, signOut, useUserDispatch, useUserState } from "../../context/UserContext";
-import { ClientRole, ClientProject, ClientInvitation, AcceptRequest, ParticipantInvitation, ProposeSubmission, CreateProject, ParticipantSubmissionProposal, ParticipantSubmission, AcceptSubmission, JudgeInvitation } from "@daml.js/cosmart-0.0.1/lib/Main";
+import { ClientRole, ClientProject, ClientInvitation, AcceptRequest, ParticipantInvitation, ProposeSubmission, CreateProject, ParticipantSubmissionProposal, ParticipantSubmission, AcceptSubmission, JudgeInvitation, AcceptParticipantRequest } from "@daml.js/cosmart-0.0.1/lib/Main";
 import { setSelectedProject } from "../../context/SharedContext";
 import CriteriaTagsInput from "../../components/CriteriaTagsInput/CriteriaTagsInput";
 import * as damlTypes from '@daml/types';
@@ -369,11 +369,11 @@ const Profile = (props : RouteComponentProps) => {
                                                 participantInvitationAssets.filter(c => (user as any).party === c.payload.participant).map(a => (
                                                     <IonButton
                                                     onClick={async e => {
-                                                        await ledger.exercise(ParticipantInvitation.AcceptParticipantRequest, a.contractId, AcceptRequest);
+                                                        await ledger.exercise(ParticipantInvitation.AcceptParticipantRequest, a.contractId, {participantProfile: {firstName: user.party, lastName: "", company: "", email: "", job: "", about: "", pictureUrl: ""}});
                                                         alert('Your request accepted successfully!');
                                                     }
                                                     }
-                                                    > Accept Invitation As Participant</IonButton>
+                                                    >Accept Invitation As Participant</IonButton>
                                                 ))
                                             }
                                             {
@@ -398,9 +398,14 @@ const Profile = (props : RouteComponentProps) => {
                                             {
                                                 getUserType() === 'client' ? 
                                                 (
-                                                    <IonButton 
+                                                    <div>
+                                                        <p><IonButton 
                                                         onClick={() => setShowCreateProjectModal(true)}
-                                                        className="create-project-button"> Create New Project </IonButton>
+                                                        className="create-project-button"> Create New Project </IonButton></p>
+                                                        <p><IonButton
+                                                        onClick={e => props.history.push('/main/scores') }
+                                                         size="small"> Scores </IonButton></p>
+                                                    </div>
                                                 ) : null
                                             }
                                         </div>

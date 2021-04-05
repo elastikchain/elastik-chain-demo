@@ -155,10 +155,9 @@ const Submission = (props : RouteComponentProps) => {
                                                             return re.test(email);
                                                         }
                                                         const email = prompt('Enter the participant email');
-                                                        const participantToAdd = prompt('Enter the participant name');
                                                         if(email){
                                                             if(validateEmail(email)){
-                                                                await ledger.exercise(ParticipantSubmission.ProposeTeammate, submission[0].contractId, {email, participantToAdd});
+                                                                await ledger.exercise(ParticipantSubmission.ProposeTeammate, submission[0].contractId, {email});
                                                                 alert("Teammate request has been sent successfully!");
                                                             }else{
                                                                 alert(email + " is not a valid email!");

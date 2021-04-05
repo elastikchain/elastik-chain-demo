@@ -675,8 +675,6 @@ setup = script do
   let participantProfile = ProfileData with firstName="Andy",lastName="ke",email="andy@dabl.com",job="engineer",company="",about="",pictureUrl=""
 
 
-
-
   platform <- submit elastik do
     createCmd Platform with
       operator = elastik

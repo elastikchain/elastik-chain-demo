@@ -37,9 +37,7 @@ const Project = (props : RouteComponentProps) => {
         challengeId: '',
         nameOf: '',
         description: '',
-        prize: '',
-        participant: 'Andy',
-        judge: 'Yuling'
+        prize: ''
     };
     const [challengeDetail, setChallengeDetail] = useState(defaultChallengeDetail);
     const resetCreateChallenge = () => {
