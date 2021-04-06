@@ -15,8 +15,8 @@ import {
   ParticipantSubmission,
   AcceptSubmission,
   JudgeInvitation,
-  RequestToJoinProject,
   ParticipantRole,
+  RequestToJoinProject,
 } from "@daml.js/cosmart-0.0.1/lib/Main";
 
 import {
@@ -67,6 +67,7 @@ interface CriteriaPoint {
   name: string;
   point: damlTypes.Numeric;
 }
+
 const Profile = (props: RouteComponentProps) => {
   const userDispatch = useUserDispatch();
   const user = useUserState();
@@ -89,13 +90,18 @@ const Profile = (props: RouteComponentProps) => {
     loading: false,
   };
 
-  const [projectDetail, setProjectDetail] = useState( defaultProjectDetail );
-  const [registerProjectId, setRegisterProjectId] = useState("");
-  const [registerProjectClient, setRegisterProjectClient] = useState("");
   const [searchText, setSearchText] = useState("");
+
+  const [projectDetail, setProjectDetail] = useState(defaultProjectDetail);
   const [projectIdTouched, setProjectIdTouched] = useState(false);
   const [showCreateProjectModal, setShowCreateProjectModal] = useState(false);
+
+  const [registerProjectId, setRegisterProjectId] = useState("");
+  const [registerProjectClient, setRegisterProjectClient] = useState("");
   const [showRequestModal, setShowRequestModal] = useState(false);
+
+  const [participantId, setParicipantId] = useState("");
+  const [showParticipantModal, setShowParticipantModal] = useState(false);
 
   const resetCreateProject = () => {
     setProjectDetail(defaultProjectDetail);
@@ -148,10 +154,10 @@ const Profile = (props: RouteComponentProps) => {
       ParticipantSubmissionProposal,
       () => [{ projectId: props.projectId }]
     ).contracts;
-    console.log(
-      "participantSubmissionProposalAssets",
-      participantSubmissionProposalAssets
-    );
+    // console.log(
+    //   "participantSubmissionProposalAssets",
+    //   participantSubmissionProposalAssets
+    // );
     const els = participantSubmissionProposalAssets.map((c) => (
       <IonItem>
         <IonLabel>
@@ -191,7 +197,7 @@ const Profile = (props: RouteComponentProps) => {
     evt.preventDefault();
     const exercise = (cb: () => void) => {
       const { loading, projectImageFile, ...dataToExercise } = projectDetail;
-      console.log("dataToExercise", dataToExercise);
+      // console.log("dataToExercise", dataToExercise);
       ledger
         .exercise(
           ClientRole.CreateProject,
@@ -216,7 +222,7 @@ const Profile = (props: RouteComponentProps) => {
     setProjectDetail({ ...projectDetail, loading: true });
     if (projectDetail.projectImageFile) {
       let imgFile = projectDetail.projectImageFile;
-      console.log("imgFile", imgFile);
+      // console.log("imgFile", imgFile);
       const { name } = imgFile;
       const filePath = `${new Date().getTime()}_${name}`;
       const storage = firebase.storage;
@@ -228,7 +234,7 @@ const Profile = (props: RouteComponentProps) => {
           task
             .getDownloadURL()
             .then((urlStr) => {
-              console.log("urlStr", urlStr);
+              // console.log("urlStr", urlStr);
               const pd = projectDetail;
               pd.pictureUrl = urlStr;
               setProjectDetail(pd);
@@ -239,13 +245,13 @@ const Profile = (props: RouteComponentProps) => {
               }, 500);
             })
             .catch((err) => {
-              console.error(err);
+              // console.error(err);
               alert(JSON.stringify(err));
               setProjectDetail({ ...projectDetail, loading: false });
             });
         })
         .catch((err) => {
-          console.error(err);
+          // console.error(err);
           alert(JSON.stringify(err));
           setProjectDetail({ ...projectDetail, loading: false });
         });
@@ -256,24 +262,42 @@ const Profile = (props: RouteComponentProps) => {
     }
   };
 
-
   const participantRoleAssets = useStreamQueries(ParticipantRole).contracts;
 
   const handleJoinProject = async (evt: any) => {
     evt.preventDefault();
-      
-     const formData = {
+
+    const formData = {
       participant: user,
       client: registerProjectClient,
       operator: "Elastik",
       projectId: registerProjectId,
     };
 
-    ledger.exercise(ParticipantRole.RegisterForProject, participantRoleAssets[0].contractId, formData)
-    .then(data=>console.log(data));
+    ledger
+      .exercise(
+        ParticipantRole.RegisterForProject,
+        participantRoleAssets[0].contractId,
+        formData
+      )
+      .then((data) => console.log(data))
+      .catch((err) => console.log(err));
   };
 
-  
+  const requestToJoinProjectAssets = useStreamQueries(RequestToJoinProject)
+    .contracts;
+  console.log("requestToJoinProjectAssets", requestToJoinProjectAssets);
+
+  const handleAddParticipant = async (contractId: any) => {
+    ledger
+      .exercise(
+        RequestToJoinProject.AddParticipantToProject,
+        contractId,
+        ""
+      )
+      .then((data) => console.log(data))
+      .catch((err) => console.log(err));
+  };
 
   const handleUploadError = (err: any) => {
     console.log(err);
@@ -534,16 +558,18 @@ const Profile = (props: RouteComponentProps) => {
               >
                 <div className="content create-project-modal-content">
                   <form onSubmit={handleJoinProject}>
-                    <h1>Request to join project</h1>
+                    <h1>Register project</h1>
                     <div className="flex-equal-childs-width">
                       <IonItem>
                         <IonLabel position="floating">Project ID</IonLabel>
-                        
+
                         <IonInput
                           required={true}
                           value={registerProjectId}
                           onIonChange={(e) => {
-                            setRegisterProjectId(e.detail.value! as unknown as string)
+                            setRegisterProjectId(
+                              (e.detail.value! as unknown) as string
+                            );
                           }}
                         ></IonInput>
                       </IonItem>
@@ -553,7 +579,9 @@ const Profile = (props: RouteComponentProps) => {
                           required={true}
                           value={registerProjectClient}
                           onIonChange={(e) => {
-                            setRegisterProjectClient(e.detail.value! as unknown as string);
+                            setRegisterProjectClient(
+                              (e.detail.value! as unknown) as string
+                            );
                           }}
                         ></IonInput>
                       </IonItem>
@@ -561,7 +589,8 @@ const Profile = (props: RouteComponentProps) => {
 
                     <IonButton
                       onClick={(e) => {
-                        // resetRequestForm();
+                        setRegisterProjectClient("");
+                        setRegisterProjectId("");
                         setShowRequestModal(false);
                         handleJoinProject(e);
                       }}
@@ -584,6 +613,58 @@ const Profile = (props: RouteComponentProps) => {
                   <IonIcon icon={close}></IonIcon>
                 </IonButton>
               </IonModal>
+
+              {/*-- modal AddParticipantToProject --*/}
+              <IonModal
+                isOpen={showParticipantModal}
+                onDidDismiss={() => setShowParticipantModal(false)}
+                cssClass="my-custom-class"
+              >
+                <div className="content create-project-modal-content">
+                  <form onSubmit={handleJoinProject}>
+                    <h1>Add Participant</h1>
+                    <div className="flex-equal-childs-width">
+                      <IonItem>
+                        <IonLabel position="floating">Participant ID</IonLabel>
+
+                        <IonInput
+                          required={true}
+                          value={participantId}
+                          onIonChange={(e) => {
+                            setParicipantId(
+                              (e.detail.value! as unknown) as string
+                            );
+                          }}
+                        ></IonInput>
+                      </IonItem>
+                    </div>
+
+                    <IonButton
+                      onClick={(e) => {
+                        setParicipantId("");
+                        setShowParticipantModal(false);
+                        handleAddParticipant(e);
+                      }}
+                      className="submit-button"
+                      type="submit"
+                    >
+                      Add Participant
+                    </IonButton>
+                  </form>
+                </div>
+                <IonButton
+                  className="modal-default-close-btn"
+                  fill="clear"
+                  color="danger"
+                  onClick={() => {
+                    resetCreateProject();
+                    setShowCreateProjectModal(false);
+                  }}
+                >
+                  <IonIcon icon={close}></IonIcon>
+                </IonButton>
+              </IonModal>
+
               <div className="wrapper">
                 <div className="profile-info-container">
                   <div className="profile-img-container">
@@ -689,14 +770,14 @@ const Profile = (props: RouteComponentProps) => {
                   </div>
                 </div>
                 <div>
-                  {
+                  {getUserType() === "participant" && (
                     <IonButton
                       onClick={() => setShowRequestModal(true)}
                       className="create-project-button"
                     >
-                      Request to join project
+                      Register for project
                     </IonButton>
-                  }
+                  )}
                 </div>
                 {getUserType() === "client" ? (
                   clientProjectAssets.filter(
@@ -734,6 +815,7 @@ const Profile = (props: RouteComponentProps) => {
                   <IonList>
                     <IonListHeader>Projects:</IonListHeader>
                     {clientProjectAssets.map((p) => {
+                      console.log("sas", p);
                       return (
                         <IonItem
                           onClick={(e) => {
@@ -746,8 +828,20 @@ const Profile = (props: RouteComponentProps) => {
                         >
                           <IonIcon slot="start" icon={open}></IonIcon>
                           <IonLabel className="project-info">
-                            name: {p.payload.name}, id: {p.payload.projectId}
+                            name: {p.payload.name}, id: {p.payload.projectId},
+                            participants: {JSON.stringify(p.payload.participants)}
                           </IonLabel>
+                          {getUserType() === "" && (
+                              <IonButton
+                                onClick={(e) => {
+                                  e.stopPropagation();
+                                  handleAddParticipant(p.contractId)
+                                }}
+                                className="create-project-button"
+                              >
+                                Add Participant To Project
+                              </IonButton>
+                            )}
                         </IonItem>
                       );
                     })}
@@ -762,7 +856,3 @@ const Profile = (props: RouteComponentProps) => {
   }
 };
 export default Profile;
-function dbdb90d7bcad5c3e9b0cff213c7b254a8270cd6275adcdb4c51ff85078d4f7(AddParticipantToProject: damlTypes.Choice<RequestToJoinProject, import("@daml.js/cosmart-0.0.1/lib/Main").AddParticipantToProject, damlTypes.ContractId<ClientProject>, undefined>, arg1: number, dbdb90d7bcad5c3e9b0cff213c7b254a8270cd6275adcdb4c51ff85078d4f7: any, formData: { participant: { isAuthenticated: false; } | { isAuthenticated: true; token: string; party: string; }; client: string; operator: string; projectId: string; }) {
-  throw new Error("Function not implemented.");
-}
-
