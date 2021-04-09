@@ -1148,8 +1148,8 @@
 "@daml.js/cosmart-0.0.1@file:../daml.js/cosmart-0.0.1":
   version "1.11.1"
   dependencies:
-    "@daml.js/40f452260bef3f29dede136108fc08a88d5a5250310281067087da6f0baddff7" "file:../../../Library/Caches/Yarn/v2/npm-@daml.js/40f452260bef3f29dede136108fc08a88d5a5250310281067087da6f0baddff7"
-    "@daml.js/d14e08374fc7197d6a0de468c968ae8ba3aadbf9315476fd39071831f5923662" "file:../../../Library/Caches/Yarn/v2/npm-@daml.js/d14e08374fc7197d6a0de468c968ae8ba3aadbf9315476fd39071831f5923662"
+    "@daml.js/40f452260bef3f29dede136108fc08a88d5a5250310281067087da6f0baddff7" "file:../../../.cache/yarn/v6/npm-@daml-js-cosmart-0-0-1-1.11.1-072add1e-241e-436b-b96e-ad2d2c7e572c-1617986576941/node_modules/@daml.js/40f452260bef3f29dede136108fc08a88d5a5250310281067087da6f0baddff7"
+    "@daml.js/d14e08374fc7197d6a0de468c968ae8ba3aadbf9315476fd39071831f5923662" "file:../../../.cache/yarn/v6/npm-@daml-js-cosmart-0-0-1-1.11.1-072add1e-241e-436b-b96e-ad2d2c7e572c-1617986576941/node_modules/@daml.js/d14e08374fc7197d6a0de468c968ae8ba3aadbf9315476fd39071831f5923662"
     "@mojotech/json-type-validation" "^3.1.0"
 
 "@daml.js/d14e08374fc7197d6a0de468c968ae8ba3aadbf9315476fd39071831f5923662@file:../daml.js/d14e08374fc7197d6a0de468c968ae8ba3aadbf9315476fd39071831f5923662":
@@ -1157,16 +1157,28 @@
   dependencies:
     "@mojotech/json-type-validation" "^3.1.0"
 
-"@daml/hub-react@^0.1.0":
-  version "0.1.0"
-  resolved "https://registry.yarnpkg.com/@daml/hub-react/-/hub-react-0.1.0.tgz#5a2c65d8d5c2f4dc4dfe98bf186d573346d6aac4"
-  integrity sha512-W0APpmIrHgPSxI2FesxRUHMkPvn6/hnXRCW4V1f9quFjxcDDLCcLf9D3EZFI2yZ7nIpwpCElRIq1ln7QutIXUA==
+"@daml/hub-react@^0.2.0":
+  version "0.2.0"
+  resolved "https://registry.yarnpkg.com/@daml/hub-react/-/hub-react-0.2.0.tgz#9cf141b4a298a930d494562ff6f7d9e3b8a5cd97"
+  integrity sha512-IZMjF0EhwJKo1OKhtSPiuhl7DTpU8ZzBMA6iERJw8V8/zbOp204Q6kPhbyz3ph1j6cZkT+AdZ2vy49DMy2HJ2A==
   dependencies:
-    "@daml/ledger" "1.9.0"
-    "@daml/react" "1.9.0"
+    "@daml/ledger" "1.11.1"
+    "@daml/react" "1.11.1"
     "@mojotech/json-type-validation" "^3.1.0"
     jsonwebtoken "^8.5.1"
     react "^16.12.0"
+
+"@daml/ledger@1.11.1":
+  version "1.11.1"
+  resolved "https://registry.yarnpkg.com/@daml/ledger/-/ledger-1.11.1.tgz#82ac59dfe981bb8c19353569d237ce775c2e383f"
+  integrity sha512-2P0JxZ2QFGN1WlvgoyrlXLcFsQqlSu5pEBBzXMWQLiU4kwJUzfX7EFppsTiLdIyjVfJEjxClJzpgD3JPRTzPbA==
+  dependencies:
+    "@daml/types" "1.11.1"
+    "@mojotech/json-type-validation" "^3.1.0"
+    cross-fetch "^3.0.4"
+    events "^3.1.0"
+    isomorphic-ws "^4.0.1"
+    ws "^7.2.1"
 
 "@daml/ledger@1.7.0":
   version "1.7.0"
@@ -1180,17 +1192,14 @@
     isomorphic-ws "^4.0.1"
     ws "^7.2.1"
 
-"@daml/ledger@1.9.0":
-  version "1.9.0"
-  resolved "https://registry.yarnpkg.com/@daml/ledger/-/ledger-1.9.0.tgz#41efd1c2fa54f0aacdd668eb5ceba125ac1eb95e"
-  integrity sha512-v7I+yboEKcsc7gNPCjG1pFhyIL6qRjccz5k9CLI20Sd5VTv6MNcRGmJID4DuE9ATrx83F0beFZxF+6la2wCoKA==
+"@daml/react@1.11.1":
+  version "1.11.1"
+  resolved "https://registry.yarnpkg.com/@daml/react/-/react-1.11.1.tgz#2c0127c0bb44b7171a6dcff260b9dfa7f2d90f2c"
+  integrity sha512-v05d+Rtv9iSugHTL2VcSxwg0cwG/SWFAFB4N9QfMQgzADi8Et4U1Je/fxK4jWEOomGyDTzBqPAHD6NVnLYWUrA==
   dependencies:
-    "@daml/types" "1.9.0"
-    "@mojotech/json-type-validation" "^3.1.0"
-    cross-fetch "^3.0.4"
-    events "^3.1.0"
-    isomorphic-ws "^4.0.1"
-    ws "^7.2.1"
+    "@daml/ledger" "1.11.1"
+    "@daml/types" "1.11.1"
+    react "^16.12.0"
 
 "@daml/react@1.7.0":
   version "1.7.0"
@@ -1201,26 +1210,17 @@
     "@daml/types" "1.7.0"
     react "^16.12.0"
 
-"@daml/react@1.9.0":
-  version "1.9.0"
-  resolved "https://registry.yarnpkg.com/@daml/react/-/react-1.9.0.tgz#3cb52099795508273c11842892991861d4af7f30"
-  integrity sha512-eLpK31ZZhMo4lA/CWTA2ZfWZuEsghB6fPruI0smo71v/r8far+1cn9HzQ6r7Wls4fnaQFM40mRYngQP5yufPFg==
+"@daml/types@1.11.1":
+  version "1.11.1"
+  resolved "https://registry.yarnpkg.com/@daml/types/-/types-1.11.1.tgz#e1bca26478036a003b1659dbc80b0fe8be5eabff"
+  integrity sha512-KMLbPdz7Vtp5Bk4bMwjGwTTPFKI0pTPdPiW/U1NerHQiBKjBVmSOj944GF1f4FqcOEVSbQz3xRIjop1nEikDzw==
   dependencies:
-    "@daml/ledger" "1.9.0"
-    "@daml/types" "1.9.0"
-    react "^16.12.0"
+    "@mojotech/json-type-validation" "^3.1.0"
 
 "@daml/types@1.7.0":
   version "1.7.0"
   resolved "https://registry.yarnpkg.com/@daml/types/-/types-1.7.0.tgz#6a18f7c9b4c38f96fe099537fd71dd3ab5434546"
   integrity sha512-0Hz5KoIGgNZQ+hbAt2JlWKFl6TNw2Pftgy+0B7N0EUxxhKk+vxNy3Iw8Lmdi2UW+kLAZpamDwz1TCHrwv6KgFg==
-  dependencies:
-    "@mojotech/json-type-validation" "^3.1.0"
-
-"@daml/types@1.9.0":
-  version "1.9.0"
-  resolved "https://registry.yarnpkg.com/@daml/types/-/types-1.9.0.tgz#4d1b38961c413c77cb32d368da198de78a542de7"
-  integrity sha512-ju8uNkiAeA3ZCfdz3Va1t0jKz62KUQ6eYwvWvfKQWYgYt/PiKJYmrClHpVMZSRlHdDUDHyOWK73rfKjuMeftGA==
   dependencies:
     "@mojotech/json-type-validation" "^3.1.0"
 

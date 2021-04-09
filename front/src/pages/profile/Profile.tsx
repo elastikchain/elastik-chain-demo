@@ -17,6 +17,8 @@ import {
   JudgeInvitation,
   ParticipantRole,
   RequestToJoinProject,
+  AddParticipant,
+  AddParticipantToProject,
 } from "@daml.js/cosmart-0.0.1/lib/Main";
 
 import {
@@ -58,6 +60,9 @@ import {
   IonIcon,
 } from "@ionic/react";
 import { open, close } from "ionicons/icons";
+
+import Tabs from "../../components/Tabs";
+import Tab from "../../components/Tabs/Tab";
 
 import logo from "../../assets/img/logo-combination.svg";
 import menuItemImg from "../../assets/img/img-menu-item.png";
@@ -109,7 +114,7 @@ const Profile = (props: RouteComponentProps) => {
   };
 
   const ledger = useLedger();
-
+  
   const clientInvitationAssets = useStreamQueries(ClientInvitation).contracts;
   console.log("clientInvitationAssets", clientInvitationAssets);
 
@@ -127,6 +132,10 @@ const Profile = (props: RouteComponentProps) => {
 
   const projectAssets = useStreamQueries(ClientRole).contracts;
 
+  const participantAssets = useStreamQueries(ParticipantRole).contracts;
+  const participantRoleAssets = useStreamQueries(ParticipantRole).contracts;
+
+  console.log("participantAssets", participantAssets);
   const getUserType = (): "" | "client" | "participant" | "judge" => {
     if (
       clientProjectAssets.length > 0 &&
@@ -143,7 +152,10 @@ const Profile = (props: RouteComponentProps) => {
     ) {
       return "client";
     }
-
+    if(participantRoleAssets.filter((p: any)=> p.payload.participant === (user as any).party ).length > 0
+    ){
+      return "participant";
+    }
     return "";
   };
 
@@ -262,8 +274,6 @@ const Profile = (props: RouteComponentProps) => {
     }
   };
 
-  const participantRoleAssets = useStreamQueries(ParticipantRole).contracts;
-
   const handleJoinProject = async (evt: any) => {
     evt.preventDefault();
 
@@ -288,13 +298,13 @@ const Profile = (props: RouteComponentProps) => {
     .contracts;
   console.log("requestToJoinProjectAssets", requestToJoinProjectAssets);
 
-  const handleAddParticipant = async (contractId: any) => {
+  const handleAddParticipant = async (
+    contractId: any,
+    state: AddParticipant
+  ) => {
+    console.log("state", state);
     ledger
-      .exercise(
-        RequestToJoinProject.AddParticipantToProject,
-        contractId,
-        ""
-      )
+      .exercise(ClientProject.AddParticipant, contractId, { participant: state.participant })
       .then((data) => console.log(data))
       .catch((err) => console.log(err));
   };
@@ -318,6 +328,15 @@ const Profile = (props: RouteComponentProps) => {
   } else {
     return (
       <IonPage>
+        {getUserType() === "client" ? (
+          <IonButton
+            onClick={() => setShowCreateProjectModal(true)}
+            className="create-project-button"
+          >
+            {" "}
+            Create New Project{" "}
+          </IonButton>
+        ) : null}
         <IonHeader>
           <IonToolbar className="toolbar">
             <div className="d-flex">
@@ -353,6 +372,11 @@ const Profile = (props: RouteComponentProps) => {
               </IonHeader>
               <IonContent>
                 <IonList className="menu-items-list">
+                  <Tabs>
+                    <Tab title="Lemon">Lemon is yellow</Tab>
+                    <Tab title="Strawberry">Strawberry is red</Tab>
+                    <Tab title="Pear">Pear is green</Tab>
+                  </Tabs>
                   <IonItem>
                     <img slot="start" src={menuItemImg} alt="menu item" />
                     <IonLabel>Profile</IonLabel>
@@ -638,18 +662,6 @@ const Profile = (props: RouteComponentProps) => {
                         ></IonInput>
                       </IonItem>
                     </div>
-
-                    <IonButton
-                      onClick={(e) => {
-                        setParicipantId("");
-                        setShowParticipantModal(false);
-                        handleAddParticipant(e);
-                      }}
-                      className="submit-button"
-                      type="submit"
-                    >
-                      Add Participant
-                    </IonButton>
                   </form>
                 </div>
                 <IonButton
@@ -757,19 +769,11 @@ const Profile = (props: RouteComponentProps) => {
                       <p>
                         Github: <a href="#">Information here</a>
                       </p>
-                      {getUserType() === "client" ? (
-                        <IonButton
-                          onClick={() => setShowCreateProjectModal(true)}
-                          className="create-project-button"
-                        >
-                          {" "}
-                          Create New Project{" "}
-                        </IonButton>
-                      ) : null}
                     </div>
                   </div>
                 </div>
                 <div>
+                  {console.log('getUserType() new', getUserType() )}
                   {getUserType() === "participant" && (
                     <IonButton
                       onClick={() => setShowRequestModal(true)}
@@ -814,6 +818,7 @@ const Profile = (props: RouteComponentProps) => {
                 ) : (
                   <IonList>
                     <IonListHeader>Projects:</IonListHeader>
+
                     {clientProjectAssets.map((p) => {
                       console.log("sas", p);
                       return (
@@ -829,19 +834,23 @@ const Profile = (props: RouteComponentProps) => {
                           <IonIcon slot="start" icon={open}></IonIcon>
                           <IonLabel className="project-info">
                             name: {p.payload.name}, id: {p.payload.projectId},
-                            participants: {JSON.stringify(p.payload.participants)}
+                            participants:{" "}
+                            {JSON.stringify(p.payload.participants)}
                           </IonLabel>
-                          {getUserType() === "" && (
+                          {getUserType() === "" &&
+                            participantAssets
+                            .filter(c=>p.payload.participants.indexOf(c.payload.participant) < 0)
+                            .map((key) => (
                               <IonButton
                                 onClick={(e) => {
                                   e.stopPropagation();
-                                  handleAddParticipant(p.contractId)
+                                  handleAddParticipant(p.contractId, key.payload);
                                 }}
                                 className="create-project-button"
                               >
-                                Add Participant To Project
+                                Add {key.payload.participant} To Project
                               </IonButton>
-                            )}
+                            ))}
                         </IonItem>
                       );
                     })}
