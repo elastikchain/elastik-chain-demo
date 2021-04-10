@@ -18,15 +18,13 @@ import {
   ParticipantRole,
   RequestToJoinProject,
   AddParticipant,
+	AcceptParticipantRequest,
   AddParticipantToProject,
 } from "@daml.js/cosmart-0.0.1/lib/Main";
 
-import {
-  publicParty,
-  signOut,
-  useUserDispatch,
-  useUserState,
-} from "../../context/UserContext";
+import './Profile.scss';
+import { publicParty, signOut, useUserDispatch, useUserState } from "../../context/UserContext";
+
 import { setSelectedProject } from "../../context/SharedContext";
 
 import CriteriaTagsInput from "../../components/CriteriaTagsInput/CriteriaTagsInput";
@@ -754,224 +752,130 @@ const Profile = (props: RouteComponentProps) => {
               </IonModal>
 
               <div className="wrapper">
-                <div className="profile-info-container">
-                  <div className="profile-img-container">
-                    <img
-                      src="https://via.placeholder.com/214x198.png"
-                      alt="profile image"
-                    />
-                    <input
-                      className="profile-picture-input"
-                      type="file"
-                      accept="image/*"
-                    />
-                  </div>
-                  <div className="profile-info">
-                    <div className="profile-header">
-                      <IonLabel color="secondary">
-                        {(user as any).party}
-                        {clientInvitationAssets
-                          .filter(
-                            (c: any) => (user as any).party === c.payload.client
-                          )
-                          .map((a: any) => (
-                            <IonButton
-                              onClick={async (e) => {
-                                await ledger.exercise(
-                                  ClientInvitation.AcceptRequest,
-                                  a.contractId,
-                                  AcceptRequest
-                                );
-                                alert("Your request accepted successfully!");
-                              }}
-                            >
-                              {" "}
-                              Accept Invitation
-                            </IonButton>
-                          ))}
-                        {participantInvitationAssets
-                          .filter(
-                            (c) => (user as any).party === c.payload.participant
-                          )
-                          .map((a) => (
-                            <IonButton
-                              onClick={async (e) => {
-                                await ledger.exercise(
-                                  ParticipantInvitation.AcceptParticipantRequest,
-                                  a.contractId,
-                                  AcceptRequest
-                                );
-                                alert("Your request accepted successfully!");
-                              }}
-                            >
-                              {" "}
-                              Accept Invitation As Participant
-                            </IonButton>
-                          ))}
-                        {judgeInvitationAssets
-                          .filter(
-                            (c) => (user as any).party === c.payload.judge
-                          )
-                          .map((a) => (
-                            <IonButton
-                              onClick={async (e) => {
-                                await ledger.exercise(
-                                  JudgeInvitation.AcceptjudgeRequest,
-                                  a.contractId,
-                                  AcceptRequest
-                                );
-                                alert("Your request accepted successfully!");
-                              }}
-                            >
-                              {" "}
-                              Accept Invitation As Judge
-                            </IonButton>
-                          ))}
-                      </IonLabel>
-                      <IonButton size="large"> Edit </IonButton>
-                    </div>
-                    <div className="profile-about">
-                      <h1>About me</h1>
-                      <p>
-                        Lorem ipsum dolor sit amet consectetur adipisicing elit.
-                        Nihil, neque. Nulla quae pariatur voluptas, tenetur
-                        perferendis voluptatibus incidunt provident impedit
-                        sapiente eius voluptatum perspiciatis sint quisquam iste
-                        nam cupiditate dolores.
-                      </p>
-                      <p>
-                        Linkedin: <a href="#">Information here</a>
-                      </p>
-                      <p>
-                        Github: <a href="#">Information here</a>
-                      </p>
-                    </div>
-                  </div>
-                </div>
-                <div>
-                  {console.log("getUserType() new", getUserType())}
-                  {getUserType() === "participant" && (
-                    <IonButton
-                      onClick={() => setShowRequestModal(true)}
-                      className="create-project-button"
-                    >
-                      Register for project
-                    </IonButton>
-                  )}
-                </div>
-                {getUserType() === "client" ? (
-                  clientProjectAssets.filter(
-                    (c) => (user as any).party === c.payload.client
-                  ).length > 0 ? (
-                    <IonList>
-                      <IonListHeader>Created Projects</IonListHeader>
-                      {clientProjectAssets
-                        .filter((c) => (user as any).party === c.payload.client)
-                        .map((p) => (
-                          <IonItem
-                            onClick={(e) => {
-                              e.preventDefault();
-                              console.log("the selected::", p);
-
-                              setSelectedProject(p);
-                              props.history.push(
-                                "/main/project?id=" + p.payload.projectId
-                              );
-                            }}
-                          >
-                            <IonIcon slot="start" icon={open}></IonIcon>
-                            <IonLabel className="project-info">
-                              name: {p.payload.name}, id: {p.payload.projectId}
-                              <SubmissionToAcceptComponent
-                                contractId={p.contractId}
-                                projectId={p.payload.projectId}
-                              ></SubmissionToAcceptComponent>
-                            </IonLabel>
-                            <IonIcon
-                              icon={pencil}
-                              onClick={(e) => {
-                                e.stopPropagation();
-                                console.log("the selected::", p);
-
-                                setSelectedProject(p);
-                                props.history.push(
-                                  "/main/projects/" +
-                                    p.payload.projectId +
-                                    "/edit"
-                                );
-                              }}
-                            ></IonIcon>
-                            <IonIcon
-                              icon={trash}
-                              onClick={(e) =>{
-                                e.stopPropagation();
-                                setShowTrashProjectModal({
-                                  status: true,
-                                  projectID: p.payload.projectId,
-                                  contractID: p.contractId,
-                                })
+                  <div className="profile-info-container">
+                      <div className="profile-img-container">
+                          <img src="https://via.placeholder.com/214x198.png" alt="profile image"/>
+                          <input
+                          className="profile-picture-input"
+                          type="file"
+                          accept="image/*"
+                          />
+                      </div>
+                      <div className="profile-info">
+                          <div className="profile-header">
+                              <IonLabel color="secondary">{(user as any).party}
+                              {
+                                  clientInvitationAssets.filter((c: any) => (user as any).party === c.payload.client).map((a: any) => (
+                                      <IonButton
+                                      onClick={async e => {
+                                          await ledger.exercise(ClientInvitation.AcceptRequest, a.contractId, AcceptRequest);
+                                          alert('Your request accepted successfully!');
+                                      }
+                                      }
+                                      > Accept Invitation</IonButton>
+                                  ))
                               }
+                              {
+                                  participantInvitationAssets.filter(c => (user as any).party === c.payload.participant).map(a => (
+                                      <IonButton
+                                      onClick={async e => {
+                                          await ledger.exercise(ParticipantInvitation.AcceptParticipantRequest, a.contractId, {participantProfile: {firstName: user.party, lastName: "", company: "", email: "", job: "", about: "", pictureUrl: ""}});
+                                          alert('Your request accepted successfully!');
+                                      }
+                                      }
+                                      >Accept Invitation As Participant</IonButton>
+                                  ))
                               }
-                              className="trash-project-button"
-                            ></IonIcon>
-                          </IonItem>
-                        ))}
-                    </IonList>
-                  ) : null
-                ) : (
-                  <IonList>
-                    <IonListHeader>Projects:</IonListHeader>
-
-                    {clientProjectAssets.map((p) => {
-                      console.log("sas", p);
-                      return (
-                        <IonItem
-                          onClick={(e) => {
-                            e.preventDefault();
-                            setSelectedProject(p);
-                            props.history.push(
-                              "/main/project?id=" + p.payload.projectId
-                            );
-                          }}
-                        >
-                          <IonIcon slot="start" icon={open}></IonIcon>
-                          <IonLabel className="project-info">
-                            name: {p.payload.name}, id: {p.payload.projectId},
-                            participants:{" "}
-                            {JSON.stringify(p.payload.participants)}
-                          </IonLabel>
-                          {getUserType() === "" &&
-                            participantAssets
-                              .filter(
-                                (c) =>
-                                  p.payload.participants.indexOf(
-                                    c.payload.participant
-                                  ) < 0
-                              )
-                              .map((key) => (
-                                <IonButton
-                                  onClick={(e) => {
-                                    e.stopPropagation();
-                                    handleAddParticipant(
-                                      p.contractId,
-                                      key.payload
-                                    );
-                                  }}
-                                  className="create-project-button"
-                                >
-                                  Add {key.payload.participant} To Project
-                                </IonButton>
-                              ))}
-                        </IonItem>
-                      );
-                    })}
-                  </IonList>
-                )}
+                              {
+                                  judgeInvitationAssets.filter(c => (user as any).party === c.payload.judge).map(a => (
+                                      <IonButton
+                                      onClick={async e => {
+                                          await ledger.exercise(JudgeInvitation.AcceptjudgeRequest, a.contractId, AcceptRequest);
+                                          alert('Your request accepted successfully!');
+                                      }
+                                      }
+                                      > Accept Invitation As Judge</IonButton>
+                                  ))
+                              }
+                              </IonLabel>
+                              <IonButton size="large"> Edit </IonButton>
+                          </div>
+                          <div className="profile-about">
+                              <h1>About me</h1>
+                              <p>Lorem ipsum dolor sit amet consectetur adipisicing elit. Nihil, neque. Nulla quae pariatur voluptas, tenetur perferendis voluptatibus incidunt provident impedit sapiente eius voluptatum perspiciatis sint quisquam iste nam cupiditate dolores.</p>
+                              <p>Linkedin: <a href="#">Information here</a></p>
+                              <p>Github: <a href="#">Information here</a></p>
+                              {
+                                  getUserType() === 'client' ? 
+                                  (
+                                      <div>
+                                          <p><IonButton 
+                                          onClick={() => setShowCreateProjectModal(true)}
+                                          className="create-project-button"> Create New Project </IonButton></p>
+                                          <p><IonButton
+                                          onClick={e => props.history.push('/main/scores') }
+                                            size="small"> Scores </IonButton></p>
+                                      </div>
+                                  ) : null
+                              }
+                          </div>
+                      </div>
+                  </div>
+                  {
+                      getUserType() === 'client' ?  (
+                          clientProjectAssets.filter(c => (user as any).party === c.payload.client).length > 0 ? (
+                              <IonList>
+                                  <IonListHeader>
+                                      Created Projects
+                                  </IonListHeader>
+                                  {
+                                      clientProjectAssets.filter(c => (user as any).party === c.payload.client).map(p => (
+                                              <IonItem onClick={ e => {
+                                                  e.preventDefault();
+                                                  console.log('the selected::', p);
+                                                  
+                                                  setSelectedProject(p);
+                                                  props.history.push('/main/project?id='+p.payload.projectId);
+                                              }
+                                              }>
+                                                  <IonIcon slot="start" icon={open}></IonIcon>
+                                                  <IonLabel className="project-info">
+                                                      name: {p.payload.name}, id: {p.payload.projectId} 
+                                                      <SubmissionToAcceptComponent contractId={p.contractId} projectId={p.payload.projectId}></SubmissionToAcceptComponent>
+                                                  </IonLabel>
+                                              </IonItem> 
+                                      ))
+                                  }
+                              </IonList>
+                          ) : null
+                      ) :  (
+                          <IonList>
+                              <IonListHeader>
+                                  Projects: 
+                              </IonListHeader>
+                                  {
+                                      clientProjectAssets.map(p => {
+                                          return (
+                                              <IonItem onClick={ e => {
+                                                  e.preventDefault();                                                                
+                                                  setSelectedProject(p);
+                                                  props.history.push('/main/project?id='+p.payload.projectId);
+                                              }
+                                              }>
+                                                  <IonIcon slot="start" icon={open}></IonIcon>
+                                                  <IonLabel className="project-info">name: {p.payload.name}, id: {p.payload.projectId}</IonLabel>
+                                              </IonItem> 
+                                          )
+                                      })
+                                  }
+                          </IonList>
+                      )  
+                  }
               </div>
-            </IonPage>
-          </IonSplitPane>
-        </IonContent>
-      </IonPage>
+          </IonPage>
+        </IonSplitPane>
+    </IonContent>
+    </IonPage>
     );
   }
 };

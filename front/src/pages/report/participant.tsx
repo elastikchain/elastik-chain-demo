@@ -111,12 +111,14 @@ export default function Report() {
 
   const defaultAcceptParticipantRequestProps : InputDialogProps<AcceptParticipantRequest> = {
     open: false,
-    title: "Invite Customs Gua",
-    defaultValue: { customsGua : "" },
+    title: "",
+    defaultValue: {participantProfile: {firstName: "", lastName: "", company: "", email: "", job: "", about: "", pictureUrl: ""}},
     fields: {
-      customsGua : {
-        label: "customs Gua",
-        type: "text" }},
+      participantProfile : {
+        label: "Participant Profile",
+        type: "text" 
+      }
+    },
     onClose: async function() {}
   };
 

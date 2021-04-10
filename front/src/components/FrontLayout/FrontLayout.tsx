@@ -13,6 +13,7 @@ import {
   useWellKnownParties,
   WellKnownPartiesProvider,
 } from "@daml/hub-react/lib";
+import Scores from "../../pages/scores/Scores";
 
 const PublicProvider: React.FC = ({ children }) => {
   // This component fetches the public party ID and uses it to instantiate a PublicLedger context
@@ -49,6 +50,7 @@ const FrontLayout = (props: any) => {
           <Route path="/main/project" component={Project} />
           <Route path="/main/profile" component={Profile} />
           <Route path="/main/submission" component={Submission} />
+          <Route path="/main/scores" component={Scores} />
         </Switch>
         {/*  </PublicProvider>
             </WellKnownPartiesProvider> */}

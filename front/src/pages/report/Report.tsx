@@ -214,7 +214,7 @@ export default function Report() {
   const defaultAddUpdateChallengeProps : InputDialogProps<AddChallenge> = {
     open: false,
     title: "Add Challenge",
-    defaultValue: { challengeId: "", description: "",nameOf: "", prize: "", participant: "Andy", judge: "Yuling"},
+    defaultValue: { challengeId: "", description: "",nameOf: "", prize: ""},
     fields: {
       challengeId: {
         label: "Challenge Id",
@@ -231,14 +231,6 @@ export default function Report() {
       description: {
         label: "description",
         type: "text"
-      },
-      participant: {
-        label: "participant",
-        type: "text" 
-      },
-      judge: {
-        label: "judge",
-        type: "text" 
       }
     },
     onClose: async function() {}
@@ -311,16 +303,11 @@ export default function Report() {
     open: false,
     title: "Add To The Teammate",
     defaultValue: { 
-      email: "",
-      participantToAdd: ""
+      email: ""
     },
     fields: {
       email: {
         label: "Participant Email To Add",
-        type: "text" 
-      },
-      participantToAdd: {
-        label: "Participant To Add",
         type: "text" 
       }
     },
@@ -378,7 +365,7 @@ export default function Report() {
   };
 
   async function showAcceptParticipant(asset : ParticipantInvitation.CreateEvent) {
-    await ledger.exercise(ParticipantInvitation.AcceptParticipantRequest, asset.contractId, AcceptRequest);
+    await ledger.exercise(ParticipantInvitation.AcceptParticipantRequest, asset.contractId, {participantProfile: {firstName: (user as any).party, lastName: "", company: "", email: "", job: "", about: "", pictureUrl: ""}});
     alert('Your request accepted successfully!');
   };
 

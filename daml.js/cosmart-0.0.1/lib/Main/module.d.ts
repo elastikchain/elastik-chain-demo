@@ -18,7 +18,7 @@ export declare type Scorecard = {
 };
 
 export declare const Scorecard:
-  damlTypes.Template<Scorecard, Scorecard.Key, '4294fa1d1cdda15d0b2f99f8a59cb624e9b8798e16badfe70f715eaa12424d3c:Main:Scorecard'> & {
+  damlTypes.Template<Scorecard, Scorecard.Key, '0dbc4c0cbfaca7dd2f3f82e328348ca76e10c2a88e517e68da17af33fcf6e5e1:Main:Scorecard'> & {
   Archive: damlTypes.Choice<Scorecard, pkgd14e08374fc7197d6a0de468c968ae8ba3aadbf9315476fd39071831f5923662.DA.Internal.Template.Archive, {}, Scorecard.Key>;
 };
 
@@ -40,7 +40,7 @@ export declare type ClosedParticipantProfile = {
 };
 
 export declare const ClosedParticipantProfile:
-  damlTypes.Template<ClosedParticipantProfile, undefined, '4294fa1d1cdda15d0b2f99f8a59cb624e9b8798e16badfe70f715eaa12424d3c:Main:ClosedParticipantProfile'> & {
+  damlTypes.Template<ClosedParticipantProfile, undefined, '0dbc4c0cbfaca7dd2f3f82e328348ca76e10c2a88e517e68da17af33fcf6e5e1:Main:ClosedParticipantProfile'> & {
   Archive: damlTypes.Choice<ClosedParticipantProfile, pkgd14e08374fc7197d6a0de468c968ae8ba3aadbf9315476fd39071831f5923662.DA.Internal.Template.Archive, {}, undefined>;
 };
 
@@ -61,7 +61,7 @@ export declare type ClosedJudgeProfile = {
 };
 
 export declare const ClosedJudgeProfile:
-  damlTypes.Template<ClosedJudgeProfile, undefined, '4294fa1d1cdda15d0b2f99f8a59cb624e9b8798e16badfe70f715eaa12424d3c:Main:ClosedJudgeProfile'> & {
+  damlTypes.Template<ClosedJudgeProfile, undefined, '0dbc4c0cbfaca7dd2f3f82e328348ca76e10c2a88e517e68da17af33fcf6e5e1:Main:ClosedJudgeProfile'> & {
   Archive: damlTypes.Choice<ClosedJudgeProfile, pkgd14e08374fc7197d6a0de468c968ae8ba3aadbf9315476fd39071831f5923662.DA.Internal.Template.Archive, {}, undefined>;
 };
 
@@ -82,7 +82,7 @@ export declare type ClosedClientProfile = {
 };
 
 export declare const ClosedClientProfile:
-  damlTypes.Template<ClosedClientProfile, undefined, '4294fa1d1cdda15d0b2f99f8a59cb624e9b8798e16badfe70f715eaa12424d3c:Main:ClosedClientProfile'> & {
+  damlTypes.Template<ClosedClientProfile, undefined, '0dbc4c0cbfaca7dd2f3f82e328348ca76e10c2a88e517e68da17af33fcf6e5e1:Main:ClosedClientProfile'> & {
   Archive: damlTypes.Choice<ClosedClientProfile, pkgd14e08374fc7197d6a0de468c968ae8ba3aadbf9315476fd39071831f5923662.DA.Internal.Template.Archive, {}, undefined>;
 };
 
@@ -91,6 +91,30 @@ export declare namespace ClosedClientProfile {
   export type ArchiveEvent = damlLedger.ArchiveEvent<ClosedClientProfile, typeof ClosedClientProfile.templateId>
   export type Event = damlLedger.Event<ClosedClientProfile, undefined, typeof ClosedClientProfile.templateId>
   export type QueryResult = damlLedger.QueryResult<ClosedClientProfile, undefined, typeof ClosedClientProfile.templateId>
+}
+
+
+
+export declare type ClosedChallenge = {
+  challengeId: string;
+  nameOf: string;
+  prize: string;
+  client: damlTypes.Party;
+  description: string;
+  participants: damlTypes.Party[];
+  judges: damlTypes.Party[];
+};
+
+export declare const ClosedChallenge:
+  damlTypes.Template<ClosedChallenge, undefined, '0dbc4c0cbfaca7dd2f3f82e328348ca76e10c2a88e517e68da17af33fcf6e5e1:Main:ClosedChallenge'> & {
+  Archive: damlTypes.Choice<ClosedChallenge, pkgd14e08374fc7197d6a0de468c968ae8ba3aadbf9315476fd39071831f5923662.DA.Internal.Template.Archive, {}, undefined>;
+};
+
+export declare namespace ClosedChallenge {
+  export type CreateEvent = damlLedger.CreateEvent<ClosedChallenge, undefined, typeof ClosedChallenge.templateId>
+  export type ArchiveEvent = damlLedger.ArchiveEvent<ClosedChallenge, typeof ClosedChallenge.templateId>
+  export type Event = damlLedger.Event<ClosedChallenge, undefined, typeof ClosedChallenge.templateId>
+  export type QueryResult = damlLedger.QueryResult<ClosedChallenge, undefined, typeof ClosedChallenge.templateId>
 }
 
 
@@ -114,7 +138,7 @@ export declare type ClosedClientProject = {
 };
 
 export declare const ClosedClientProject:
-  damlTypes.Template<ClosedClientProject, undefined, '4294fa1d1cdda15d0b2f99f8a59cb624e9b8798e16badfe70f715eaa12424d3c:Main:ClosedClientProject'> & {
+  damlTypes.Template<ClosedClientProject, undefined, '0dbc4c0cbfaca7dd2f3f82e328348ca76e10c2a88e517e68da17af33fcf6e5e1:Main:ClosedClientProject'> & {
   Archive: damlTypes.Choice<ClosedClientProject, pkgd14e08374fc7197d6a0de468c968ae8ba3aadbf9315476fd39071831f5923662.DA.Internal.Template.Archive, {}, undefined>;
 };
 
@@ -144,7 +168,7 @@ export declare type ClosedParticipantSubmission = {
 };
 
 export declare const ClosedParticipantSubmission:
-  damlTypes.Template<ClosedParticipantSubmission, undefined, '4294fa1d1cdda15d0b2f99f8a59cb624e9b8798e16badfe70f715eaa12424d3c:Main:ClosedParticipantSubmission'> & {
+  damlTypes.Template<ClosedParticipantSubmission, undefined, '0dbc4c0cbfaca7dd2f3f82e328348ca76e10c2a88e517e68da17af33fcf6e5e1:Main:ClosedParticipantSubmission'> & {
   Archive: damlTypes.Choice<ClosedParticipantSubmission, pkgd14e08374fc7197d6a0de468c968ae8ba3aadbf9315476fd39071831f5923662.DA.Internal.Template.Archive, {}, undefined>;
 };
 
@@ -165,7 +189,7 @@ export declare type Criteria = {
 };
 
 export declare const Criteria:
-  damlTypes.Template<Criteria, undefined, '4294fa1d1cdda15d0b2f99f8a59cb624e9b8798e16badfe70f715eaa12424d3c:Main:Criteria'> & {
+  damlTypes.Template<Criteria, undefined, '0dbc4c0cbfaca7dd2f3f82e328348ca76e10c2a88e517e68da17af33fcf6e5e1:Main:Criteria'> & {
   Archive: damlTypes.Choice<Criteria, pkgd14e08374fc7197d6a0de468c968ae8ba3aadbf9315476fd39071831f5923662.DA.Internal.Template.Archive, {}, undefined>;
 };
 
@@ -184,7 +208,7 @@ export declare type ParticipantProfile = {
 };
 
 export declare const ParticipantProfile:
-  damlTypes.Template<ParticipantProfile, undefined, '4294fa1d1cdda15d0b2f99f8a59cb624e9b8798e16badfe70f715eaa12424d3c:Main:ParticipantProfile'> & {
+  damlTypes.Template<ParticipantProfile, undefined, '0dbc4c0cbfaca7dd2f3f82e328348ca76e10c2a88e517e68da17af33fcf6e5e1:Main:ParticipantProfile'> & {
   Archive: damlTypes.Choice<ParticipantProfile, pkgd14e08374fc7197d6a0de468c968ae8ba3aadbf9315476fd39071831f5923662.DA.Internal.Template.Archive, {}, undefined>;
 };
 
@@ -203,7 +227,7 @@ export declare type JudgeProfile = {
 };
 
 export declare const JudgeProfile:
-  damlTypes.Template<JudgeProfile, undefined, '4294fa1d1cdda15d0b2f99f8a59cb624e9b8798e16badfe70f715eaa12424d3c:Main:JudgeProfile'> & {
+  damlTypes.Template<JudgeProfile, undefined, '0dbc4c0cbfaca7dd2f3f82e328348ca76e10c2a88e517e68da17af33fcf6e5e1:Main:JudgeProfile'> & {
   Archive: damlTypes.Choice<JudgeProfile, pkgd14e08374fc7197d6a0de468c968ae8ba3aadbf9315476fd39071831f5923662.DA.Internal.Template.Archive, {}, undefined>;
 };
 
@@ -222,7 +246,7 @@ export declare type ClientProfile = {
 };
 
 export declare const ClientProfile:
-  damlTypes.Template<ClientProfile, undefined, '4294fa1d1cdda15d0b2f99f8a59cb624e9b8798e16badfe70f715eaa12424d3c:Main:ClientProfile'> & {
+  damlTypes.Template<ClientProfile, undefined, '0dbc4c0cbfaca7dd2f3f82e328348ca76e10c2a88e517e68da17af33fcf6e5e1:Main:ClientProfile'> & {
   Archive: damlTypes.Choice<ClientProfile, pkgd14e08374fc7197d6a0de468c968ae8ba3aadbf9315476fd39071831f5923662.DA.Internal.Template.Archive, {}, undefined>;
 };
 
@@ -246,14 +270,13 @@ export declare const AcceptTeammateProposal:
 
 export declare type TeammateProposal = {
   operator: damlTypes.Party;
-  teammate: damlTypes.Party;
   submissionId: string;
   participant: damlTypes.Party;
   email: string;
 };
 
 export declare const TeammateProposal:
-  damlTypes.Template<TeammateProposal, undefined, '4294fa1d1cdda15d0b2f99f8a59cb624e9b8798e16badfe70f715eaa12424d3c:Main:TeammateProposal'> & {
+  damlTypes.Template<TeammateProposal, undefined, '0dbc4c0cbfaca7dd2f3f82e328348ca76e10c2a88e517e68da17af33fcf6e5e1:Main:TeammateProposal'> & {
   Archive: damlTypes.Choice<TeammateProposal, pkgd14e08374fc7197d6a0de468c968ae8ba3aadbf9315476fd39071831f5923662.DA.Internal.Template.Archive, {}, undefined>;
   AcceptTeammateProposal: damlTypes.Choice<TeammateProposal, AcceptTeammateProposal, {}, undefined>;
 };
@@ -277,6 +300,17 @@ export declare const SubmitScorecard:
 ;
 
 
+export declare type AddTeammate = {
+  participantToAdd: damlTypes.Party;
+  leaderParticipant: damlTypes.Party;
+};
+
+export declare const AddTeammate:
+  damlTypes.Serializable<AddTeammate> & {
+  }
+;
+
+
 export declare type RemoveSubmission = {
   comment: string;
 };
@@ -287,18 +321,7 @@ export declare const RemoveSubmission:
 ;
 
 
-export declare type AddTeammate = {
-  p: damlTypes.Party;
-};
-
-export declare const AddTeammate:
-  damlTypes.Serializable<AddTeammate> & {
-  }
-;
-
-
 export declare type ProposeTeammate = {
-  participantToAdd: damlTypes.Party;
   email: string;
 };
 
@@ -338,12 +361,12 @@ export declare type ParticipantSubmission = {
 };
 
 export declare const ParticipantSubmission:
-  damlTypes.Template<ParticipantSubmission, ParticipantSubmission.Key, '4294fa1d1cdda15d0b2f99f8a59cb624e9b8798e16badfe70f715eaa12424d3c:Main:ParticipantSubmission'> & {
+  damlTypes.Template<ParticipantSubmission, ParticipantSubmission.Key, '0dbc4c0cbfaca7dd2f3f82e328348ca76e10c2a88e517e68da17af33fcf6e5e1:Main:ParticipantSubmission'> & {
   Archive: damlTypes.Choice<ParticipantSubmission, pkgd14e08374fc7197d6a0de468c968ae8ba3aadbf9315476fd39071831f5923662.DA.Internal.Template.Archive, {}, ParticipantSubmission.Key>;
   UpdateSubmission: damlTypes.Choice<ParticipantSubmission, UpdateSubmission, damlTypes.ContractId<ParticipantSubmission>, ParticipantSubmission.Key>;
   ProposeTeammate: damlTypes.Choice<ParticipantSubmission, ProposeTeammate, damlTypes.ContractId<TeammateProposal>, ParticipantSubmission.Key>;
-  AddTeammate: damlTypes.Choice<ParticipantSubmission, AddTeammate, damlTypes.ContractId<ParticipantSubmission>, ParticipantSubmission.Key>;
   RemoveSubmission: damlTypes.Choice<ParticipantSubmission, RemoveSubmission, damlTypes.ContractId<ClosedParticipantSubmission>, ParticipantSubmission.Key>;
+  AddTeammate: damlTypes.Choice<ParticipantSubmission, AddTeammate, damlTypes.ContractId<ParticipantSubmission>, ParticipantSubmission.Key>;
   SubmitScorecard: damlTypes.Choice<ParticipantSubmission, SubmitScorecard, damlTypes.ContractId<Scorecard>, ParticipantSubmission.Key>;
 };
 
@@ -357,9 +380,20 @@ export declare namespace ParticipantSubmission {
 
 
 
+export declare type RemoveChallenge = {
+  comment: string;
+};
+
+export declare const RemoveChallenge:
+  damlTypes.Serializable<RemoveChallenge> & {
+  }
+;
+
+
 export declare type ModifieChallenge = {
-  name1: string;
-  prize1: string;
+  newname: string;
+  newprize: string;
+  newdescription: string;
 };
 
 export declare const ModifieChallenge:
@@ -373,16 +407,16 @@ export declare type Challenge = {
   nameOf: string;
   prize: string;
   client: damlTypes.Party;
+  description: string;
   participants: damlTypes.Party[];
   judges: damlTypes.Party[];
-  participant: damlTypes.Party;
-  judge: damlTypes.Party;
 };
 
 export declare const Challenge:
-  damlTypes.Template<Challenge, undefined, '4294fa1d1cdda15d0b2f99f8a59cb624e9b8798e16badfe70f715eaa12424d3c:Main:Challenge'> & {
+  damlTypes.Template<Challenge, undefined, '0dbc4c0cbfaca7dd2f3f82e328348ca76e10c2a88e517e68da17af33fcf6e5e1:Main:Challenge'> & {
   Archive: damlTypes.Choice<Challenge, pkgd14e08374fc7197d6a0de468c968ae8ba3aadbf9315476fd39071831f5923662.DA.Internal.Template.Archive, {}, undefined>;
   ModifieChallenge: damlTypes.Choice<Challenge, ModifieChallenge, damlTypes.ContractId<Challenge>, undefined>;
+  RemoveChallenge: damlTypes.Choice<Challenge, RemoveChallenge, damlTypes.ContractId<ClosedChallenge>, undefined>;
 };
 
 export declare namespace Challenge {
@@ -420,7 +454,7 @@ export declare type ParticipantSubmissionProposal = {
 };
 
 export declare const ParticipantSubmissionProposal:
-  damlTypes.Template<ParticipantSubmissionProposal, undefined, '4294fa1d1cdda15d0b2f99f8a59cb624e9b8798e16badfe70f715eaa12424d3c:Main:ParticipantSubmissionProposal'> & {
+  damlTypes.Template<ParticipantSubmissionProposal, undefined, '0dbc4c0cbfaca7dd2f3f82e328348ca76e10c2a88e517e68da17af33fcf6e5e1:Main:ParticipantSubmissionProposal'> & {
   Archive: damlTypes.Choice<ParticipantSubmissionProposal, pkgd14e08374fc7197d6a0de468c968ae8ba3aadbf9315476fd39071831f5923662.DA.Internal.Template.Archive, {}, undefined>;
   AcceptSubmission: damlTypes.Choice<ParticipantSubmissionProposal, AcceptSubmission, damlTypes.ContractId<ParticipantSubmission>, undefined>;
 };
@@ -491,23 +525,11 @@ export declare const AddParticipant:
 ;
 
 
-export declare type RemoveChallenge = {
-  challengeId: string;
-};
-
-export declare const RemoveChallenge:
-  damlTypes.Serializable<RemoveChallenge> & {
-  }
-;
-
-
 export declare type AddChallenge = {
   challengeId: string;
   nameOf: string;
   prize: string;
   description: string;
-  participant: damlTypes.Party;
-  judge: damlTypes.Party;
 };
 
 export declare const AddChallenge:
@@ -536,6 +558,20 @@ export declare const AddUpdateDescription:
 ;
 
 
+export declare type AddUpdateClientProject = {
+  newDesc: string;
+  newCriteria: CriteriaPoint;
+  newlocation: string;
+  newstartDate: damlTypes.Time;
+  newendDate: damlTypes.Time;
+};
+
+export declare const AddUpdateClientProject:
+  damlTypes.Serializable<AddUpdateClientProject> & {
+  }
+;
+
+
 export declare type ClientProject = {
   client: damlTypes.Party;
   operator: damlTypes.Party;
@@ -555,12 +591,12 @@ export declare type ClientProject = {
 };
 
 export declare const ClientProject:
-  damlTypes.Template<ClientProject, ClientProject.Key, '4294fa1d1cdda15d0b2f99f8a59cb624e9b8798e16badfe70f715eaa12424d3c:Main:ClientProject'> & {
+  damlTypes.Template<ClientProject, ClientProject.Key, '0dbc4c0cbfaca7dd2f3f82e328348ca76e10c2a88e517e68da17af33fcf6e5e1:Main:ClientProject'> & {
   Archive: damlTypes.Choice<ClientProject, pkgd14e08374fc7197d6a0de468c968ae8ba3aadbf9315476fd39071831f5923662.DA.Internal.Template.Archive, {}, ClientProject.Key>;
+  AddUpdateClientProject: damlTypes.Choice<ClientProject, AddUpdateClientProject, damlTypes.ContractId<ClientProject>, ClientProject.Key>;
   AddUpdateDescription: damlTypes.Choice<ClientProject, AddUpdateDescription, damlTypes.ContractId<ClientProject>, ClientProject.Key>;
   AddUpdateCriteria: damlTypes.Choice<ClientProject, AddUpdateCriteria, damlTypes.ContractId<ClientProject>, ClientProject.Key>;
   AddChallenge: damlTypes.Choice<ClientProject, AddChallenge, damlTypes.ContractId<ClientProject>, ClientProject.Key>;
-  RemoveChallenge: damlTypes.Choice<ClientProject, RemoveChallenge, damlTypes.ContractId<ClientProject>, ClientProject.Key>;
   AddParticipant: damlTypes.Choice<ClientProject, AddParticipant, damlTypes.ContractId<ClientProject>, ClientProject.Key>;
   AddJudge: damlTypes.Choice<ClientProject, AddJudge, damlTypes.ContractId<ClientProject>, ClientProject.Key>;
   AddSubmissionToList: damlTypes.Choice<ClientProject, AddSubmissionToList, damlTypes.ContractId<ClientProject>, ClientProject.Key>;
@@ -612,7 +648,7 @@ export declare type ClientRole = {
 };
 
 export declare const ClientRole:
-  damlTypes.Template<ClientRole, undefined, '4294fa1d1cdda15d0b2f99f8a59cb624e9b8798e16badfe70f715eaa12424d3c:Main:ClientRole'> & {
+  damlTypes.Template<ClientRole, undefined, '0dbc4c0cbfaca7dd2f3f82e328348ca76e10c2a88e517e68da17af33fcf6e5e1:Main:ClientRole'> & {
   Archive: damlTypes.Choice<ClientRole, pkgd14e08374fc7197d6a0de468c968ae8ba3aadbf9315476fd39071831f5923662.DA.Internal.Template.Archive, {}, undefined>;
   AddEditCliProfile: damlTypes.Choice<ClientRole, AddEditCliProfile, damlTypes.ContractId<ClientProfile>, undefined>;
   CreateProject: damlTypes.Choice<ClientRole, CreateProject, damlTypes.ContractId<ClientProject>, undefined>;
@@ -642,7 +678,7 @@ export declare type ClientInvitation = {
 };
 
 export declare const ClientInvitation:
-  damlTypes.Template<ClientInvitation, undefined, '4294fa1d1cdda15d0b2f99f8a59cb624e9b8798e16badfe70f715eaa12424d3c:Main:ClientInvitation'> & {
+  damlTypes.Template<ClientInvitation, undefined, '0dbc4c0cbfaca7dd2f3f82e328348ca76e10c2a88e517e68da17af33fcf6e5e1:Main:ClientInvitation'> & {
   Archive: damlTypes.Choice<ClientInvitation, pkgd14e08374fc7197d6a0de468c968ae8ba3aadbf9315476fd39071831f5923662.DA.Internal.Template.Archive, {}, undefined>;
   AcceptRequest: damlTypes.Choice<ClientInvitation, AcceptRequest, damlTypes.ContractId<ClientRole>, undefined>;
 };
@@ -673,7 +709,7 @@ export declare type RequestToJoinProject = {
 };
 
 export declare const RequestToJoinProject:
-  damlTypes.Template<RequestToJoinProject, undefined, '4294fa1d1cdda15d0b2f99f8a59cb624e9b8798e16badfe70f715eaa12424d3c:Main:RequestToJoinProject'> & {
+  damlTypes.Template<RequestToJoinProject, undefined, '0dbc4c0cbfaca7dd2f3f82e328348ca76e10c2a88e517e68da17af33fcf6e5e1:Main:RequestToJoinProject'> & {
   Archive: damlTypes.Choice<RequestToJoinProject, pkgd14e08374fc7197d6a0de468c968ae8ba3aadbf9315476fd39071831f5923662.DA.Internal.Template.Archive, {}, undefined>;
   AddParticipantToProject: damlTypes.Choice<RequestToJoinProject, AddParticipantToProject, damlTypes.ContractId<ClientProject>, undefined>;
 };
@@ -698,12 +734,12 @@ export declare const RegisterForProject:
 ;
 
 
-export declare type AddParProfile = {
-  participantProfile: ProfileData;
+export declare type UpdateParProfile = {
+  participantProfile1: ProfileData;
 };
 
-export declare const AddParProfile:
-  damlTypes.Serializable<AddParProfile> & {
+export declare const UpdateParProfile:
+  damlTypes.Serializable<UpdateParProfile> & {
   }
 ;
 
@@ -711,25 +747,28 @@ export declare const AddParProfile:
 export declare type ParticipantRole = {
   participant: damlTypes.Party;
   operator: damlTypes.Party;
+  participantProfile: ProfileData;
 };
 
 export declare const ParticipantRole:
-  damlTypes.Template<ParticipantRole, undefined, '4294fa1d1cdda15d0b2f99f8a59cb624e9b8798e16badfe70f715eaa12424d3c:Main:ParticipantRole'> & {
-  Archive: damlTypes.Choice<ParticipantRole, pkgd14e08374fc7197d6a0de468c968ae8ba3aadbf9315476fd39071831f5923662.DA.Internal.Template.Archive, {}, undefined>;
-  AddParProfile: damlTypes.Choice<ParticipantRole, AddParProfile, damlTypes.ContractId<ParticipantProfile>, undefined>;
-  RegisterForProject: damlTypes.Choice<ParticipantRole, RegisterForProject, damlTypes.ContractId<RequestToJoinProject>, undefined>;
+  damlTypes.Template<ParticipantRole, ParticipantRole.Key, '0dbc4c0cbfaca7dd2f3f82e328348ca76e10c2a88e517e68da17af33fcf6e5e1:Main:ParticipantRole'> & {
+  Archive: damlTypes.Choice<ParticipantRole, pkgd14e08374fc7197d6a0de468c968ae8ba3aadbf9315476fd39071831f5923662.DA.Internal.Template.Archive, {}, ParticipantRole.Key>;
+  UpdateParProfile: damlTypes.Choice<ParticipantRole, UpdateParProfile, damlTypes.ContractId<ParticipantRole>, ParticipantRole.Key>;
+  RegisterForProject: damlTypes.Choice<ParticipantRole, RegisterForProject, damlTypes.ContractId<RequestToJoinProject>, ParticipantRole.Key>;
 };
 
 export declare namespace ParticipantRole {
-  export type CreateEvent = damlLedger.CreateEvent<ParticipantRole, undefined, typeof ParticipantRole.templateId>
+  export type Key = pkg40f452260bef3f29dede136108fc08a88d5a5250310281067087da6f0baddff7.DA.Types.Tuple2<damlTypes.Party, string>
+  export type CreateEvent = damlLedger.CreateEvent<ParticipantRole, ParticipantRole.Key, typeof ParticipantRole.templateId>
   export type ArchiveEvent = damlLedger.ArchiveEvent<ParticipantRole, typeof ParticipantRole.templateId>
-  export type Event = damlLedger.Event<ParticipantRole, undefined, typeof ParticipantRole.templateId>
-  export type QueryResult = damlLedger.QueryResult<ParticipantRole, undefined, typeof ParticipantRole.templateId>
+  export type Event = damlLedger.Event<ParticipantRole, ParticipantRole.Key, typeof ParticipantRole.templateId>
+  export type QueryResult = damlLedger.QueryResult<ParticipantRole, ParticipantRole.Key, typeof ParticipantRole.templateId>
 }
 
 
 
 export declare type AcceptParticipantRequest = {
+  participantProfile: ProfileData;
 };
 
 export declare const AcceptParticipantRequest:
@@ -744,7 +783,7 @@ export declare type ParticipantInvitation = {
 };
 
 export declare const ParticipantInvitation:
-  damlTypes.Template<ParticipantInvitation, undefined, '4294fa1d1cdda15d0b2f99f8a59cb624e9b8798e16badfe70f715eaa12424d3c:Main:ParticipantInvitation'> & {
+  damlTypes.Template<ParticipantInvitation, undefined, '0dbc4c0cbfaca7dd2f3f82e328348ca76e10c2a88e517e68da17af33fcf6e5e1:Main:ParticipantInvitation'> & {
   Archive: damlTypes.Choice<ParticipantInvitation, pkgd14e08374fc7197d6a0de468c968ae8ba3aadbf9315476fd39071831f5923662.DA.Internal.Template.Archive, {}, undefined>;
   AcceptParticipantRequest: damlTypes.Choice<ParticipantInvitation, AcceptParticipantRequest, damlTypes.ContractId<ParticipantRole>, undefined>;
 };
@@ -775,7 +814,7 @@ export declare type RequestToJudgeProject = {
 };
 
 export declare const RequestToJudgeProject:
-  damlTypes.Template<RequestToJudgeProject, undefined, '4294fa1d1cdda15d0b2f99f8a59cb624e9b8798e16badfe70f715eaa12424d3c:Main:RequestToJudgeProject'> & {
+  damlTypes.Template<RequestToJudgeProject, undefined, '0dbc4c0cbfaca7dd2f3f82e328348ca76e10c2a88e517e68da17af33fcf6e5e1:Main:RequestToJudgeProject'> & {
   Archive: damlTypes.Choice<RequestToJudgeProject, pkgd14e08374fc7197d6a0de468c968ae8ba3aadbf9315476fd39071831f5923662.DA.Internal.Template.Archive, {}, undefined>;
   AddJudgeToProject: damlTypes.Choice<RequestToJudgeProject, AddJudgeToProject, damlTypes.ContractId<ClientProject>, undefined>;
 };
@@ -816,7 +855,7 @@ export declare type JudgeRole = {
 };
 
 export declare const JudgeRole:
-  damlTypes.Template<JudgeRole, undefined, '4294fa1d1cdda15d0b2f99f8a59cb624e9b8798e16badfe70f715eaa12424d3c:Main:JudgeRole'> & {
+  damlTypes.Template<JudgeRole, undefined, '0dbc4c0cbfaca7dd2f3f82e328348ca76e10c2a88e517e68da17af33fcf6e5e1:Main:JudgeRole'> & {
   Archive: damlTypes.Choice<JudgeRole, pkgd14e08374fc7197d6a0de468c968ae8ba3aadbf9315476fd39071831f5923662.DA.Internal.Template.Archive, {}, undefined>;
   AddEditJudProfile: damlTypes.Choice<JudgeRole, AddEditJudProfile, damlTypes.ContractId<JudgeProfile>, undefined>;
   JudgeForProject: damlTypes.Choice<JudgeRole, JudgeForProject, damlTypes.ContractId<RequestToJudgeProject>, undefined>;
@@ -846,7 +885,7 @@ export declare type JudgeInvitation = {
 };
 
 export declare const JudgeInvitation:
-  damlTypes.Template<JudgeInvitation, undefined, '4294fa1d1cdda15d0b2f99f8a59cb624e9b8798e16badfe70f715eaa12424d3c:Main:JudgeInvitation'> & {
+  damlTypes.Template<JudgeInvitation, undefined, '0dbc4c0cbfaca7dd2f3f82e328348ca76e10c2a88e517e68da17af33fcf6e5e1:Main:JudgeInvitation'> & {
   Archive: damlTypes.Choice<JudgeInvitation, pkgd14e08374fc7197d6a0de468c968ae8ba3aadbf9315476fd39071831f5923662.DA.Internal.Template.Archive, {}, undefined>;
   AcceptjudgeRequest: damlTypes.Choice<JudgeInvitation, AcceptjudgeRequest, damlTypes.ContractId<JudgeRole>, undefined>;
 };
@@ -895,7 +934,7 @@ export declare type Platform = {
 };
 
 export declare const Platform:
-  damlTypes.Template<Platform, undefined, '4294fa1d1cdda15d0b2f99f8a59cb624e9b8798e16badfe70f715eaa12424d3c:Main:Platform'> & {
+  damlTypes.Template<Platform, undefined, '0dbc4c0cbfaca7dd2f3f82e328348ca76e10c2a88e517e68da17af33fcf6e5e1:Main:Platform'> & {
   Archive: damlTypes.Choice<Platform, pkgd14e08374fc7197d6a0de468c968ae8ba3aadbf9315476fd39071831f5923662.DA.Internal.Template.Archive, {}, undefined>;
   InviteClient: damlTypes.Choice<Platform, InviteClient, damlTypes.ContractId<ClientInvitation>, undefined>;
   InviteParticipant: damlTypes.Choice<Platform, InviteParticipant, damlTypes.ContractId<ParticipantInvitation>, undefined>;
@@ -914,7 +953,7 @@ export declare namespace Platform {
 export declare type ProfileData = {
   firstName: string;
   lastName: string;
-  profileEmail: string;
+  email: string;
   job: string;
   company: string;
   about: string;

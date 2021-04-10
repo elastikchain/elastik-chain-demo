@@ -38,8 +38,6 @@ const EditProject = (props : RouteComponentProps) => {
         nameOf: '',
         description: '',
         prize: '',
-        participant: 'Andy',
-        judge: 'Yuling'
     };
     const [challengeDetail, setChallengeDetail] = useState(defaultChallengeDetail);
     const resetCreateChallenge = () => {
