@@ -24,20 +24,17 @@ import {
   IonInput,
   IonItem,
   IonLabel,
-  IonList,
-  IonListHeader,
   IonModal,
   IonNote,
   IonPage,
   IonSearchbar,
   IonSegment,
   IonSegmentButton,
-  IonSpinner,
   IonTextarea,
   IonToolbar,
 } from "@ionic/react";
 
-import logo from "../../assets/img/logo-combination.svg";
+import logo from "../../assets/img/logo-combination.png";
 import {
   add,
   close,

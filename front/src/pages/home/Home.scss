@@ -2,7 +2,8 @@
     --background: white;
     --min-height: 76px;
     .app-logo{
-        margin-left: 1.75rem;
+        padding: 8px;
+        height: 50px;
     }
     .toolbar-buttons-container{
         margin-inline-end: 4rem;
@@ -158,6 +159,7 @@ section{
     .logo-slogan{
         margin: 0 auto;
         margin-top: 1.5rem;
+        width: 100px;
     }
     .error-message{
         margin-left: 2rem;

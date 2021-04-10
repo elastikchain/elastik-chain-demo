@@ -1,4 +1,6 @@
 import React, { useState } from 'react';
+import styled from "styled-components";
+
 import { 
   IonContent, 
   IonHeader, 
@@ -15,7 +17,7 @@ import {
   IonItem,
   IonIcon
 } from '@ionic/react';
-import logo from '../../assets/img/logo-combination.svg';
+import logo from '../../assets/img/logo-combination.png';
 import timelineLine from '../../assets/img/img-how-it-work-timeline.png';
 
 import icWork1 from '../../assets/img/ic-work1.png';
@@ -29,7 +31,12 @@ import { RouteComponentProps } from 'react-router-dom';
 import { Fade, Typography } from '@material-ui/core';
 
 import {close} from 'ionicons/icons'; 
-import loginImg from '../../assets/img/logo-slogan.png';
+import loginImg from '../../assets/img/logo-slogan.jpg';
+
+const StyledNewsletter = styled.div`
+  width: 200px;
+  background: blue;
+`;
 
 const workSteps = [
     {
@@ -193,6 +200,10 @@ const Home = (props : RouteComponentProps) => {
               </div>
             </div>
           </section>
+          <StyledNewsletter>
+            <h2>Newsletter</h2>
+          </StyledNewsletter>
+
         </IonContent>
       </IonPage>
     )

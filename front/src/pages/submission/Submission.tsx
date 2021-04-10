@@ -1,7 +1,7 @@
 import { IonButton, IonButtons, IonContent, IonFab, IonFabButton, IonHeader, IonIcon, IonInput, IonItem, IonLabel, IonPage, IonSearchbar, IonToolbar } from "@ionic/react";
 import React, { useState } from "react";
 import { Link, RouteComponentProps } from "react-router-dom";
-import logo from '../../assets/img/logo-combination.svg';
+import logo from '../../assets/img/logo-combination.png';
 import { getSelectedSubmission, setSelectedSubmission } from '../../context/SharedContext'
 import { arrowBack, add } from 'ionicons/icons';
 import submissionPlaceHolder from '../../assets/img/img-proj-placeholder.png'

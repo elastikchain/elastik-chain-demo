@@ -2,6 +2,7 @@ import React, { useEffect, useState } from "react";
 import { RouteComponentProps } from "react-router-dom";
 import firebase from "firebase/app";
 import { useLedger, useStreamQueries } from "@daml/react";
+import * as damlTypes from "@daml/types";
 
 import {
   ClientRole,
@@ -9,42 +10,31 @@ import {
   ClientInvitation,
   AcceptRequest,
   ParticipantInvitation,
-  ProposeSubmission,
   CreateProject,
   ParticipantSubmissionProposal,
-  ParticipantSubmission,
-  AcceptSubmission,
   JudgeInvitation,
   ParticipantRole,
   RequestToJoinProject,
   AddParticipant,
-  AcceptParticipantRequest,
-  AddParticipantToProject,
 } from "@daml.js/cosmart-0.0.1/lib/Main";
 
 import "./Profile.scss";
 import {
   publicParty,
-  signOut,
   useUserDispatch,
   useUserState,
 } from "../../context/UserContext";
 
+
 import { setSelectedProject } from "../../context/SharedContext";
+import HeaderComponent from '../../components/header';
 
 import CriteriaTagsInput from "../../components/CriteriaTagsInput/CriteriaTagsInput";
-import * as damlTypes from "@daml/types";
-import DamlLedger from "@daml/react";
-import { httpBaseUrl, wsBaseUrl } from "../../config";
-import { useStreamQueriesAsPublic } from "@daml/hub-react/lib";
-import { Template } from "@daml/types";
 
 import {
   IonPage,
   IonHeader,
   IonToolbar,
-  IonSearchbar,
-  IonButtons,
   IonButton,
   IonContent,
   IonMenu,
@@ -67,7 +57,6 @@ import { open, close, pencil, trash } from "ionicons/icons";
 import Tabs from "../../components/Tabs";
 import Tab from "../../components/Tabs/Tab";
 
-import logo from "../../assets/img/logo-combination.svg";
 import menuItemImg from "../../assets/img/img-menu-item.png";
 import "./Profile.scss";
 
@@ -363,30 +352,7 @@ const Profile = (props: RouteComponentProps) => {
             Create New Project{" "}
           </IonButton>
         ) : null}
-        <IonHeader>
-          <IonToolbar className="toolbar">
-            <div className="d-flex">
-              <img className="app-logo" src={logo} alt="logo" />
-              <IonSearchbar
-                placeholder="Explore amazing ideas"
-                value={searchText}
-                onIonChange={(e: any) => setSearchText(e.detail.value!)}
-              ></IonSearchbar>
-            </div>
-            <IonButtons slot="end" className="toolbar-buttons-container">
-              <div className="toolbar-buttons">
-                <IonButton>Explore</IonButton>
-                <IonButton
-                  onClick={(evt: any) => {
-                    signOut(userDispatch, props.history, false);
-                  }}
-                >
-                  Logout
-                </IonButton>
-              </div>
-            </IonButtons>
-          </IonToolbar>
-        </IonHeader>
+        <HeaderComponent />
         <IonContent>
           <IonSplitPane className="menu-container" contentId="main">
             {/*-- Delete Project confirmation setShowTrashProjectModal --*/}
@@ -456,6 +422,12 @@ const Profile = (props: RouteComponentProps) => {
                     <Tab title="Strawberry">Strawberry is red</Tab>
                     <Tab title="Pear">Pear is green</Tab>
                   </Tabs>
+
+
+
+
+
+                  
                   <IonItem>
                     <img slot="start" src={menuItemImg} alt="menu item" />
                     <IonLabel>Profile</IonLabel>
@@ -942,6 +914,15 @@ const Profile = (props: RouteComponentProps) => {
                 ) : (
                   <IonList>
                     <IonListHeader>Projects:</IonListHeader>
+                    {
+                      getUserType() === "participant" &&
+                      <IonButton
+                      onClick={e=> {
+                        setShowRequestModal(true)
+                      }}
+                    >
+                      Register for Project</IonButton>}
+
                     {clientProjectAssets.map((p) => {
                       return (
                         <IonItem
