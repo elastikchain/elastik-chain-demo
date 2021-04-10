@@ -1,4 +1,4 @@
-import { IonButton, IonButtons, IonCard, IonCardContent, IonContent,IonDatetime, IonFab, IonFabButton, IonHeader, IonIcon, IonInput, IonItem, IonLabel, IonList, IonListHeader, IonModal, IonNote, IonPage, IonSearchbar, IonSegment, IonSegmentButton, IonSpinner, IonTextarea, IonToolbar } from "@ionic/react";
+import { IonButton, IonButtons, IonCard, IonCardContent, IonContent,IonDatetime, IonFab, IonFabButton,IonThumbnail, IonHeader, IonIcon, IonInput, IonItem, IonLabel, IonList, IonListHeader, IonModal, IonNote, IonPage, IonSearchbar, IonSegment, IonSegmentButton, IonSpinner, IonTextarea, IonToolbar, IonImg } from "@ionic/react";
 import React, { useState } from "react";
 import { RouteComponentProps } from "react-router-dom";
 import { signOut, useUserDispatch, useUserState } from "../../context/UserContext";
@@ -44,7 +44,23 @@ const EditProject = (props : RouteComponentProps) => {
         setChallengeDetail(defaultChallengeDetail);
         setChallengeIdTouched(false);
     }; 
+    const handleProjectUpdate = async (evt: any) => {
+            let  newCriteria:any = {};
+            evt.preventDefault();
+            for(let i =0; i< evt.target.elements.criteriaName.length;i++){
+                if(i!= 0){
+                    newCriteria = {name:evt.target.elements.criteriaName[i].value,point:evt.target.elements.criteriaPoint[i].value};
+                }
+            }
+           ledger.exercise(ClientProject.AddUpdateClientProject,evt.target.elements.contractId.value,{newName:evt.target.elements.name.value,newpictureUrl:evt.target.elements.pictureUrl.value, newDesc:evt.target.elements.desc.value,newCriteria:newCriteria,newlocation:evt.target.elements.location.value,newstartDate:evt.target.elements.startDate.value,newendDate:evt.target.elements.endDate.value})
+            .then((data:any)=>{
+                    props.history.push("/main/profile");
+            })
+            .catch((err:any)=>{
 
+            });
+            
+    };   
     const handleChallengeSubmit = async (evt: any) => {
         evt.preventDefault();
         ledger.exercise(ClientProject.AddChallenge, selectedProj[0]!.contractId, challengeDetail)
@@ -144,25 +160,22 @@ const EditProject = (props : RouteComponentProps) => {
                         Back
                     </IonButton>    
             <div className="edi-project">
+                <form onSubmit={handleProjectUpdate}>
                  <IonItem>
                       <IonLabel position="floating">Project Name</IonLabel>
                         <IonInput
                             required={true}
                             value={getSelectedProject().payload.name}
+                            name="name"
                         ></IonInput>
                  </IonItem>
-                 <IonItem>
-                      <IonLabel position="floating">Project ID</IonLabel>
-                        <IonInput
-                            required={true}
-                            value={getSelectedProject().payload.projectId}
-                        ></IonInput>
-                 </IonItem>
+                
                  <IonItem>
                       <IonLabel position="floating">Description</IonLabel>
                         <IonInput
                             required={true}
                             value={getSelectedProject().payload.desc}
+                            name="desc"
                         ></IonInput>
                  </IonItem>
                  <IonItem>
@@ -171,6 +184,7 @@ const EditProject = (props : RouteComponentProps) => {
                             displayFormat="MM DD YYYY, HH:mm"
                             display-timezone="utc"
                             value={getSelectedProject().payload.startDate}
+                            name="startDate"
                         ></IonDatetime>
                  </IonItem>
                  <IonItem>
@@ -179,6 +193,7 @@ const EditProject = (props : RouteComponentProps) => {
                             displayFormat="MM DD YYYY, HH:mm"
                             display-timezone="utc"
                             value={getSelectedProject().payload.endDate}
+                            name="endDate"
                         ></IonDatetime>
                  </IonItem>
                  <IonItem>
@@ -186,50 +201,66 @@ const EditProject = (props : RouteComponentProps) => {
                         <IonInput
                             required={true}
                             value={getSelectedProject().payload.location}
+                            name="location"
                         ></IonInput>
                  </IonItem>
                  <IonItem>
                       <IonLabel position="floating">Criteria</IonLabel>
+                      <IonInput
+                                value=""
+                                name="criteriaName"
+                                className="hidden"
+                            ></IonInput>
+                            <IonInput
+                                value=""
+                                name="criteriaPoint"
+                                className="hidden"
+                            ></IonInput>
                       {getSelectedProject().payload.criteria.map((row:any, i:any) =>
                         <IonList>
                           <IonItem>
                             <IonLabel position="floating">Name</IonLabel>
                             <IonInput
-                                display-timezone="utc"
                                 value={row.name}
+                                name="criteriaName"
                             ></IonInput>
                           </IonItem>
                           
                           <IonItem>
                           <IonLabel position="floating">Point</IonLabel>
                           <IonInput
-                              display-timezone="utc"
                               value={row.point}
+                              name="criteriaPoint"
                           ></IonInput>
                         </IonItem>
                         </IonList>
                       ) }
                  </IonItem>
-                 <IonItem>
-                      <IonLabel position="floating">Public</IonLabel>
-                        <IonInput
-                            required={true}
-                            value={getSelectedProject().payload.public}
-                        ></IonInput>
-                 </IonItem>
+                
                  <IonItem>
                       <IonLabel position="floating">Picture URL</IonLabel>
                         <IonInput
                             required={true}
                             value={getSelectedProject().payload.pictureUrl}
+                            name="pictureUrl"
                         ></IonInput>
+                    <IonInput
+                            required={true}
+                            value={getSelectedProject().contractId}
+                            name="contractId"
+                        ></IonInput>    
+                        
                  </IonItem>
+                 <IonItem>{ getSelectedProject().payload.pictureUrl != "" &&
+                           <IonThumbnail slot="start"> <IonImg src={getSelectedProject().payload.pictureUrl}></IonImg></IonThumbnail>
+                        }</IonItem>
                  <IonButton
                       className="submit-button"
-                      type="button"
+                      type="submit"
                     >
                       Update Project
                     </IonButton>
+                    </form>
                  </div>
                  </div>
             </IonContent>

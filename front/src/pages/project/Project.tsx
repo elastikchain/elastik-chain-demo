@@ -323,7 +323,7 @@ const Project = (props: RouteComponentProps) => {
         {
           newname: event.target.elements.challengeName.value,
           newprize: event.target.elements.challengePrize.value,
-					newdescription: "",
+					newdescription: event.target.elements.challengeDesc.value,
         }
       )
       .then((data: any) => {
