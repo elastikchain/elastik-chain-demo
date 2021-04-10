@@ -59,7 +59,7 @@ import {
   IonSpinner,
   IonIcon,
 } from "@ionic/react";
-import { open, close } from "ionicons/icons";
+import { open, close, pencil, trash } from "ionicons/icons";
 
 import Tabs from "../../components/Tabs";
 import Tab from "../../components/Tabs/Tab";
@@ -100,7 +100,11 @@ const Profile = (props: RouteComponentProps) => {
   const [projectDetail, setProjectDetail] = useState(defaultProjectDetail);
   const [projectIdTouched, setProjectIdTouched] = useState(false);
   const [showCreateProjectModal, setShowCreateProjectModal] = useState(false);
-
+  const [showTrashProjectModal, setShowTrashProjectModal] = useState({
+    status: false,
+    projectID: "",
+    contractID: "",
+  });
   const [registerProjectId, setRegisterProjectId] = useState("");
   const [registerProjectClient, setRegisterProjectClient] = useState("");
   const [showRequestModal, setShowRequestModal] = useState(false);
@@ -114,7 +118,7 @@ const Profile = (props: RouteComponentProps) => {
   };
 
   const ledger = useLedger();
-  
+
   const clientInvitationAssets = useStreamQueries(ClientInvitation).contracts;
   console.log("clientInvitationAssets", clientInvitationAssets);
 
@@ -152,8 +156,11 @@ const Profile = (props: RouteComponentProps) => {
     ) {
       return "client";
     }
-    if(participantRoleAssets.filter((p: any)=> p.payload.participant === (user as any).party ).length > 0
-    ){
+    if (
+      participantRoleAssets.filter(
+        (p: any) => p.payload.participant === (user as any).party
+      ).length > 0
+    ) {
       return "participant";
     }
     return "";
@@ -298,13 +305,29 @@ const Profile = (props: RouteComponentProps) => {
     .contracts;
   console.log("requestToJoinProjectAssets", requestToJoinProjectAssets);
 
+  const deleteProjectFromStorage = (contactID: any) => {
+    ledger
+      .exercise(ClientProject.RemoveClientProject, contactID, { comment: "" })
+      .then((data: any) => {
+        setShowTrashProjectModal({
+          status: false,
+          projectID: "",
+          contractID: "",
+        });
+      })
+      .catch((err: any) => console.log(err));
+    console.log(contactID);
+  };
+
   const handleAddParticipant = async (
     contractId: any,
     state: AddParticipant
   ) => {
     console.log("state", state);
     ledger
-      .exercise(ClientProject.AddParticipant, contractId, { participant: state.participant })
+      .exercise(ClientProject.AddParticipant, contractId, {
+        participant: state.participant,
+      })
       .then((data) => console.log(data))
       .catch((err) => console.log(err));
   };
@@ -363,6 +386,59 @@ const Profile = (props: RouteComponentProps) => {
         </IonHeader>
         <IonContent>
           <IonSplitPane className="menu-container" contentId="main">
+            {/*-- Delete Project confirmation setShowTrashProjectModal --*/}
+            <IonModal
+              isOpen={showTrashProjectModal.status}
+              onDidDismiss={() =>
+                setShowTrashProjectModal({
+                  status: false,
+                  projectID: "",
+                  contractID: "",
+                })
+              }
+              cssClass="my-custom-class-trash trash-popup"
+            >
+              <div className="content trash-project-modal-content">
+                <h1>Are you sure !</h1>
+                <IonButton
+                  className="confirm-submit-button"
+                  type="button"
+                  onClick={() => {
+                    deleteProjectFromStorage(showTrashProjectModal.contractID);
+                  }}
+                >
+                  Yes
+                </IonButton>
+                <IonButton
+                  className="decline-submit-button"
+                  type="button"
+                  onClick={() => {
+                    setShowTrashProjectModal({
+                      status: false,
+                      projectID: "",
+                      contractID: "",
+                    });
+                  }}
+                >
+                  No
+                </IonButton>
+              </div>
+              <IonButton
+                className="modal-default-close-btn"
+                fill="clear"
+                color="danger"
+                onClick={() => {
+                  setShowTrashProjectModal({
+                    status: false,
+                    projectID: "",
+                    contractID: "",
+                  });
+                }}
+              >
+                <IonIcon icon={close}></IonIcon>
+              </IonButton>
+            </IonModal>
+
             {/*--  the side menu  --*/}
             <IonMenu contentId="main">
               <IonHeader>
@@ -773,7 +849,7 @@ const Profile = (props: RouteComponentProps) => {
                   </div>
                 </div>
                 <div>
-                  {console.log('getUserType() new', getUserType() )}
+                  {console.log("getUserType() new", getUserType())}
                   {getUserType() === "participant" && (
                     <IonButton
                       onClick={() => setShowRequestModal(true)}
@@ -811,6 +887,33 @@ const Profile = (props: RouteComponentProps) => {
                                 projectId={p.payload.projectId}
                               ></SubmissionToAcceptComponent>
                             </IonLabel>
+                            <IonIcon
+                              icon={pencil}
+                              onClick={(e) => {
+                                e.stopPropagation();
+                                console.log("the selected::", p);
+
+                                setSelectedProject(p);
+                                props.history.push(
+                                  "/main/projects/" +
+                                    p.payload.projectId +
+                                    "/edit"
+                                );
+                              }}
+                            ></IonIcon>
+                            <IonIcon
+                              icon={trash}
+                              onClick={(e) =>{
+                                e.stopPropagation();
+                                setShowTrashProjectModal({
+                                  status: true,
+                                  projectID: p.payload.projectId,
+                                  contractID: p.contractId,
+                                })
+                              }
+                              }
+                              className="trash-project-button"
+                            ></IonIcon>
                           </IonItem>
                         ))}
                     </IonList>
@@ -839,18 +942,26 @@ const Profile = (props: RouteComponentProps) => {
                           </IonLabel>
                           {getUserType() === "" &&
                             participantAssets
-                            .filter(c=>p.payload.participants.indexOf(c.payload.participant) < 0)
-                            .map((key) => (
-                              <IonButton
-                                onClick={(e) => {
-                                  e.stopPropagation();
-                                  handleAddParticipant(p.contractId, key.payload);
-                                }}
-                                className="create-project-button"
-                              >
-                                Add {key.payload.participant} To Project
-                              </IonButton>
-                            ))}
+                              .filter(
+                                (c) =>
+                                  p.payload.participants.indexOf(
+                                    c.payload.participant
+                                  ) < 0
+                              )
+                              .map((key) => (
+                                <IonButton
+                                  onClick={(e) => {
+                                    e.stopPropagation();
+                                    handleAddParticipant(
+                                      p.contractId,
+                                      key.payload
+                                    );
+                                  }}
+                                  className="create-project-button"
+                                >
+                                  Add {key.payload.participant} To Project
+                                </IonButton>
+                              ))}
                         </IonItem>
                       );
                     })}

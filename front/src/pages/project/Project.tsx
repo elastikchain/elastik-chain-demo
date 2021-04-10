@@ -4,10 +4,10 @@ import { RouteComponentProps } from "react-router-dom";
 import { signOut, useUserDispatch, useUserState } from "../../context/UserContext";
 import { getSelectedProject, setSelectedSubmission } from '../../context/SharedContext'
 import logo from '../../assets/img/logo-combination.svg';
-import { add, close, arrowBack, time, location, open } from 'ionicons/icons';
+import { add, close, arrowBack, time, location, open,trash,pencil } from 'ionicons/icons';
 import './Project.scss';
 import { useLedger, useQuery, useStreamQueries } from "@daml/react";
-import { AddChallenge, Challenge, ClientProject, ClientRole, ParticipantSubmission, ProposeSubmission } from "@daml.js/cosmart-0.0.1/lib/Main";
+import { AddChallenge, Challenge,RemoveChallenge, ClientProject, ClientRole, ParticipantSubmission, ProposeSubmission,ModifieChallenge } from "@daml.js/cosmart-0.0.1/lib/Main";
 
 const Project = (props : RouteComponentProps) => {
     const user = useUserState();
@@ -31,7 +31,7 @@ const Project = (props : RouteComponentProps) => {
 
     const [searchText, setSearchText] = useState('');
     const [showChallengeModal, setShowChallengeModal] = useState(false);
-    
+    const [showDltChallenderConfirmation,deleteChallenderConfirmation] =  useState({status:false,challengeID:"",contractID:""});
     const [challengeIdTouched, setChallengeIdTouched] = useState(false);
     const defaultChallengeDetail: AddChallenge = { 
         challengeId: '',
@@ -42,6 +42,7 @@ const Project = (props : RouteComponentProps) => {
         judge: 'Yuling'
     };
     const [challengeDetail, setChallengeDetail] = useState(defaultChallengeDetail);
+    const [showedtChallengeToggle,editChallengeToggle] = useState(false);
     const resetCreateChallenge = () => {
         setChallengeDetail(defaultChallengeDetail);
         setChallengeIdTouched(false);
@@ -57,7 +58,7 @@ const Project = (props : RouteComponentProps) => {
             setTimeout(() => {
                 resetCreateChallenge();
                 setTimeout(() => {
-                    console.log('selectedProj>>', selectedProj);
+                    console.log('selectedProj this >>', selectedProj);
                 }, 1000);
             }, 250);
         })
@@ -82,8 +83,11 @@ const Project = (props : RouteComponentProps) => {
         if ((stream.contracts || []).length > 0){
             return (
                 <IonCard>
-                    <div className="d-flex">
-                        <IonCardContent>
+                    <div className="d-flex" id="view-project">
+                    {showedtChallengeToggle != props.challengeId ?
+                        <IonCardContent className="list-item-data">
+                            {console.log("Contacr",stream.contracts[0].payload)}
+                        
                             <h1 className="proj-chall-name">{stream.contracts[0].payload.nameOf} <IonNote>Id: {props.challengeId}</IonNote></h1>
                             <h2 className="proj-chall-example">Dolor sit amet</h2>
                             <p className="proj-chall-description">Lorem ipsum dolor sit amet consectetur adipisicing elit. Dolore, quos perspiciatis officiis aliquid, corrupti nobis rem iure explicabo dignissimos magni ducimus quo assumenda provident ad possimus voluptatem saepe reprehenderit nam.</p>
@@ -98,7 +102,75 @@ const Project = (props : RouteComponentProps) => {
                                         className="create-project-button"> Create New Submission </IonButton>
                                 ) : null
                             }
+                                <IonIcon icon={pencil} onClick={()=>{
+                                      editChallengeToggle(props.challengeId)  
+                                }}></IonIcon>
+                              
+                              <IonIcon icon={trash}
+                              onClick={()=>{
+                                deleteChallenderConfirmation({status:true,challengeID:props.challengeId,contractID: stream.contracts[0].contractId})
+                              }}></IonIcon>
                         </IonCardContent>
+                      :
+                        <IonCardContent className="editClient-challenge">
+                                        <IonButton fill="clear" onClick={()=>{
+                                             editChallengeToggle(false)  
+                                             }} >
+                                            <IonIcon slot="start" icon={arrowBack}></IonIcon>
+                                             Back
+                                        </IonButton>
+                       <div className="edi-challenge">
+                       <form onSubmit={handleChallengeSubmission}>
+                            <IonItem>
+                                <IonLabel position="floating">Challenge Name</IonLabel>
+                                    <IonInput
+                                        required={true}
+                                        value={stream.contracts[0].payload.nameOf}
+                                        name="challengeName"
+                                    ></IonInput>
+                            </IonItem>
+                            <IonItem>
+                                <IonLabel position="floating">Challenge ID</IonLabel>
+                                    <IonInput
+                                        required={true}
+                                        value={props.challengeId}
+                                        name="challengeId"
+                                    ></IonInput>
+                            </IonItem>
+                            <IonItem>
+                                <IonLabel position="floating">Challenge Description</IonLabel>
+                                    <IonTextarea
+                                        required={true}
+                                        value={""}
+                                        name="challengeDesc"
+                                    ></IonTextarea>
+                            </IonItem>
+                          
+                            <IonItem>
+                                <IonLabel position="floating">Challenge Price</IonLabel>
+                                <IonLabel position="floating">contractId</IonLabel>
+                                    <IonInput
+                                        required={true}
+                                        value={stream.contracts[0].contractId}
+                                        name="contractId"
+                                    ></IonInput>         
+                                    <IonInput
+                                        required={true}
+                                        value={stream.contracts[0].payload.prize}
+                                        name="challengePrize"
+                                    ></IonInput>
+                            </IonItem>
+                           
+                            <IonButton
+                                className="submit-button"
+                                type="submit"
+                                >
+                                Update Challenge
+                                </IonButton>
+                               </form> 
+                 </div>
+                        </IonCardContent>
+                        }
                     </div>
                 </IonCard>
             )
@@ -109,6 +181,24 @@ const Project = (props : RouteComponentProps) => {
 
     const getChallengesIds = () => {
         return (selectedProj && selectedProj.length > 0 ? selectedProj[0] : {payload: {}}).payload.challenges || [];
+    }
+    const deleteChallegeFromStorage = (challengeID:any,contractID:any)=>{
+        console.log(contractID);
+        ledger.exercise(ClientProject.RemoveChallenge,contractID,{challengeId:challengeID})
+        .then((data:any)=>{ console.log("Record Delete successfully");   deleteChallenderConfirmation({ status: false,challengeID:"", contractID: ""});})
+        .catch((err:any)=> console.log(err));
+      
+    }
+    const handleChallengeSubmission= async(event:any)=>{
+        event.preventDefault();
+        ledger.exercise(Challenge.ModifieChallenge,event.target.elements.contractId.value,{name1:event.target.elements.challengeName.value,prize1:event.target.elements.challengePrize.value})
+        .then((data:any)=>{
+            editChallengeToggle(false);
+        })
+        .catch((err:any)=>{
+            editChallengeToggle(false);
+        });
+        console.log(event.target.elements.challengeName.value);
     }
 
     const SubmissionFormComponent = (props: any) => {
@@ -306,6 +396,50 @@ const Project = (props : RouteComponentProps) => {
                         </div>
                     }
                 </div>
+                {/*-- Delete Project confirmation showDltChallenderConfirmation --*/}
+              <IonModal
+                isOpen={showDltChallenderConfirmation.status}
+                onDidDismiss={() =>
+                  deleteChallenderConfirmation({ status: false,challengeID:"",contractID: ""})
+                }
+                cssClass="my-custom-class-trash trash-popup"
+              >
+                <div className="content trash-project-modal-content">
+                  <h1>Are you sure !</h1>
+                  <IonButton
+                    className="confirm-submit-button"
+                    type="button"
+                    onClick={()=>{
+                        deleteChallegeFromStorage(showDltChallenderConfirmation.challengeID,showDltChallenderConfirmation.contractID)
+                    }}
+                  >
+                    Yes
+                  </IonButton>
+                  <IonButton
+                    className="decline-submit-button"
+                    type="button"
+                    onClick={() => {
+                        deleteChallenderConfirmation({
+                        status: false,
+                        challengeID:"",
+                        contractID: ""
+                      });
+                    }}
+                  >
+                    No
+                  </IonButton>
+                </div>
+                <IonButton
+                  className="modal-default-close-btn"
+                  fill="clear"
+                  color="danger"
+                  onClick={() => {
+                    deleteChallenderConfirmation({ status: false,challengeID:"", contractID: ""});
+                  }}
+                >
+                  <IonIcon icon={close}></IonIcon>
+                </IonButton>
+              </IonModal>
                 <IonModal isOpen={showChallengeModal} onDidDismiss={() => setShowChallengeModal(false) } cssClass='my-custom-class'>
                     <div className="content challenge-modal-content">
                         <h1>Create Challenge</h1>
@@ -359,4 +493,3 @@ const Project = (props : RouteComponentProps) => {
     )
 }
 export default Project;
-
