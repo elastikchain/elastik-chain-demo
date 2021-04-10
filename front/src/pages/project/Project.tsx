@@ -183,10 +183,7 @@ const Project = (props: RouteComponentProps) => {
                 </h1>
                 <h2 className="proj-chall-example">Dolor sit amet</h2>
                 <p className="proj-chall-description">
-                  Lorem ipsum dolor sit amet consectetur adipisicing elit.
-                  Dolore, quos perspiciatis officiis aliquid, corrupti nobis rem
-                  iure explicabo dignissimos magni ducimus quo assumenda
-                  provident ad possimus voluptatem saepe reprehenderit nam.
+                {stream.contracts[0].payload.description}
                 </p>
                 <p>Fund: ${stream.contracts[0].payload.prize}</p>
                 {getUserType() === "participant" ? (
@@ -257,18 +254,19 @@ const Project = (props: RouteComponentProps) => {
                       </IonLabel>
                       <IonTextarea
                         required={true}
-                        value={""}
+                        value={stream.contracts[0].payload.description}
                         name="challengeDesc"
                       ></IonTextarea>
                     </IonItem>
 
                     <IonItem>
                       <IonLabel position="floating">Challenge Price</IonLabel>
-                      <IonLabel position="floating">contractId</IonLabel>
+                     
                       <IonInput
                         required={true}
                         value={stream.contracts[0].contractId}
                         name="contractId"
+                        className="hidden"
                       ></IonInput>
                       <IonInput
                         required={true}
