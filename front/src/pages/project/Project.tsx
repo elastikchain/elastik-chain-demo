@@ -576,7 +576,7 @@ const Project = (props: RouteComponentProps) => {
                     disabled={getChallengesIds().length < 1}
                   >
                     <IonLabel>
-                      Challenges ({getChallengesIds().length})
+                       Challenges ({getChallengesIds().length})
                     </IonLabel>
                   </IonSegmentButton>
                 </IonSegment>
