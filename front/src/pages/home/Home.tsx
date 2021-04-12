@@ -118,26 +118,37 @@ const Home = (props : RouteComponentProps) => {
 
   return  (
       <IonPage>
-        <IonHeader>
-          <IonToolbar className="toolbar">
-            <div className="d-flex">
-              <img className="app-logo" src={logo} alt="logo"/>
-              <IonSearchbar 
-              placeholder="Explore amazing ideas"
-              value={searchText} onIonChange={e => setSearchText(e.detail.value!)}></IonSearchbar>  
-            </div>
-            <IonButtons slot="end" className="toolbar-buttons-container">
-              <div className="toolbar-buttons">
-                <IonButton>
-                  Explore
-                </IonButton>
-                <IonButton onClick={() => setShowLoginModal(true) }>
+
+<IonHeader>
+    <IonToolbar className="toolbar">
+      <div className="container-header">
+        <div className="header">
+        <div className="logo-img">
+        <img className="app-logo" src={logo} alt="logo" />
+        </div>
+        <div className="search-form">
+        <IonSearchbar
+          placeholder="Explore amazing ideas"
+          value={searchText}
+          onIonChange={(e) => setSearchText(e.detail.value!)}
+        ></IonSearchbar>
+      </div>
+      <div className="header-menu">
+      <IonButtons slot="end" className="toolbar-buttons-container">
+        <div className="toolbar-buttons">
+          <IonButton>Explore</IonButton>
+          <IonButton className="activeButton" onClick={() => setShowLoginModal(true) }>
                   Log in
                 </IonButton>
-              </div>
-            </IonButtons>
-          </IonToolbar>
-        </IonHeader>
+        </div>
+      </IonButtons>
+      </div>
+      </div>
+      </div>
+    </IonToolbar>
+  </IonHeader>
+
+       
         <IonContent fullscreen>
           <IonModal isOpen={showLoginModal} onDidDismiss={() => setShowLoginModal(false) } cssClass='my-custom-class'>
               <div className="content login-modal-content">

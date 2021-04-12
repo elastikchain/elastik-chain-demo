@@ -26,7 +26,7 @@ import {
   useUserDispatch,
   useUserState,
 } from "../../context/UserContext";
-import HeaderComponent from "../../components/header";
+import SubHeader from '../../components/Header/subheader';
 import { getSelectedProject } from "../../context/SharedContext";
 
 import { arrowBack } from "ionicons/icons";
@@ -196,7 +196,7 @@ const EditProject = (props: RouteComponentProps) => {
 
   return (
     <IonPage>
-      <HeaderComponent />
+      <SubHeader />
       <IonContent>
         <div className="proj-wrapper">
           <IonButton fill="clear" onClick={(e) => props.history.goBack()}>

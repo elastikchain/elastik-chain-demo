@@ -32,6 +32,7 @@ import {
   IonSegmentButton,
   IonTextarea,
   IonToolbar,
+  IonList,
 } from "@ionic/react";
 
 import logo from "../../assets/img/logo-combination.png";
@@ -57,7 +58,8 @@ import {
   ModifieChallenge,
 	Challenge,
 } from "@daml.js/cosmart-0.0.1/lib/Main";
-
+import submissionPlaceHolder from '../../assets/img/img-proj-placeholder.png'
+import SubHeader from "../../components/Header/subheader";
 const Project = (props: RouteComponentProps) => {
   const user = useUserState();
   var userDispatch = useUserDispatch();
@@ -91,6 +93,7 @@ const Project = (props: RouteComponentProps) => {
 
   const [searchText, setSearchText] = useState("");
   const [showChallengeModal, setShowChallengeModal] = useState(false);
+ 
   const [
     showDltChallenderConfirmation,
     deleteChallenderConfirmation,
@@ -154,6 +157,7 @@ const Project = (props: RouteComponentProps) => {
     challengeId: "",
   } as { show: boolean; challengeId?: string });
   const ChallengeCompoenent = (props: any) => {
+    console.log("Challenge For customer",props.challengeId);
     const stream = useQuery(
       Challenge,
       () => ({ challengeId: props.challengeId }),
@@ -165,7 +169,7 @@ const Project = (props: RouteComponentProps) => {
       "challengeId: props.challengeId=",
       props.challengeId
     );
-
+      
     if ((stream.contracts || []).length > 0) {
       return (
         <IonCard>
@@ -183,6 +187,7 @@ const Project = (props: RouteComponentProps) => {
                 {stream.contracts[0].payload.description}
                 </p>
                 <p>Fund: ${stream.contracts[0].payload.prize}</p>
+                
                 {getUserType() === "participant" ? (
                   <IonButton
                     onClick={() => {
@@ -331,7 +336,7 @@ const Project = (props: RouteComponentProps) => {
       });
     console.log(event.target.elements.challengeName.value);
   };
-
+ 
   const SubmissionFormComponent = (props: any) => {
     const defaultSubmissionDetail: ProposeSubmission = {
       challengeId: "",
@@ -386,6 +391,19 @@ const Project = (props: RouteComponentProps) => {
                   setSubmissionDetail({
                     ...submissionDetail,
                     subName: e.detail.value!,
+                  })
+                }
+              ></IonInput>
+            </IonItem>
+            <IonItem>
+              <IonLabel position="floating">Participant*</IonLabel>
+              <IonInput
+                required={true}
+                value={submissionDetail.participant}
+                onIonChange={(e) =>
+                  setSubmissionDetail({
+                    ...submissionDetail,
+                    participant: e.detail.value!,
                   })
                 }
               ></IonInput>
@@ -480,30 +498,7 @@ const Project = (props: RouteComponentProps) => {
 
   return (
     <IonPage>
-      <IonHeader>
-        <IonToolbar className="toolbar">
-          <div className="d-flex">
-            <img className="app-logo" src={logo} alt="logo" />
-            <IonSearchbar
-              placeholder="Explore amazing ideas"
-              value={searchText}
-              onIonChange={(e) => setSearchText(e.detail.value!)}
-            ></IonSearchbar>
-          </div>
-          <IonButtons slot="end" className="toolbar-buttons-container">
-            <div className="toolbar-buttons">
-              <IonButton>Explore</IonButton>
-              <IonButton
-                onClick={(evt: any) => {
-                  signOut(userDispatch, props.history, false);
-                }}
-              >
-                Logout
-              </IonButton>
-            </div>
-          </IonButtons>
-        </IonToolbar>
-      </IonHeader>
+     <SubHeader/>
       <IonContent>
         <div className="proj-wrapper">
           <IonButton fill="clear" onClick={(e) => props.history.goBack()}>
@@ -577,14 +572,23 @@ const Project = (props: RouteComponentProps) => {
                     </IonLabel>
                   </IonSegmentButton>
                 </IonSegment>
+              
                 {getUserType() === "client" ? (
-                  <IonFab vertical="top" horizontal="end">
-                    <IonFabButton onClick={(e) => setShowChallengeModal(true)}>
+                  <div className="icon-menu">
+                  <IonFab vertical="top" horizontal="end" title="Add new Challenge"> 
+                    <IonFabButton title="Add new Challenge" onClick={(e) => setShowChallengeModal(true)}>
                       <IonIcon icon={add} />
                     </IonFabButton>
                   </IonFab>
+                  {/*<IonFab className="submittionadd-btn" title="Add new Submission" vertical="top" horizontal="end">
+                  <IonFabButton title="Add new Submission" onClick={(e) => setShowCreateSubmissionModal({show:true})}>
+                    <IonIcon icon={add}/> 
+                  </IonFabButton>
+                </IonFab>*/}
+                </div>
                 ) : null}
               </div>
+             
               {selectedSegement === "challenges"
                 ? getChallengesIds().map((c) => (
                     <ChallengeCompoenent challengeId={c}></ChallengeCompoenent>
@@ -598,24 +602,41 @@ const Project = (props: RouteComponentProps) => {
                         selectedSub.payload.projectId = getSelectedProject().payload.projectId;
                         setSelectedSubmission(selectedSub);
                         props.history.push(
-                          "/main/submission?id=" + sc.payload.submissionId
+                          "/main/submission/" + sc.payload.submissionId
                         );
                       }}
                     >
                       <div className="d-flex">
+                      <div className="submission-img">
+                            <img src={submissionPlaceHolder} alt="submission image"/>
+                        </div>
                         <IonCardContent>
                           <h1 className="proj-chall-name">
-                            {sc.payload.submissionId}
+                            {sc.payload.name}
                           </h1>
-                          <h2 className="proj-chall-example">Dolor sit amet</h2>
+                          <h2 className="proj-chall-example"> {sc.payload.submissionId}</h2>
                           <p className="proj-chall-description">
-                            {sc.payload.submission}, Lorem ipsum dolor sit amet
-                            consectetur adipisicing elit. Dolore, quos
-                            perspiciatis officiis aliquid, corrupti nobis rem
-                            iure explicabo dignissimos magni ducimus quo
-                            assumenda provident ad possimus voluptatem saepe
-                            reprehenderit nam.
+                            {sc.payload.desc}
                           </p>
+                        
+                        <IonList>
+                          <IonItem>
+                              <IonLabel>Challenge ID</IonLabel>
+                              {sc.payload.challengeId}
+                          </IonItem>
+                          <IonItem>
+                              <IonLabel>Submission</IonLabel>
+                              {sc.payload.submission}
+                          </IonItem>
+                          <IonItem>
+                              <IonLabel>Presentation</IonLabel>
+                              {sc.payload.presentation}
+                          </IonItem>
+                          <IonItem>
+                              <IonLabel>Video Link</IonLabel>
+                              {sc.payload.videoLink}
+                          </IonItem>
+                        </IonList>
                         </IonCardContent>
                       </div>
                     </IonCard>
@@ -678,6 +699,7 @@ const Project = (props: RouteComponentProps) => {
             <IonIcon icon={close}></IonIcon>
           </IonButton>
         </IonModal>
+         {/*-- Challenge Model */}
         <IonModal
           isOpen={showChallengeModal}
           onDidDismiss={() => setShowChallengeModal(false)}

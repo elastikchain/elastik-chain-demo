@@ -100,9 +100,11 @@ function loginUser(
     setError(false);
     setIsLoading(false);
     if (uiTemplate){
-      history.push("/app");
+      //history.push("/app");
+      window.history.pushState(1,"/app","/app");
     }else{
-      history.push("/main");
+      //history.push("/main");
+      window.history.pushState(1,"/main","/main");
     }
   } else {
     dispatch({ type: "LOGIN_FAILURE" });

@@ -27,7 +27,7 @@ import {
 
 
 import { setSelectedProject } from "../../context/SharedContext";
-import HeaderComponent from '../../components/header';
+import SubHeader from '../../components/Header/subheader';
 
 import CriteriaTagsInput from "../../components/CriteriaTagsInput/CriteriaTagsInput";
 
@@ -352,7 +352,7 @@ const Profile = (props: RouteComponentProps) => {
             Create New Project{" "}
           </IonButton>
         ) : null}
-        <HeaderComponent />
+        <SubHeader />
         <IonContent>
           <IonSplitPane className="menu-container" contentId="main">
             {/*-- Delete Project confirmation setShowTrashProjectModal --*/}

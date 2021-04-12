@@ -292,12 +292,14 @@ template ClientProject
     controller client can 
        AddUpdateClientProject: ContractId ClientProject 
         with 
+          newName: Text
           newDesc: Text 
           newCriteria: CriteriaPoint 
           newlocation: Text
           newstartDate: Time
           newendDate: Time
-        do create this with client, name, desc=newDesc, challenges,criteria=newCriteria::criteria,location=newlocation,startDate=newstartDate,endDate=newendDate
+          newpictureUrl:Text
+        do create this with client, name=newName, desc=newDesc, challenges,criteria=newCriteria::criteria,location=newlocation,startDate=newstartDate,endDate=newendDate,pictureUrl=newpictureUrl
 
     controller client can 
        AddUpdateDescription: ContractId ClientProject 

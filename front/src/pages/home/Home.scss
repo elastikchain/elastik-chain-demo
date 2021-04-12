@@ -167,3 +167,12 @@ section{
         position: absolute;
     }
 }
+.container-header {padding: 0 35px;background: #0C3B6C;}
+.header .logo-img{flex: 0 0 auto;width: 20%;}
+.header .search-form{flex: 0 0 auto;width: 50%; margin-top: 10px;}
+.header .search-form .searchbar-has-value .searchbar-input.sc-ion-searchbar-md {color: #2b7fb1;}
+.header .search-form .searchbar-input.sc-ion-searchbar-md {box-shadow: none;border-bottom: 1px solid #fff;padding: 7px 5px; color:#fff; background: #0C3B6C;}
+.header .header-menu{flex: 0 0 auto;width: 30%;}
+.toolbar .container-header .header-menu  .toolbar-buttons-container{float:right;    margin-top: 18px;    color: #fff;
+    opacity: 1;}
+  .toolbar .toolbar-buttons-container { margin-inline-end: 0rem; }

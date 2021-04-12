@@ -1,4 +1,4 @@
-import { IonButton, IonButtons, IonContent, IonFab, IonFabButton, IonHeader, IonIcon, IonInput, IonItem, IonLabel, IonPage, IonSearchbar, IonToolbar } from "@ionic/react";
+import { IonButton, IonButtons,IonList, IonContent, IonFab, IonFabButton, IonHeader, IonIcon, IonInput, IonItem, IonLabel, IonPage, IonSearchbar, IonToolbar } from "@ionic/react";
 import React, { useState } from "react";
 import { Link, RouteComponentProps } from "react-router-dom";
 import logo from '../../assets/img/logo-combination.png';
@@ -9,7 +9,7 @@ import './Submission.scss'
 import { useLedger, useStreamQueries } from "@daml/react";
 import { ClientProject, ParticipantSubmission, ParticipantSubmissionProposal } from "@daml.js/cosmart-0.0.1/lib/Main";
 import { signOut, useUserDispatch, useUserState } from "../../context/UserContext";
-
+import SubHeader from '../../components/Header/subheader';
 const Submission = (props : RouteComponentProps) => {
     const [searchText, setSearchText] = useState('');
     const selectedSubmission = getSelectedSubmission();
@@ -75,35 +75,24 @@ const Submission = (props : RouteComponentProps) => {
     
     return (
         <IonPage>
-            <IonHeader>
-                <IonToolbar className="toolbar">
-                    <div className="d-flex">
-                    <img className="app-logo" src={logo} alt="logo"/>
-                    <IonSearchbar 
-                    placeholder="Explore amazing ideas"
-                    value={searchText} onIonChange={e => setSearchText(e.detail.value!)}></IonSearchbar>  
-                    </div>
-                    <IonButtons slot="end" className="toolbar-buttons-container">
-                    <div className="toolbar-buttons">
-                        <IonButton>
-                            Explore
-                        </IonButton>
-                        <IonButton onClick={ (evt: any) => {
-                                signOut(
-                                    userDispatch,
-                                    props.history,
-                                    false
-                                )
-                            }
-                            }>
-                                Logout
-                        </IonButton>
-                    </div>
-                    </IonButtons>
-                    </IonToolbar>
-            </IonHeader>
+            <SubHeader />
+          
             <IonContent className="submission-content">
-                <div className="submission-wrapper">
+          
+            <div className="submission-wrapper">
+            <div className="page-breadcrumb">
+                    <IonList className="breadcrumbs">
+                    <IonItem>
+                            <IonLabel>Projects {'>'}</IonLabel>
+                    </IonItem>
+                    <IonItem>
+                        <IonLabel>Fintech {'>'}</IonLabel>
+                    </IonItem>
+                    <IonItem className="active">
+                        <IonLabel>{selectedSubmission.payload.name}</IonLabel>
+                    </IonItem>
+                    </IonList>
+                </div>
                     <div className="nav-info-header">
                         <div className="nav-info">
                         <IonButton fill="clear" onClick={e => props.history.goBack() }>
@@ -128,10 +117,27 @@ const Submission = (props : RouteComponentProps) => {
                         <div className="short-info-container">
                             <h1>{selectedSubmission.payload.name}</h1>
                             <p>
-                            {selectedSubmission.payload.submission}
+                            {selectedSubmission.payload.desc}
                             </p>
-                            <h1>Technologies</h1>
-                            <p><strong>DAML</strong></p>
+                            <h1>Other Details:</h1>
+                            <IonList>
+                          <IonItem>
+                              <IonLabel>Challenge ID :- </IonLabel>
+                              {selectedSubmission.payload.challengeId}
+                          </IonItem>
+                          <IonItem>
+                              <IonLabel>Submission :- </IonLabel>
+                              {selectedSubmission.payload.submission}
+                          </IonItem>
+                          <IonItem>
+                              <IonLabel>Presentation :- </IonLabel>
+                              {selectedSubmission.payload.presentation}
+                          </IonItem>
+                          <IonItem>
+                              <IonLabel>Video Link :-  </IonLabel>
+                              {selectedSubmission.payload.videoLink}
+                          </IonItem>
+                        </IonList>
                         </div>
                     </div>
                     <div className="idea-teammate-steps">
