@@ -25,9 +25,8 @@ import {
   useUserState,
 } from "../../context/UserContext";
 
-
 import { setSelectedProject } from "../../context/SharedContext";
-import SubHeader from '../../components/Header/subheader';
+import SubHeader from "../../components/Header/subheader";
 
 import CriteriaTagsInput from "../../components/CriteriaTagsInput/CriteriaTagsInput";
 
@@ -170,7 +169,7 @@ const Profile = (props: RouteComponentProps) => {
     //   participantSubmissionProposalAssets
     // );
     const els = participantSubmissionProposalAssets.map((c) => (
-      <IonItem>
+      <IonItem className="proj-details">
         <IonLabel>
           <h2>Submission Name: {c.payload.subName}</h2>
           <p>Submission Description: {c.payload.subDesc}</p>
@@ -423,11 +422,6 @@ const Profile = (props: RouteComponentProps) => {
                     <Tab title="Pear">Pear is green</Tab>
                   </Tabs>
 
-
-
-
-
-                  
                   <IonItem>
                     <img slot="start" src={menuItemImg} alt="menu item" />
                     <IonLabel>Profile</IonLabel>
@@ -862,25 +856,30 @@ const Profile = (props: RouteComponentProps) => {
                       {clientProjectAssets
                         .filter((c) => (user as any).party === c.payload.client)
                         .map((p) => (
-                          <IonItem
-                            onClick={(e) => {
-                              e.preventDefault();
-                              console.log("the selected::", p);
+                          <div>
+                            <IonItem
+                              onClick={(e) => {
+                                e.preventDefault();
+                                console.log("the selected::", p);
 
-                              setSelectedProject(p);
-                              props.history.push(
-                                "/main/project?id=" + p.payload.projectId
-                              );
-                            }}
-                          >
-                            <IonIcon slot="start" icon={open}></IonIcon>
-                            <IonLabel className="project-info">
-                              name: {p.payload.name}, id: {p.payload.projectId}
-                              <SubmissionToAcceptComponent
-                                contractId={p.contractId}
-                                projectId={p.payload.projectId}
-                              ></SubmissionToAcceptComponent>
-                            </IonLabel>
+                                setSelectedProject(p);
+                                props.history.push(
+                                  "/main/project?id=" + p.payload.projectId
+                                );
+                              }}
+                            >
+                              <IonIcon slot="start" icon={open}></IonIcon>
+                            </IonItem>
+                            <div className="list-proj">
+                              <span>Name:</span> {p.payload.name},
+                              <span>Id:</span> {p.payload.projectId}
+                            </div>
+                            <SubmissionToAcceptComponent
+                              contractId={p.contractId}
+                              projectId={p.payload.projectId}
+                            ></SubmissionToAcceptComponent>
+
+                            <IonLabel className="project-info"></IonLabel>
                             <IonIcon
                               icon={pencil}
                               onClick={(e) => {
@@ -907,21 +906,22 @@ const Profile = (props: RouteComponentProps) => {
                               }}
                               className="trash-project-button"
                             ></IonIcon>
-                          </IonItem>
+                          </div>
                         ))}
                     </IonList>
                   ) : null
                 ) : (
                   <IonList>
                     <IonListHeader>Projects:</IonListHeader>
-                    {
-                      getUserType() === "participant" &&
+                    {getUserType() === "participant" && (
                       <IonButton
-                      onClick={e=> {
-                        setShowRequestModal(true)
-                      }}
-                    >
-                      Register for Project</IonButton>}
+                        onClick={(e) => {
+                          setShowRequestModal(true);
+                        }}
+                      >
+                        Register for Project
+                      </IonButton>
+                    )}
 
                     {clientProjectAssets.map((p) => {
                       return (
