@@ -27,7 +27,7 @@ const Header = ({ history } : RouteComponentProps) => {
           color="inherit"
           className={classes.headerMenuButton}
           aria-controls="profile-menu"
-          onClick={(event) => signOut(userDispatch, history)}
+          onClick={(event) => signOut(userDispatch, history,history)}
         >
           <ExitToApp className={classes.headerIcon} />
         </IconButton>

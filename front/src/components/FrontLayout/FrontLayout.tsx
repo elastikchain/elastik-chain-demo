@@ -45,15 +45,18 @@ const FrontLayout = (props: any) => {
       >
         {/* <WellKnownPartiesProvider>
                 <PublicProvider> */}
-        <Switch>
-        <Route path="/main/projects/:id/edit" component={EditProject} />
-          <Route path="/main/project" component={Project} />
-          <Route path="/main/profile" component={Profile} />
-          <Route path="/main/submission/:id" component={Submission} />
-          <Route path="/main/scores" component={Scores} />
-        </Switch>
-        {/*  </PublicProvider>
+        <div>
+          <p>hello mohit</p>
+          <Switch>
+            <Route path="/main/project" component={Project} />
+            <Route path="/main/projects/:id/edit" component={EditProject} />
+            <Route path="/main/profile" component={Profile} />
+            <Route path="/main/submission/:id" component={Submission} />
+            <Route path="/main/scores" component={Scores} />
+          </Switch>
+          {/*  </PublicProvider>
             </WellKnownPartiesProvider> */}
+        </div>
       </DamlLedger>
     );
   }

@@ -22,6 +22,7 @@ import { useLedger, useStreamQueries } from "@daml/react";
 import { arrowBack } from "ionicons/icons";
 import logo from "../../assets/img/logo-combination.png";
 import { Scorecard } from "@daml.js/cosmart-0.0.1/lib/Main";
+import Footer from "../../components/Footer/footer";
 
 const Scores = (props: RouteComponentProps) => {
   const user = useUserState();
@@ -98,6 +99,7 @@ const Scores = (props: RouteComponentProps) => {
           </IonList>
         </div>
       </IonContent>
+      <Footer />
     </IonPage>
   );
 };

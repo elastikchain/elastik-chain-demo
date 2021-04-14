@@ -48,7 +48,7 @@ const SubHeader = (props: any) => {
                   <IonButton>Explore</IonButton>
                   <IonButton className="activeButton"
                     onClick={(evt: any) => {
-                      signOut(userDispatch, props.history, false);
+                      signOut(userDispatch, props.history,props, false);
                     }}
                   >
                     Logout

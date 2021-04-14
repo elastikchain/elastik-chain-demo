@@ -5,35 +5,49 @@ import TableRow from "@material-ui/core/TableRow";
 import TableCell from "@material-ui/core/TableCell";
 import TableBody from "@material-ui/core/TableBody";
 import Button from "@material-ui/core/Button";
-// import Ledger from "@daml/ledger";
+
 import { useStreamQueries, useLedger, useParty } from "@daml/react";
-import { InviteClient, Platform, 
-  ClientInvitation, AcceptRequest, 
-  InviteJudge, JudgeInvitation, 
-  ParticipantInvitation, InviteParticipant,
-  CreateProject, ClientRole, AddChallenge, ClientProject,
-  RegisterForProject, ParticipantRole, RequestToJoinProject,
+import {
+  InviteClient,
+  Platform,
+  ClientInvitation,
+  AcceptRequest,
+  InviteJudge,
+  JudgeInvitation,
+  ParticipantInvitation,
+  InviteParticipant,
+  CreateProject,
+  ClientRole,
+  AddChallenge,
+  ClientProject,
+  RegisterForProject,
+  ParticipantRole,
+  RequestToJoinProject,
   ParticipantSubmission,
   ProposeTeammate,
-  ProposeSubmission
+  ProposeSubmission,
 } from "@daml.js/cosmart-0.0.1/lib/Main";
 import { InputDialog, InputDialogProps } from "./InputDialog";
 import useStyles from "./styles";
 import { publicParty, useUserState } from "../../context/UserContext";
+import Footer from "../../components/Footer/footer";
 
 export default function Report() {
   const classes = useStyles();
   const party = useParty();
   const ledger = useLedger();
   const assets = useStreamQueries(Platform).contracts;
-  const clientProjectAssets = useStreamQueries(ClientProject).contracts;  
-  console.log('clientProjectAssets', clientProjectAssets);
+  const clientProjectAssets = useStreamQueries(ClientProject).contracts;
+  console.log("clientProjectAssets", clientProjectAssets);
   const projectAssets = useStreamQueries(ClientRole).contracts;
   const judgeInvitationAssets = useStreamQueries(JudgeInvitation).contracts;
-  const requestToJoinProjectAssets = useStreamQueries(RequestToJoinProject).contracts;
+  const requestToJoinProjectAssets = useStreamQueries(RequestToJoinProject)
+    .contracts;
 
-  const participantSubmissionAssets = useStreamQueries(ParticipantSubmission).contracts;
-  const participantInvitationAssets = useStreamQueries(ParticipantInvitation).contracts;
+  const participantSubmissionAssets = useStreamQueries(ParticipantSubmission)
+    .contracts;
+  const participantInvitationAssets = useStreamQueries(ParticipantInvitation)
+    .contracts;
   const participantRoleAssets = useStreamQueries(ParticipantRole).contracts;
   const clientInvitationAssets = useStreamQueries(ClientInvitation).contracts;
   const user = useUserState();
@@ -61,7 +75,7 @@ export default function Report() {
   //   };
   //   setInviteCustomsMarProps({ ...defaultInviteCustomsMarProps, open: true, onClose})
   // };
-  
+
   // const defaultInviteCustomsGuaProps : InputDialogProps<InviteCustomsGua> = {
   //   open: false,
   //   title: "Invite Customs Gua",
@@ -83,174 +97,223 @@ export default function Report() {
   //   setInviteCustomsGuaProps({ ...defaultInviteCustomsGuaProps, open: true, onClose})
   // };
 
-  const defaultInviteClientProps : InputDialogProps<InviteClient> = {
+  const defaultInviteClientProps: InputDialogProps<InviteClient> = {
     open: false,
     title: "Invite client",
-    defaultValue: { client : "" },
+    defaultValue: { client: "" },
     fields: {
-      client : {
+      client: {
         label: "Client",
-        type: "text" }},
-    onClose: async function() {}
+        type: "text",
+      },
+    },
+    onClose: async function () {},
   };
 
-  const [ inviteClientProps, setInviteClientProps ] = useState(defaultInviteClientProps);
+  const [inviteClientProps, setInviteClientProps] = useState(
+    defaultInviteClientProps
+  );
   // One can pass the original contracts CreateEvent
-  function showInviteClient(asset : Platform.CreateEvent) {
-    async function onClose(state : InviteClient | null) {
-      setInviteClientProps({ ...defaultInviteClientProps, open: false});
+  function showInviteClient(asset: Platform.CreateEvent) {
+    async function onClose(state: InviteClient | null) {
+      setInviteClientProps({ ...defaultInviteClientProps, open: false });
       await ledger.exercise(Platform.InviteClient, asset.contractId, state);
-    };
-    setInviteClientProps({ ...defaultInviteClientProps, open: true, onClose})
-  };
+    }
+    setInviteClientProps({ ...defaultInviteClientProps, open: true, onClose });
+  }
 
-  const defaultInviteParticipantProps : InputDialogProps<InviteParticipant> = {
+  const defaultInviteParticipantProps: InputDialogProps<InviteParticipant> = {
     open: false,
     title: "Invite participant",
-    defaultValue: { participant : "" },
+    defaultValue: { participant: "" },
     fields: {
-      participant : {
+      participant: {
         label: "Participant",
-        type: "text" }},
-    onClose: async function() {}
+        type: "text",
+      },
+    },
+    onClose: async function () {},
   };
-  const [ inviteParticipantProps, setInviteParticipantProps ] = useState(defaultInviteParticipantProps);
+  const [inviteParticipantProps, setInviteParticipantProps] = useState(
+    defaultInviteParticipantProps
+  );
   // One can pass the original contracts CreateEvent
-  function showInviteParticipant(asset : Platform.CreateEvent) {
-    async function onClose(state : InviteParticipant | null) {
-      setInviteParticipantProps({ ...defaultInviteParticipantProps, open: false});
-      await ledger.exercise(Platform.InviteParticipant, asset.contractId, state);
+  function showInviteParticipant(asset: Platform.CreateEvent) {
+    async function onClose(state: InviteParticipant | null) {
+      setInviteParticipantProps({
+        ...defaultInviteParticipantProps,
+        open: false,
+      });
+      await ledger.exercise(
+        Platform.InviteParticipant,
+        asset.contractId,
+        state
+      );
       alert("Invitation sent to the participant successfully!");
-    };
-    setInviteParticipantProps({ ...defaultInviteParticipantProps, open: true, onClose})
-  };
+    }
+    setInviteParticipantProps({
+      ...defaultInviteParticipantProps,
+      open: true,
+      onClose,
+    });
+  }
 
-  const defaultInviteJudgeProps : InputDialogProps<InviteJudge> = {
+  const defaultInviteJudgeProps: InputDialogProps<InviteJudge> = {
     open: false,
     title: "Invite Judge",
-    defaultValue: { judge : "" },
+    defaultValue: { judge: "" },
     fields: {
-      judge : {
+      judge: {
         label: "Judge",
-        type: "text" }},
-    onClose: async function() {}
+        type: "text",
+      },
+    },
+    onClose: async function () {},
   };
-  const [ inviteJudgeProps, setInviteJudgeProps ] = useState(defaultInviteJudgeProps);
+  const [inviteJudgeProps, setInviteJudgeProps] = useState(
+    defaultInviteJudgeProps
+  );
   // One can pass the original contracts CreateEvent
-  function showInviteJudge(asset : Platform.CreateEvent) {
-    async function onClose(state : InviteJudge | null) {
-      setInviteJudgeProps({ ...defaultInviteJudgeProps, open: false});
+  function showInviteJudge(asset: Platform.CreateEvent) {
+    async function onClose(state: InviteJudge | null) {
+      setInviteJudgeProps({ ...defaultInviteJudgeProps, open: false });
       await ledger.exercise(Platform.InviteJudge, asset.contractId, state);
       alert("Invitation sent to the Judge successfully!");
-    };
-    setInviteJudgeProps({ ...defaultInviteJudgeProps, open: true, onClose })
-  };
+    }
+    setInviteJudgeProps({ ...defaultInviteJudgeProps, open: true, onClose });
+  }
 
-  const defaultCreateProjectProps : InputDialogProps<CreateProject> = {
+  const defaultCreateProjectProps: InputDialogProps<CreateProject> = {
     open: false,
     title: "Create Project",
-    defaultValue: { 
-      name : "", 
-      projectId: "", 
-      startDate: "", 
-      endDate: "", 
-      location: "", 
-      desc: "", 
-      criteria: [], 
+    defaultValue: {
+      name: "",
+      projectId: "",
+      startDate: "",
+      endDate: "",
+      location: "",
+      desc: "",
+      criteria: [],
       pictureUrl: "",
-      public: publicParty
+      public: publicParty,
     },
     fields: {
-      name : {
+      name: {
         label: "Project Name",
-        type: "text"
+        type: "text",
       },
-      startDate : {
+      startDate: {
         label: "Project Start Date",
-        type: "text"
+        type: "text",
       },
-      endDate : {
+      endDate: {
         label: "Project End Date",
-        type: "text"
+        type: "text",
       },
-      location : {
+      location: {
         label: "Project Location",
-        type: "text"
+        type: "text",
       },
       projectId: {
         label: "Project Id",
-        type: "text"
+        type: "text",
       },
       desc: {
         label: "Project Descritpion",
-        type: "text"
+        type: "text",
       },
       criteria: {
         label: "Project criteria",
-        type: "text"
+        type: "text",
       },
       public: {
         label: "Public party",
-        type: "text"
+        type: "text",
       },
       pictureUrl: {
         label: "Project Picture url",
-        type: "text"
-      }
+        type: "text",
+      },
     },
-    onClose: async function() {}
+    onClose: async function () {},
   };
-  const [ createProjectProps, setCreateProjectProps ] = useState(defaultCreateProjectProps);
+  const [createProjectProps, setCreateProjectProps] = useState(
+    defaultCreateProjectProps
+  );
   // One can pass the original contracts CreateEvent
-  function showCreateProject(asset : ClientRole.CreateEvent) {
-    async function onClose(state : CreateProject | null) {
-      setCreateProjectProps({ ...defaultCreateProjectProps, open: false});
+  function showCreateProject(asset: ClientRole.CreateEvent) {
+    async function onClose(state: CreateProject | null) {
+      setCreateProjectProps({ ...defaultCreateProjectProps, open: false });
       await ledger.exercise(ClientRole.CreateProject, asset.contractId, state);
       alert("Project has been created successfully!");
-    };
-    setCreateProjectProps({ ...defaultCreateProjectProps, open: true, onClose})
-  };
-  
-  const defaultAddUpdateChallengeProps : InputDialogProps<AddChallenge> = {
+    }
+    setCreateProjectProps({
+      ...defaultCreateProjectProps,
+      open: true,
+      onClose,
+    });
+  }
+
+  const defaultAddUpdateChallengeProps: InputDialogProps<AddChallenge> = {
     open: false,
     title: "Add Challenge",
-    defaultValue: { challengeId: "", description: "",nameOf: "", prize: ""},
+    defaultValue: { challengeId: "", description: "", nameOf: "", prize: "" },
     fields: {
       challengeId: {
         label: "Challenge Id",
-        type: "text" 
+        type: "text",
       },
       nameOf: {
         label: "Challenge Name",
-        type: "text" 
+        type: "text",
       },
       prize: {
         label: "prize",
-        type: "text" 
+        type: "text",
       },
       description: {
         label: "description",
-        type: "text"
-      }
+        type: "text",
+      },
     },
-    onClose: async function() {}
+    onClose: async function () {},
   };
-  const [ addUpdateChallengeProps, setAddUpdateChallengeProps ] = useState(defaultAddUpdateChallengeProps);
+  const [addUpdateChallengeProps, setAddUpdateChallengeProps] = useState(
+    defaultAddUpdateChallengeProps
+  );
   // One can pass the original contracts CreateEvent
-  function showAddUpdateChallenge(asset : ClientProject.CreateEvent) {
-    async function onClose(state : AddChallenge | null) {
-      setAddUpdateChallengeProps({ ...defaultAddUpdateChallengeProps, open: false});
-      await ledger.exercise(ClientProject.AddChallenge, asset.contractId, state);
+  function showAddUpdateChallenge(asset: ClientProject.CreateEvent) {
+    async function onClose(state: AddChallenge | null) {
+      setAddUpdateChallengeProps({
+        ...defaultAddUpdateChallengeProps,
+        open: false,
+      });
+      await ledger.exercise(
+        ClientProject.AddChallenge,
+        asset.contractId,
+        state
+      );
       alert("Challenge has been created successfully!");
-    };
-    setAddUpdateChallengeProps({ ...defaultAddUpdateChallengeProps, open: true, onClose})
-  };
+    }
+    setAddUpdateChallengeProps({
+      ...defaultAddUpdateChallengeProps,
+      open: true,
+      onClose,
+    });
+  }
 
-  const defaultAddUpdateSubmissionProps : InputDialogProps<ProposeSubmission> = {
+  const defaultAddUpdateSubmissionProps: InputDialogProps<ProposeSubmission> = {
     open: false,
     title: "Submission",
-    defaultValue: { 
-      participant: party, subName: "", subDesc: "", presentation: "", submission: "", challengeId: "", judge: "Yuling", videoLink: ""
+    defaultValue: {
+      participant: party,
+      subName: "",
+      subDesc: "",
+      presentation: "",
+      submission: "",
+      challengeId: "",
+      judge: "Yuling",
+      videoLink: "",
     },
     fields: {
       participant: {
@@ -259,71 +322,94 @@ export default function Report() {
       },
       subName: {
         label: "Submission Name",
-        type: "text" 
+        type: "text",
       },
       subDesc: {
         label: "Submission Description",
-        type: "text" 
+        type: "text",
       },
       submission: {
         label: "Submission",
-        type: "text" 
+        type: "text",
       },
       presentation: {
         label: "Presentation",
-        type: "text" 
+        type: "text",
       },
       videoLink: {
         label: "Video Link",
-        type: "text" 
+        type: "text",
       },
       challengeId: {
         label: "Challenge Id",
-        type: "text" 
+        type: "text",
       },
       judge: {
         label: "judge",
-        type: "text" 
-      }
+        type: "text",
+      },
     },
-    onClose: async function() {}
+    onClose: async function () {},
   };
-  const [ addUpdateSubmissionProps, setAddUpdateSubmissionProps ] = useState(defaultAddUpdateSubmissionProps);
+  const [addUpdateSubmissionProps, setAddUpdateSubmissionProps] = useState(
+    defaultAddUpdateSubmissionProps
+  );
   // One can pass the original contracts CreateEvent
-  function showParticipantSubmission(asset : ClientProject.CreateEvent) {
-    async function onClose(state : ProposeSubmission | null) {
-      setAddUpdateSubmissionProps({ ...defaultAddUpdateSubmissionProps, open: false});
-      await ledger.exercise(ClientProject.ProposeSubmission, asset.contractId, state);
+  function showParticipantSubmission(asset: ClientProject.CreateEvent) {
+    async function onClose(state: ProposeSubmission | null) {
+      setAddUpdateSubmissionProps({
+        ...defaultAddUpdateSubmissionProps,
+        open: false,
+      });
+      await ledger.exercise(
+        ClientProject.ProposeSubmission,
+        asset.contractId,
+        state
+      );
       alert("Submission has been created successfully!");
-    };
-    setAddUpdateSubmissionProps({ ...defaultAddUpdateSubmissionProps, open: true, onClose})
-  };
+    }
+    setAddUpdateSubmissionProps({
+      ...defaultAddUpdateSubmissionProps,
+      open: true,
+      onClose,
+    });
+  }
 
-  const defaultProposeTeammateProps : InputDialogProps<ProposeTeammate> = {
+  const defaultProposeTeammateProps: InputDialogProps<ProposeTeammate> = {
     open: false,
     title: "Add To The Teammate",
-    defaultValue: { 
-      email: ""
+    defaultValue: {
+      email: "",
     },
     fields: {
       email: {
         label: "Participant Email To Add",
-        type: "text" 
-      }
+        type: "text",
+      },
     },
-    onClose: async function() {}
+    onClose: async function () {},
   };
-  const [ addTeammateProps, setProposeTeammateProps ] = useState(defaultProposeTeammateProps);
+  const [addTeammateProps, setProposeTeammateProps] = useState(
+    defaultProposeTeammateProps
+  );
   // One can pass the original contracts CreateEvent
-  function showProposeTeammate(asset : ParticipantSubmission.CreateEvent) {
-    async function onClose(state : ProposeTeammate | null) {
-      setProposeTeammateProps({ ...defaultProposeTeammateProps, open: false});
-      await ledger.exercise(ParticipantSubmission.ProposeTeammate, asset.contractId, state);
+  function showProposeTeammate(asset: ParticipantSubmission.CreateEvent) {
+    async function onClose(state: ProposeTeammate | null) {
+      setProposeTeammateProps({ ...defaultProposeTeammateProps, open: false });
+      await ledger.exercise(
+        ParticipantSubmission.ProposeTeammate,
+        asset.contractId,
+        state
+      );
       alert("Teammate has been created successfully!");
-    };
-    setProposeTeammateProps({ ...defaultProposeTeammateProps, open: true, onClose})
-  };
-  
+    }
+    setProposeTeammateProps({
+      ...defaultProposeTeammateProps,
+      open: true,
+      onClose,
+    });
+  }
+
   // const defaultInviteImporterProps : InputDialogProps<InviteImporter> = {
   //   open: false,
   //   title: "Invite client",
@@ -345,7 +431,7 @@ export default function Report() {
   //   setInviteImporterProps({ ...defaultInviteImporterProps, open: true, onClose})
   // };
 
-/*
+  /*
   const defaultAcceptRequestProps : InputDialogProps<AcceptRequest> = {
     open: false,
     title: "Invite Customs Gua",
@@ -359,54 +445,95 @@ export default function Report() {
 
   // const [ AcceptRequestProps, setAcceptRequestProps ] = useState(defaultAcceptRequestProps);
   // One can pass the original contracts CreateEvent
-  async function showAcceptRequest(asset : ClientInvitation.CreateEvent) {
-    await ledger.exercise(ClientInvitation.AcceptRequest, asset.contractId, AcceptRequest);
-    alert('Your request accepted successfully!');
-  };
+  async function showAcceptRequest(asset: ClientInvitation.CreateEvent) {
+    await ledger.exercise(
+      ClientInvitation.AcceptRequest,
+      asset.contractId,
+      AcceptRequest
+    );
+    alert("Your request accepted successfully!");
+  }
 
-  async function showAcceptParticipant(asset : ParticipantInvitation.CreateEvent) {
-    await ledger.exercise(ParticipantInvitation.AcceptParticipantRequest, asset.contractId, {participantProfile: {firstName: (user as any).party, lastName: "", company: "", email: "", job: "", about: "", pictureUrl: ""}});
-    alert('Your request accepted successfully!');
-  };
+  async function showAcceptParticipant(
+    asset: ParticipantInvitation.CreateEvent
+  ) {
+    await ledger.exercise(
+      ParticipantInvitation.AcceptParticipantRequest,
+      asset.contractId,
+      {
+        participantProfile: {
+          firstName: (user as any).party,
+          lastName: "",
+          company: "",
+          email: "",
+          job: "",
+          about: "",
+          pictureUrl: "",
+        },
+      }
+    );
+    alert("Your request accepted successfully!");
+  }
 
-  async function showAcceptParticipantRequestToProject(asset: RequestToJoinProject.CreateEvent) {
-    await ledger.exercise(RequestToJoinProject.AddParticipantToProject, asset.contractId, AcceptRequest);
-    alert('Participant request to project accepted successfully!');
-  };
+  async function showAcceptParticipantRequestToProject(
+    asset: RequestToJoinProject.CreateEvent
+  ) {
+    await ledger.exercise(
+      RequestToJoinProject.AddParticipantToProject,
+      asset.contractId,
+      AcceptRequest
+    );
+    alert("Participant request to project accepted successfully!");
+  }
 
-  
-
-  const defaultRegisterForProjectProps : InputDialogProps<RegisterForProject> = {
+  const defaultRegisterForProjectProps: InputDialogProps<RegisterForProject> = {
     open: false,
     title: "Register For A Project",
     defaultValue: { projectId: "", client: "" },
     fields: {
       projectId: {
         label: "Project ID",
-        type: "text"
+        type: "text",
       },
       client: {
         label: "Client",
-        type: "text"
-      }
+        type: "text",
+      },
     },
-    onClose: async function() {}
+    onClose: async function () {},
   };
-  const [ registerForProjectProps, setRegisterForProjectProps ] = useState(defaultRegisterForProjectProps);
+  const [registerForProjectProps, setRegisterForProjectProps] = useState(
+    defaultRegisterForProjectProps
+  );
   // One can pass the original contracts CreateEvent
-  function showRegiterForProject(asset : ParticipantRole.CreateEvent) {
-    async function onClose(state : RegisterForProject | null) {
-      setRegisterForProjectProps({ ...defaultRegisterForProjectProps, open: false});
-      await ledger.exercise(ParticipantRole.RegisterForProject, asset.contractId, state);
+  function showRegiterForProject(asset: ParticipantRole.CreateEvent) {
+    async function onClose(state: RegisterForProject | null) {
+      setRegisterForProjectProps({
+        ...defaultRegisterForProjectProps,
+        open: false,
+      });
+      await ledger.exercise(
+        ParticipantRole.RegisterForProject,
+        asset.contractId,
+        state
+      );
       alert("Registred For A Project Successfully!");
-    };
-    setRegisterForProjectProps({ ...defaultRegisterForProjectProps, open: true, onClose})
-  };
+    }
+    setRegisterForProjectProps({
+      ...defaultRegisterForProjectProps,
+      open: true,
+      onClose,
+    });
+  }
 
-  async function showAcceptJudge(asset : JudgeInvitation.CreateEvent) {
-    await ledger.exercise(JudgeInvitation.AcceptjudgeRequest, asset.contractId, AcceptRequest);
-    alert('Your request accepted successfully!');
-  };
+  async function showAcceptJudge(asset: JudgeInvitation.CreateEvent) {
+    await ledger.exercise(
+      JudgeInvitation.AcceptjudgeRequest,
+      asset.contractId,
+      AcceptRequest
+    );
+    alert("Your request accepted successfully!");
+  }
 
   // type UserSpecifiedAppraise = Pick<Appraise, "newValue">;
   // const today = (new Date()).toISOString().slice(0,10);
@@ -480,15 +607,15 @@ export default function Report() {
     <>
       {/* <InputDialog { ...inviteCustomsMarProps } /> */}
       {/* <InputDialog { ...inviteCustomsGuaProps } /> */}
-      <InputDialog { ...inviteJudgeProps } />
-      <InputDialog { ...inviteClientProps } />
-      <InputDialog { ...inviteParticipantProps } />
-      <InputDialog { ...createProjectProps } />
-      <InputDialog { ...addUpdateChallengeProps } /> 
-      <InputDialog { ...registerForProjectProps } /> 
-      <InputDialog { ...addUpdateSubmissionProps } /> 
-      <InputDialog { ...addTeammateProps } /> 
-      
+      <InputDialog {...inviteJudgeProps} />
+      <InputDialog {...inviteClientProps} />
+      <InputDialog {...inviteParticipantProps} />
+      <InputDialog {...createProjectProps} />
+      <InputDialog {...addUpdateChallengeProps} />
+      <InputDialog {...registerForProjectProps} />
+      <InputDialog {...addUpdateSubmissionProps} />
+      <InputDialog {...addTeammateProps} />
+
       {/* <InputDialog { ...inviteImporterProps } /> */}
       {/*<InputDialog { ...AcceptRequestProps } /> 
       /* <InputDialog { ...newAssetProps } /> */}
@@ -503,127 +630,244 @@ export default function Report() {
             <TableCell key={2} className={classes.tableCell}>Name</TableCell>
             <TableCell key={3} className={classes.tableCell}>Value</TableCell>
             <TableCell key={4} className={classes.tableCell}>DateOfAppraisal</TableCell> */}
-            <TableCell key={5} className={classes.tableCell}>options</TableCell>
+            <TableCell key={5} className={classes.tableCell}>
+              options
+            </TableCell>
             {/* <TableCell key={6} className={classes.tableCell}>Appraise</TableCell> */}
           </TableRow>
         </TableHead>
         <TableBody>
-          {clientInvitationAssets.filter((c: any) => (user as any).party === c.payload.client).map((a: any) => (
-            <TableRow key={a.contractId} className={classes.tableRow}>
-              <TableCell key={6} className={classes.tableCellButton}>
-                {/* <Button color="primary" size="small" className={classes.choiceButton} variant="contained" disabled={a.payload.operator !== party} onClick={() => showInviteCustomsMar(a)}>InviteCustomsMar</Button> */}
-                {/* <Button color="primary" size="small" className={classes.choiceButton} variant="contained" disabled={a.payload.operator !== party} onClick={() => showAcceptRequest(a)}>Accept invite</Button> */}
-              <Button color="primary" size="small" className={classes.choiceButton} variant="contained" disabled={a.payload.client !== party} onClick={() => showAcceptRequest(a) }>Accept Invitation</Button>
-                             {/* <Button color="primary" size="small" className={classes.choiceButton} variant="contained" >InviteImporter</Button> */}
-
-              </TableCell>
-            </TableRow>
-          ))}
-          {participantSubmissionAssets.filter((c: any) => (user as any).party === c.payload.participant).map((a: any) => (
-            <TableRow key={a.contractId} className={classes.tableRow}>
-              <TableCell key={6} className={classes.tableCellButton}>
-              <Button color="primary" size="small" className={classes.choiceButton} variant="contained" disabled={a.payload.participant !== party} onClick={() => showProposeTeammate(a) }>Add teammate</Button>
-              </TableCell>
-            </TableRow>
-          ))}
-          {participantInvitationAssets.filter((c: any) => (user as any).party === c.payload.participant).map((a: any) => (
-            <TableRow key={a.contractId} className={classes.tableRow}>
-              <TableCell key={6} className={classes.tableCellButton}>
-                {/* <Button color="primary" size="small" className={classes.choiceButton} variant="contained" disabled={a.payload.operator !== party} onClick={() => showInviteCustomsMar(a)}>InviteCustomsMar</Button> */}
-                {/* <Button color="primary" size="small" className={classes.choiceButton} variant="contained" disabled={a.payload.operator !== party} onClick={() => showAcceptRequest(a)}>Accept invite</Button> */}
-              <Button color="primary" size="small" className={classes.choiceButton} variant="contained" disabled={a.payload.participant !== party} onClick={() => showAcceptParticipant(a) }>Accept Invitation As A Participant</Button>
-                             {/* <Button color="primary" size="small" className={classes.choiceButton} variant="contained" >InviteImporter</Button> */}
-
-              </TableCell>
-            </TableRow>
-          ))}
+          {clientInvitationAssets
+            .filter((c: any) => (user as any).party === c.payload.client)
+            .map((a: any) => (
+              <TableRow key={a.contractId} className={classes.tableRow}>
+                <TableCell key={6} className={classes.tableCellButton}>
+                  {/* <Button color="primary" size="small" className={classes.choiceButton} variant="contained" disabled={a.payload.operator !== party} onClick={() => showInviteCustomsMar(a)}>InviteCustomsMar</Button> */}
+                  {/* <Button color="primary" size="small" className={classes.choiceButton} variant="contained" disabled={a.payload.operator !== party} onClick={() => showAcceptRequest(a)}>Accept invite</Button> */}
+                  <Button
+                    color="primary"
+                    size="small"
+                    className={classes.choiceButton}
+                    variant="contained"
+                    disabled={a.payload.client !== party}
+                    onClick={() => showAcceptRequest(a)}
+                  >
+                    Accept Invitation
+                  </Button>
+                  {/* <Button color="primary" size="small" className={classes.choiceButton} variant="contained" >InviteImporter</Button> */}
+                </TableCell>
+              </TableRow>
+            ))}
+          {participantSubmissionAssets
+            .filter((c: any) => (user as any).party === c.payload.participant)
+            .map((a: any) => (
+              <TableRow key={a.contractId} className={classes.tableRow}>
+                <TableCell key={6} className={classes.tableCellButton}>
+                  <Button
+                    color="primary"
+                    size="small"
+                    className={classes.choiceButton}
+                    variant="contained"
+                    disabled={a.payload.participant !== party}
+                    onClick={() => showProposeTeammate(a)}
+                  >
+                    Add teammate
+                  </Button>
+                </TableCell>
+              </TableRow>
+            ))}
+          {participantInvitationAssets
+            .filter((c: any) => (user as any).party === c.payload.participant)
+            .map((a: any) => (
+              <TableRow key={a.contractId} className={classes.tableRow}>
+                <TableCell key={6} className={classes.tableCellButton}>
+                  {/* <Button color="primary" size="small" className={classes.choiceButton} variant="contained" disabled={a.payload.operator !== party} onClick={() => showInviteCustomsMar(a)}>InviteCustomsMar</Button> */}
+                  {/* <Button color="primary" size="small" className={classes.choiceButton} variant="contained" disabled={a.payload.operator !== party} onClick={() => showAcceptRequest(a)}>Accept invite</Button> */}
+                  <Button
+                    color="primary"
+                    size="small"
+                    className={classes.choiceButton}
+                    variant="contained"
+                    disabled={a.payload.participant !== party}
+                    onClick={() => showAcceptParticipant(a)}
+                  >
+                    Accept Invitation As A Participant
+                  </Button>
+                  {/* <Button color="primary" size="small" className={classes.choiceButton} variant="contained" >InviteImporter</Button> */}
+                </TableCell>
+              </TableRow>
+            ))}
           {clientProjectAssets.map((a: any) => (
             <TableRow key={a.contractId} className={classes.tableRow}>
               <TableCell key={6} className={classes.tableCellButton}>
-              <Button color="primary" size="small" className={classes.choiceButton} variant="contained" disabled={a.payload.participants.map((p: any) => p.toLowerCase()).indexOf(party.toLowerCase()) < 0} onClick={() => showParticipantSubmission(a) }> Add Submission</Button>
+                <Button
+                  color="primary"
+                  size="small"
+                  className={classes.choiceButton}
+                  variant="contained"
+                  disabled={
+                    a.payload.participants
+                      .map((p: any) => p.toLowerCase())
+                      .indexOf(party.toLowerCase()) < 0
+                  }
+                  onClick={() => showParticipantSubmission(a)}
+                >
+                  {" "}
+                  Add Submission
+                </Button>
               </TableCell>
             </TableRow>
           ))}
           {participantRoleAssets.map((a: any) => (
             <TableRow key={a.contractId} className={classes.tableRow}>
               <TableCell key={6} className={classes.tableCellButton}>
-              <Button color="primary" size="small" className={classes.choiceButton} variant="contained" disabled={a.payload.participant !== party} onClick={() => showRegiterForProject(a) }>Register For A Project</Button>
+                <Button
+                  color="primary"
+                  size="small"
+                  className={classes.choiceButton}
+                  variant="contained"
+                  disabled={a.payload.participant !== party}
+                  onClick={() => showRegiterForProject(a)}
+                >
+                  Register For A Project
+                </Button>
               </TableCell>
             </TableRow>
           ))}
-          
-          {judgeInvitationAssets.filter((c: any) => (user as any).party === c.payload.judge).map((a: any) => (
-            <TableRow key={a.contractId} className={classes.tableRow}>
-              <TableCell key={6} className={classes.tableCellButton}>
-              <Button color="primary" size="small" className={classes.choiceButton} variant="contained" disabled={a.payload.judge !== party} onClick={() => showAcceptJudge(a) }>Accept Invitation As A Judge</Button>
-              </TableCell>
-            </TableRow>
-          ))}
+
+          {judgeInvitationAssets
+            .filter((c: any) => (user as any).party === c.payload.judge)
+            .map((a: any) => (
+              <TableRow key={a.contractId} className={classes.tableRow}>
+                <TableCell key={6} className={classes.tableCellButton}>
+                  <Button
+                    color="primary"
+                    size="small"
+                    className={classes.choiceButton}
+                    variant="contained"
+                    disabled={a.payload.judge !== party}
+                    onClick={() => showAcceptJudge(a)}
+                  >
+                    Accept Invitation As A Judge
+                  </Button>
+                </TableCell>
+              </TableRow>
+            ))}
           {requestToJoinProjectAssets.map((a: any) => (
             <TableRow key={a.contractId} className={classes.tableRow}>
               <TableCell key={6} className={classes.tableCellButton}>
-              <Button color="primary" size="small" className={classes.choiceButton} variant="contained" disabled={a.payload.operator !== party} onClick={() => showAcceptParticipantRequestToProject(a) }>Accept {a.payload.participant} Rquest To Project</Button>
+                <Button
+                  color="primary"
+                  size="small"
+                  className={classes.choiceButton}
+                  variant="contained"
+                  disabled={a.payload.operator !== party}
+                  onClick={() => showAcceptParticipantRequestToProject(a)}
+                >
+                  Accept {a.payload.participant} Rquest To Project
+                </Button>
               </TableCell>
             </TableRow>
           ))}
-          {projectAssets.filter((c: any) => (user as any).party === c.payload.client).map((a: any) => (
+          {projectAssets
+            .filter((c: any) => (user as any).party === c.payload.client)
+            .map((a: any) => (
+              <TableRow key={a.contractId} className={classes.tableRow}>
+                <TableCell key={6} className={classes.tableCellButton}>
+                  {/* <Button color="primary" size="small" className={classes.choiceButton} variant="contained" disabled={a.payload.operator !== party} onClick={() => showInviteCustomsMar(a)}>InviteCustomsMar</Button> */}
+                  {/* <Button color="primary" size="small" className={classes.choiceButton} variant="contained" disabled={a.payload.operator !== party} onClick={() => showAcceptRequest(a)}>Accept invite</Button> */}
+                  <Button
+                    color="primary"
+                    size="small"
+                    className={classes.choiceButton}
+                    variant="contained"
+                    disabled={a.payload.client !== party}
+                    onClick={() => showCreateProject(a)}
+                  >
+                    Create Project
+                  </Button>
+                  {/* <Button color="primary" size="small" className={classes.choiceButton} variant="contained" >InviteImporter</Button> */}
+                </TableCell>
+              </TableRow>
+            ))}
+          {clientProjectAssets
+            .filter((c) => (user as any).party === c.payload.client)
+            .map((a) => (
+              <TableRow key={a.contractId} className={classes.tableRow}>
+                <TableCell key={6} className={classes.tableCellButton}>
+                  <Button
+                    color="primary"
+                    size="small"
+                    className={classes.choiceButton}
+                    variant="contained"
+                    disabled={a.payload.client !== party}
+                    onClick={() => showAddUpdateChallenge(a)}
+                  >
+                    Add Challenge To {a.payload.name}
+                  </Button>
+                </TableCell>
+              </TableRow>
+            ))}
+          {assets.map((a: any) => (
             <TableRow key={a.contractId} className={classes.tableRow}>
               <TableCell key={6} className={classes.tableCellButton}>
                 {/* <Button color="primary" size="small" className={classes.choiceButton} variant="contained" disabled={a.payload.operator !== party} onClick={() => showInviteCustomsMar(a)}>InviteCustomsMar</Button> */}
                 {/* <Button color="primary" size="small" className={classes.choiceButton} variant="contained" disabled={a.payload.operator !== party} onClick={() => showAcceptRequest(a)}>Accept invite</Button> */}
-              <Button color="primary" size="small" className={classes.choiceButton} variant="contained" disabled={a.payload.client !== party} onClick={() => showCreateProject(a) }>Create Project</Button>
-                             {/* <Button color="primary" size="small" className={classes.choiceButton} variant="contained" >InviteImporter</Button> */}
-
-              </TableCell>
-            </TableRow>
-          ))}
-          {clientProjectAssets.filter(c => (user as any).party === c.payload.client).map(a => (
-            <TableRow key={a.contractId} className={classes.tableRow}>
-              <TableCell key={6} className={classes.tableCellButton}>
-              <Button color="primary" size="small" className={classes.choiceButton} variant="contained" disabled={a.payload.client !== party} onClick={() => showAddUpdateChallenge(a) }>Add Challenge To {a.payload.name}</Button>
+                <Button
+                  color="primary"
+                  size="small"
+                  className={classes.choiceButton}
+                  variant="contained"
+                  disabled={a.payload.operator !== party}
+                  onClick={() => showInviteClient(a)}
+                >
+                  InviteClient
+                </Button>
+                {/* <Button color="primary" size="small" className={classes.choiceButton} variant="contained" >InviteImporter</Button> */}
               </TableCell>
             </TableRow>
           ))}
           {assets.map((a: any) => (
             <TableRow key={a.contractId} className={classes.tableRow}>
-              
               <TableCell key={6} className={classes.tableCellButton}>
                 {/* <Button color="primary" size="small" className={classes.choiceButton} variant="contained" disabled={a.payload.operator !== party} onClick={() => showInviteCustomsMar(a)}>InviteCustomsMar</Button> */}
                 {/* <Button color="primary" size="small" className={classes.choiceButton} variant="contained" disabled={a.payload.operator !== party} onClick={() => showAcceptRequest(a)}>Accept invite</Button> */}
-                <Button color="primary" size="small" className={classes.choiceButton} variant="contained" disabled={a.payload.operator !== party} onClick={() => showInviteClient(a)}>InviteClient</Button>
+                <Button
+                  color="primary"
+                  size="small"
+                  className={classes.choiceButton}
+                  variant="contained"
+                  disabled={a.payload.operator !== party}
+                  onClick={() => showInviteParticipant(a)}
+                >
+                  Invite Participant
+                </Button>
                 {/* <Button color="primary" size="small" className={classes.choiceButton} variant="contained" >InviteImporter</Button> */}
-
               </TableCell>
             </TableRow>
           ))}
           {assets.map((a: any) => (
             <TableRow key={a.contractId} className={classes.tableRow}>
-              
               <TableCell key={6} className={classes.tableCellButton}>
                 {/* <Button color="primary" size="small" className={classes.choiceButton} variant="contained" disabled={a.payload.operator !== party} onClick={() => showInviteCustomsMar(a)}>InviteCustomsMar</Button> */}
                 {/* <Button color="primary" size="small" className={classes.choiceButton} variant="contained" disabled={a.payload.operator !== party} onClick={() => showAcceptRequest(a)}>Accept invite</Button> */}
-                <Button color="primary" size="small" className={classes.choiceButton} variant="contained" disabled={a.payload.operator !== party} onClick={() => showInviteParticipant(a)}>Invite Participant</Button>
+                <Button
+                  color="primary"
+                  size="small"
+                  className={classes.choiceButton}
+                  variant="contained"
+                  disabled={a.payload.operator !== party}
+                  onClick={() => showInviteJudge(a)}
+                >
+                  Invite Judge
+                </Button>
                 {/* <Button color="primary" size="small" className={classes.choiceButton} variant="contained" >InviteImporter</Button> */}
-
               </TableCell>
             </TableRow>
           ))}
-          {assets.map((a: any) => (
-            <TableRow key={a.contractId} className={classes.tableRow}>
-              
-              <TableCell key={6} className={classes.tableCellButton}>
-                {/* <Button color="primary" size="small" className={classes.choiceButton} variant="contained" disabled={a.payload.operator !== party} onClick={() => showInviteCustomsMar(a)}>InviteCustomsMar</Button> */}
-                {/* <Button color="primary" size="small" className={classes.choiceButton} variant="contained" disabled={a.payload.operator !== party} onClick={() => showAcceptRequest(a)}>Accept invite</Button> */}
-                <Button color="primary" size="small" className={classes.choiceButton} variant="contained" disabled={a.payload.operator !== party} onClick={() => showInviteJudge(a)}>Invite Judge</Button>
-                {/* <Button color="primary" size="small" className={classes.choiceButton} variant="contained" >InviteImporter</Button> */}
-
-              </TableCell>
-            </TableRow>
-          ))}
-
         </TableBody>
       </Table>
-
+      <Footer/>
     </>
   );
 }

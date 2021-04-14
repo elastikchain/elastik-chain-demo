@@ -1,5 +1,5 @@
 .toolbar {
-  --background: white;
+  --background: #143b6c;
   --min-height: 76px;
   .app-logo {
     padding: 8px;
@@ -96,7 +96,7 @@ section {
 			overflow-y: auto;
       img.timeline-line {
         position: absolute;
-        top: 50%;
+        top: 57%;
         left: 50%;
         transform: translateX(-50%);
       }
@@ -112,7 +112,7 @@ section {
           align-items: center;
           flex-grow: 1;
           img {
-            width: 74px;
+            
             margin-bottom: 92px;
           }
           .dot {
@@ -203,3 +203,190 @@ footer {
 	margin-right: 30px;
 	text-transform: uppercase;
 }
+
+
+.header .toolbar-buttons ion-button {
+  margin: 0px;
+  padding: 20px 20px;
+}
+
+.toolbar .container-header .header-menu .toolbar-buttons-container {
+  margin-top: 0px !important;
+}
+
+section.app-header {
+  background: linear-gradient(to right, #ededec 50%, #fefefe 50%);
+  display: block;
+  position: relative;
+}
+
+.banner-img {
+  width: 50%;
+  display: inline-block;
+}
+
+.banner-img img {
+  position: absolute;
+  left: 15%;
+  top:0px;
+}
+
+.header .toolbar-buttons ion-button {
+  padding: 22px 20px !important;
+}
+.toolbar-buttons ion-button:hover {
+  padding: 22px 20px !important;
+}
+
+.container-header {
+  height: 76px;
+}
+
+section h1.title {
+  color: #0C3B6C;
+}
+
+section.how-it-work .wrapper .content-container .work-step:nth-child(2) img {
+  margin-top: 10px;
+}
+
+section.how-it-work .wrapper .content-container .work-step:nth-child(1) img {
+  margin-top: -50px;
+}
+
+section.how-it-work .wrapper .content-container .work-step:nth-child(3) img {
+  margin-top: 60px;
+}
+
+section.how-it-work .wrapper .content-container .work-step:nth-child(4) img {
+  margin-top: -70px;
+}
+
+section.how-it-work {
+  margin-bottom: 80px;
+}
+
+section.how-it-work h1.title {
+  margin-bottom: 70px;
+}
+
+.sc-bdvvaa.fisObN {
+  /* background-color: #f0faff; */
+  padding: 100px 0px 0px 0px;
+  background-image: url(../../assets/img/subscribe-bg-image.png);
+  background-size: 100% 75%;
+  background-repeat: no-repeat;
+}
+
+.sc-bdvvaa.fisObN .sc-gsDJrp.hjgMJF {
+  max-width: 895px;
+  padding: 60px;
+  border-radius: 10px;
+}
+
+.sc-bdvvaa.fisObN .sc-gsDJrp.hjgMJF span.footer-subs-text {
+  letter-spacing: 0px;
+  text-align: left;
+  margin-right: 30px;
+  font-family: Glober;
+  font-style: normal;
+  font-weight: 600;
+  font-size: 24px;
+  line-height: 29px;
+  text-transform: uppercase;
+}
+
+.footer-email-text {
+  background: #FFFFFF;
+  border-radius: 4px;
+  height: 60px;
+  line-height: 60px;
+  min-width: 425px;
+}
+
+.footer-email-text ion-button.footer-subs-button.md.button.button-solid.ion-activatable.ion-focusable.hydrated {
+  margin-top: 12px;
+  margin-right: 12px;
+}
+
+.footer-container {
+    text-align: center;
+}
+
+.footer-container img.footer-logo {
+    margin-bottom: 30px;
+}
+
+.footer-container .footer-text {
+    font-family: Glober;
+    font-style: normal;
+    font-weight: normal;
+    font-size: 14px;
+    line-height: 13px;
+    display: flex;
+    align-items: center;
+}
+
+footer {
+    margin-bottom: 50px;
+}
+
+.footer-container .footer-text span {
+    margin: 0px 10px;
+    color: #1E3D74;
+}
+
+.footer-container .footer-text span:last-child {
+    color: #ab9e9e;
+}
+
+
+// login form css
+.login-form input.native-input.sc-ion-input-md {
+  border: 1px solid #BDBDBD;
+  border-radius: 2px;
+  height: 40px;
+  line-height: 40px;
+  padding: 0px 15px;
+  box-shadow: none;
+  margin-bottom: 20px;
+  color: #8D8D8D;
+}
+
+.login-form ion-input.sc-ion-input-md-h.sc-ion-input-md-s.md.hydrated {border: 0px none !important;box-shadow: none;}
+
+.login-form ion-label {
+  transform: inherit !important;
+  font-size: 14px !important;
+  color: #464545 !important;
+}
+
+.login-form ion-item.item-interactive.item-input.item.md.ion-focusable.hydrated.item-label.item-label-floating {
+  border: 0px none !important;
+  box-shadow: none !important;
+}
+
+:host(.item-interactive) {
+  border: 0px none !important;
+  border-width: 0px !important;
+  --border-width: 0 0 0px 0 !important;
+}
+
+.item-interactive {--border-width: 0 0 0px 0;--inner-border-width: 0;--show-full-highlight: 1;--show-inset-highlight: 0;}
+
+ion-label#ion-input-6-lbl {
+  transform: initial;
+}
+
+.login-form .button-native {
+  background: #007FB1;
+  border-radius: 2px;
+  height: 50px;
+}
+
+.login-form .submit-button {
+  background-color: #ccc !important;
+  height: 50px;
+  border-radius: 0px;
+}
+// end login form css

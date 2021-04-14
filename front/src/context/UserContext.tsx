@@ -120,15 +120,16 @@ const loginDablUser = () => {
 function signOut(
   dispatch : React.Dispatch<LoginAction>,
   history : History,
+  props:any,
   uiTemplate = true) {
   localStorage.removeItem(damlPartyKey);
   localStorage.removeItem(damlTokenKey);
 
   dispatch({ type: "SIGN_OUT_SUCCESS" });
   if(uiTemplate){
-    history.push("/login");
+    props.history.push("/login");
   }else{
-    history.push("/home");
+    props.history.push("/home");
   }
 }
 

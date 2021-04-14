@@ -21,10 +21,11 @@ import logo from "../../assets/img/logo-combination.png";
 import logoBlue from "../../assets/img/asx_logo_blue.jpg";
 import timelineLine from "../../assets/img/img-how-it-work-timeline.png";
 
-import icWork1 from "../../assets/img/ic-work1.png";
-import icWork2 from "../../assets/img/ic-work2.png";
-import icWork3 from "../../assets/img/ic-work3.png";
+import icWork1 from "../../assets/img/icon-idea.png";
+import icWork2 from "../../assets/img/icon-product.png";
+import icWork3 from "../../assets/img/icon-work.png";
 import icWork4 from "../../assets/img/ic-work4.png";
+import topBannerImage from "../../assets/img/img-top-section.png";
 
 import "./Home.scss";
 import { useUserDispatch, loginUser } from "../../context/UserContext";
@@ -33,6 +34,7 @@ import { Fade, Typography } from "@material-ui/core";
 
 import { close } from "ionicons/icons";
 import loginImg from "../../assets/img/logo-slogan.jpg";
+import Footer from "../../components/Footer/footer";
 
 const StyledNewsletter = styled.div`
   margin: 4rem 0;
@@ -97,6 +99,7 @@ const renderCatgoriesSlides = () => {
         <p>{item}</p>
       </a>
     </IonSlide>
+    
   ));
   return arr;
 };
@@ -109,11 +112,13 @@ const categoriesSlidesOptions = {
   autoplay: {
     delay: 1500,
   },
+  pager:true,
+  pagination:true,
   navigation: {
     prevEl: ".slider .prev-btn",
     nextEl: ".slider .next-btn",
   },
-  spaceBetween: 5,
+  spaceBetween: 8,
 };
 const Home = (props: RouteComponentProps) => {
   const [searchText, setSearchText] = useState("");
@@ -250,6 +255,9 @@ const Home = (props: RouteComponentProps) => {
           </div>
         </IonModal>
         <section className="app-header">
+        <div className="banner-img">
+                            <img src={topBannerImage} alt="Banner image"/>
+         </div>      
           <div className="content-container">
             <h1>Ideas change the world we live in</h1>
             <IonButton color="primary" size="large">
@@ -258,7 +266,7 @@ const Home = (props: RouteComponentProps) => {
           </div>
         </section>
         <section className="categories">
-          <IonSlides options={categoriesSlidesOptions}>
+          <IonSlides  pager={true}  options={categoriesSlidesOptions}>
             {renderCatgoriesSlides()}
           </IonSlides>
         </section>
@@ -285,15 +293,7 @@ const Home = (props: RouteComponentProps) => {
           </NewsParent>
         </StyledNewsletter>
 
-        <footer>
-          <div className="footer-container">
-            <img className="footer-logo" src={logoBlue} alt="logo slogan" />
-            <div className="footer-text">
-              <span>Terms of use</span> | <span>Privacy Statement</span> |{" "}
-              <span>Copyright ASX Ltd 2021</span>
-            </div>
-          </div>
-        </footer>
+        <Footer />
       </IonContent>
     </IonPage>
   );

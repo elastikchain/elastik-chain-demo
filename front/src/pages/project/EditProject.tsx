@@ -39,6 +39,7 @@ import {
   ParticipantSubmission,
   ProposeSubmission,
 } from "@daml.js/cosmart-0.0.1/lib/Main";
+import Footer from "../../components/Footer/footer";
 
 const EditProject = (props: RouteComponentProps) => {
   const user = useUserState();
@@ -196,7 +197,7 @@ const EditProject = (props: RouteComponentProps) => {
 
   return (
     <IonPage>
-      <SubHeader />
+      <SubHeader  {...props}/>
       <IonContent>
         <div className="proj-wrapper">
           <IonButton fill="clear" onClick={(e) => props.history.goBack()}>
@@ -290,6 +291,7 @@ const EditProject = (props: RouteComponentProps) => {
           </div>
         </div>
       </IonContent>
+      <Footer />
     </IonPage>
   );
 };
