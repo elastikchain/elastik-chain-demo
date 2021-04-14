@@ -1,10 +1,11 @@
 import React from 'react'
 
 type Props = {
-  title: string
+  title: string;
+  className?: any;
 }
 
-const Tab: React.FC<Props> = ({ children }) => {
+const Tab: React.FC<Props> = ({ children, className }) => {
   return <div>{children}</div>
 }
 

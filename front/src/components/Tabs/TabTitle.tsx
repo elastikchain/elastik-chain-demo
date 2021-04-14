@@ -4,18 +4,19 @@ type Props = {
   title: string
   index: number
   setSelectedTab: (index: number) => void
+  className: any
 }
 
-const TabTitle: React.FC<Props> = ({ title, setSelectedTab, index }) => {
+const TabTitle: React.FC<Props> = ({ title, setSelectedTab, index, className }) => {
 
   const onClick = useCallback(() => {
     setSelectedTab(index)
   }, [setSelectedTab, index])
 
   return (
-    <li>
-      <button onClick={onClick}>{title}</button>
-    </li>
+    <div className="tabs-heading">
+      <button onClick={onClick} className={className}>{title}</button>
+    </div>
   )
 }
 

@@ -1,30 +1,34 @@
-import React, { ReactElement, useState } from "react"
-import TabTitle from "./TabTitle"
+import React, { ReactElement, useState } from "react";
+import TabTitle from "./TabTitle";
 
 type Props = {
-  children: ReactElement[]
-}
+  children: ReactElement[];
+  className?: string;
+  defaultActiveKey?: string;
+};
 
-const Tabs: React.FC<Props> = ({ children }) => {
-  const [selectedTab, setSelectedTab] = useState(0)
+const Tabs: React.FC<Props> = ({ children, className, defaultActiveKey }) => {
+  const [selectedTab, setSelectedTab] = useState(0);
 
   return (
     <div>
-      <ul>
+      <div className={className}>
         {children.map((item, index) => {
-          console.log("item", item);
+          // console.log("item", item);
           return (
-          <TabTitle
-            key={index}
-            title={item.props.title}
-            index={index}
-            setSelectedTab={setSelectedTab}
-          />
-        )})}
-      </ul>
-      {children[selectedTab]}
+            <TabTitle
+              key={index}
+              className={item.props.className}
+              title={item.props.title}
+              index={index}
+              setSelectedTab={setSelectedTab}
+            />
+          );
+        })}
+      </div>
+      <div>{children[selectedTab]}</div>
     </div>
-  )
-}
+  );
+};
 
-export default Tabs
+export default Tabs;
