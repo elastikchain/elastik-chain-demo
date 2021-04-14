@@ -107,3 +107,13 @@
     
 
 }
+.breadcrumbs {
+    display: block;
+    width: 100%;
+}
+
+.breadcrumbs .item {
+    display: inline-block;
+    width: auto;
+}   
+.page-breadcrumb .item-inner{border: 0px;}

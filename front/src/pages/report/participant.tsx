@@ -8,7 +8,7 @@ import Button from "@material-ui/core/Button";
 // import Ledger from "@daml/ledger";
 import { useStreamQueries, useLedger, useParty } from "@daml/react";
 import { ContractId } from "@daml/types";
-import { InviteParticipant,ParticipantInvitation,AcceptParticipantRequest, Platform  } from "@daml.js/cosmart-0.0.1/lib/Main";
+import { AcceptParticipantRequest, Platform  } from "@daml.js/cosmart-0.0.1/lib/Main";
 import { InputDialog, InputDialogProps } from "./InputDialog";
 import { AlertDialog } from "./AlertDialog";
 
@@ -66,7 +66,7 @@ export default function Report() {
   //   setInviteCustomsGuaProps({ ...defaultInviteCustomsGuaProps, open: true, onClose})
   // };
 
-  const defaultInviteParticipantProps : InputDialogProps<InviteParticipant> = {
+  const defaultInviteParticipantProps : any = {
     open: false,
     title: "Invite participant",
     defaultValue: { participant : "" },
@@ -80,9 +80,9 @@ export default function Report() {
   const [ inviteParticipantProps, setInviteParticipantProps ] = useState(defaultInviteParticipantProps);
   // One can pass the original contracts CreateEvent
   function showInviteParticipant(asset : Platform.CreateEvent) {
-    async function onClose(state : InviteParticipant | null) {
+    async function onClose(state :  null) {
       setInviteParticipantProps({ ...defaultInviteParticipantProps, open: false});
-      await ledger.exercise(Platform.InviteParticipant, asset.contractId, state);
+      //await ledger.exercise(Platform.InviteParticipant, asset.contractId, state);
     };
     setInviteParticipantProps({ ...defaultInviteParticipantProps, open: true, onClose})
   };
@@ -124,13 +124,13 @@ export default function Report() {
 
   const [ AcceptParticipantRequestProps, setAcceptParticipantRequestProps ] = useState(defaultAcceptParticipantRequestProps);
   // One can pass the original contracts CreateEvent
-  function showAcceptParticipantRequest(asset : ParticipantInvitation.CreateEvent) {
+  /*function showAcceptParticipantRequest(asset : ParticipantInvitation.CreateEvent) {
     async function onClose(state : AcceptParticipantRequest | null) {
       setAcceptParticipantRequestProps({ ...defaultAcceptParticipantRequestProps, open: false});
       await ledger.exercise(ParticipantInvitation.AcceptParticipantRequest, asset.contractId, state);
-    };
-    setAcceptParticipantRequestProps({ ...defaultAcceptParticipantRequestProps, open: true, onClose})
-  };
+    };*/
+    //setAcceptParticipantRequestProps({ ...defaultAcceptParticipantRequestProps, open: true, onClose})
+
   // type UserSpecifiedAppraise = Pick<Appraise, "newValue">;
   // const today = (new Date()).toISOString().slice(0,10);
   // const defaultAppraiseProps : InputDialogProps<UserSpecifiedAppraise> = {

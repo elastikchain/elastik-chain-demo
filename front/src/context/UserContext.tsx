@@ -100,9 +100,11 @@ function loginUser(
     setError(false);
     setIsLoading(false);
     if (uiTemplate){
-      history.push("/app");
+      //history.push("/app");
+      window.history.pushState(1,"/app","/app");
     }else{
-      history.push("/main");
+      //history.push("/main");
+      window.history.pushState(1,"/main","/main");
     }
   } else {
     dispatch({ type: "LOGIN_FAILURE" });
@@ -118,15 +120,16 @@ const loginDablUser = () => {
 function signOut(
   dispatch : React.Dispatch<LoginAction>,
   history : History,
+  props:any,
   uiTemplate = true) {
   localStorage.removeItem(damlPartyKey);
   localStorage.removeItem(damlTokenKey);
 
   dispatch({ type: "SIGN_OUT_SUCCESS" });
   if(uiTemplate){
-    history.push("/login");
+    props.history.push("/login");
   }else{
-    history.push("/home");
+    props.history.push("/home");
   }
 }
 

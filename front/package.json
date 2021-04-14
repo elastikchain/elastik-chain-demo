@@ -4,7 +4,7 @@
   "private": true,
   "dependencies": {
     "@daml.js/cosmart-0.0.1": "file:../daml.js/cosmart-0.0.1",
-    "@daml/hub-react": "^0.1.0",
+    "@daml/hub-react": "^0.2.0",
     "@daml/ledger": "1.7.0",
     "@daml/react": "1.7.0",
     "@daml/types": "1.7.0",
@@ -13,12 +13,14 @@
     "@material-ui/icons": "^4.2.1",
     "@material-ui/styles": "^4.3.0",
     "@types/react-tag-autocomplete": "^6.1.0",
+    "@types/styled-components": "^5.1.9",
     "firebase": "^8.3.1",
     "jsonwebtoken": "^8.5.1",
     "react": "^16.12.0",
     "react-dom": "^16.12.0",
     "react-router-dom": "^5.0.1",
     "react-tag-autocomplete": "^6.1.0",
+    "styled-components": "^5.2.3",
     "tinycolor2": "^1.4.1"
   },
   "resolutions": {

@@ -26,3 +26,316 @@
 .submission-card{
     cursor: pointer;
 }
+.sc-ion-modal-md .ion-page {
+    text-align: center;
+}
+.my-custom-class-trash .modal-wrapper.sc-ion-modal-md{max-height: 150px;}
+.hidden{display: none !important;}
+ion-fab.submittionadd-btn {
+    margin-right: 70px;
+}
+.content.submission-modal-content {
+    padding: 10px 30px;
+}
+.sbmt-btn{margin-top: 40px;}
+.header {
+    display: flex;
+    flex-wrap: wrap;
+}
+
+.image-heading-and-contant {
+    position: relative;
+    background-color: #f3f3f3;
+}
+
+.image-heading-and-contant ion-card.top-banner-details {
+    border: 0px none;
+    margin: 0px;
+    box-shadow: none;
+}
+
+ion-card-content.left-contant-details {
+    width: 480px;
+    position: absolute;
+    top: 50px;
+    background-color: #ccc;
+    min-height: 290px;
+    left: 50px;
+    background: #fff;
+    border-radius: 10px;
+    padding: 20px 40px;
+}
+
+ion-card-content.left-contant-details h2 {
+    font-family: Nixie One;
+    font-style: normal;
+    font-weight: normal;
+    font-size: 24px;
+    line-height: 52px;
+/* or 217% */
+    color: #646464;
+}
+
+ion-card-content.left-contant-details p {
+    font-family: ABeeZee;
+    font-style: normal;
+    font-weight: normal;
+    font-size: 14px;
+    line-height: 22px;
+/* or 157% */
+    color: #646464;
+}
+
+ion-card-content.left-contant-details h3 {
+    font-family: ABeeZee;
+    font-style: normal;
+    font-weight: normal;
+    font-size: 18px;
+    line-height: 52px;
+/* or 289% */
+    color: #646464;
+}
+
+.images-partner-parent {
+    width: 200px;
+    height: 60px;
+    margin-right: 10px;
+    border: 1px solid #ccc;
+    padding: 5px;
+    border-radius: 4px;
+}
+
+.images-partner-parent img {
+    height: 100%;
+    width: 100%;
+    object-fit: cover;
+}
+
+.tabs-section {
+    display: flex;
+    padding: 20px 0px;
+}
+
+.tabs-section .tabs-heading {
+    background-color: #c5dfff;
+    padding: 20px 20px;
+    min-width: 220px;
+    position: relative;
+    text-align: center;
+}
+
+.tabs-section .tabs-heading:before {
+    width: 40px;
+    background-color: #143b6c;
+    content: "";
+    position: absolute;
+    height: 61px;
+    top: 0px;
+    left: 0px;
+    border-radius: 0px 30px 30px 0px;
+}
+
+.tabs-section .tabs-heading a.tabs-contant {
+    color: #333;
+    text-decoration: none;
+    font-size: 15px;
+}
+
+.tabs-section .tabs-heading:hover {
+    background-color: #fff;
+}
+
+.tabs-section .tabs-heading:before {
+    width: 40px;
+    background-color: #143b6c;
+    content: "";
+    position: absolute;
+    height: 61px;
+    top: 0px;
+    left: 0px;
+    border-radius: 0px 30px 30px 0px;
+}
+
+
+.top-part-contant h1 {
+    font-family: Nixie One;
+    font-style: normal;
+    font-weight: bold;
+    font-size: 32px;
+    line-height: 52px;
+    color: #646464;
+}
+
+
+.tabs-section p {
+    font-family: ABeeZee;
+    font-style: normal;
+    font-weight: normal;
+    font-size: 18px;
+    line-height: 22px;
+    color: #646464;
+}
+
+.top-part-contant p {
+    font-family: ABeeZee;
+    font-style: normal;
+    font-weight: normal;
+    font-size: 16px;
+    line-height: 24px;
+    color: #646464;
+}
+.all-details-part {
+    margin-top: 50px;
+    margin-bottom: 30px;
+}
+.video-list {
+    margin-bottom: 20px;
+}
+.all-details-part p{
+font-size: 16px;
+}
+.prizes-part {
+    margin-top: 50px;
+}
+.prizes-part h5 {
+    font-size: 14px;
+}
+.prize_list {
+    display: inline-block;
+    width: 100%;
+}
+.prize_list div {
+    float: left;
+    width: 50%;
+}
+
+.prize_list div p {
+    padding-right: 30px;
+    font-size: 14px;
+}
+
+.prize_list div h3 {
+    font-size: 16px;
+    font-weight: 500;
+}
+.prize_list div h3 span {
+    color: #ffd333;
+    float: left;
+    margin-right: 2px;
+    font-size: 40px;
+    height: 23px;
+    margin-top: -5px;
+}
+.list_inner {
+    margin-top: 50px;
+}
+.list_inner p {
+    margin: 20px 0;
+}
+.list_inner  ul {
+    padding: 0 0 0 15px;
+    margin-bottom: 0;
+}
+.list_inner ul li {
+    margin-bottom: 30px;
+    margin-top: 20px;
+}
+.judges ul {
+    list-style: none;
+    padding: 0;
+    margin-top: 20px;
+    display: inline-block;
+    margin: 0;
+}
+
+.judges ul li {
+    float: left;
+    display: flex;
+    width: 50%;
+    margin-top: 30px;
+}
+
+.judges ul li img {
+    float: left;
+    width: 70px;
+}
+.judges h2 {
+    margin: 0;
+}
+.judges ul li span {display: inline-block;margin-left: 15px;margin-top: 10px;}
+
+.judges ul li span b {
+    font-size: 16px;
+}
+
+.judges ul li span i {
+    display: block;
+    font-size: 14px;
+    padding-right: 25px;
+}
+.judges {
+    margin-top: 50px;
+}
+.list_inner.judging_criteria ul {
+    margin-top: 30px;
+    margin-bottom: 50px;
+}
+.edtion_main_section {
+    display: inline-block;
+    width: 100%;
+}
+.edtion_main_section .content_part {
+    float: left;
+    width: 70%;
+}
+.edtion_sidebar {
+    float: right;
+    width: 30%;
+    margin-top: 20px;
+}
+.edtion_child {
+    border: 1px solid #DCE6E9;
+    background: #eceff3;
+    padding: 30px 0;
+    border-radius: 3px;
+    box-shadow: 0 4px 4px 0 #0000000f;
+}
+.winner_announc {
+    display: inline-block;
+    width: 100%;
+    padding: 0 15px;
+    box-sizing: border-box;
+}
+.winner_announc span {
+    font-size: 14px;
+    float: left;
+}
+.winner_announc span b {
+    display: block;
+    margin-top: 5px;
+}
+.winner_announc a {
+    float: right;
+    font-size: 12px;
+    margin: 0 0;
+    text-decoration: none;
+    color: #ffffff;
+    background: #265eac;
+    font-weight: bold;
+    padding: 8px 10px;
+    border-radius: 3px;
+}
+.iconlist_sidebar ul {
+    margin: 0;
+    padding: 0;
+    list-style: none;
+}
+
+.iconlist_sidebar ul li {
+    margin-top: 15px;
+}
+
+.iconlist_sidebar ul li a {
+    text-decoration: none;
+    color: #265eac;
+}
