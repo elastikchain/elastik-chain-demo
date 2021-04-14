@@ -291,7 +291,7 @@ font-size: 16px;
 .edtion_sidebar {
     float: right;
     width: 30%;
-    margin-top: 20px;
+    margin-top: 140px;
 }
 .edtion_child {
     border: 1px solid #DCE6E9;
@@ -339,3 +339,13 @@ font-size: 16px;
     text-decoration: none;
     color: #265eac;
 }
+
+.card-for-btn{padding: 10px 30px;
+    background: #265eac;
+    color: #fff;
+    text-align: center;
+    margin: 0 auto 20px auto;
+    cursor: pointer;
+    border-radius: 3px;
+}
+.card-for-btn a{color: #fff; text-transform: uppercase;}

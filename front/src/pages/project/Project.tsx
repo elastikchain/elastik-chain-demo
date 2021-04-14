@@ -500,10 +500,10 @@ const Project = (props: RouteComponentProps) => {
 
           <IonCard className="top-banner-details">
 
-          {/* <IonButton fill="clear" onClick={(e) => props.history.goBack()}>
+         <IonButton className="go-back" fill="clear" onClick={(e) => props.history.goBack()}>
             <IonIcon slot="start" icon={arrowBack}></IonIcon>
             Back
-          </IonButton> */}
+          </IonButton>
 
             <img
               className="project-picture"
@@ -563,18 +563,17 @@ const Project = (props: RouteComponentProps) => {
             <div className="tabs-section">
               <div className="tabs-heading"><a href="#" className="tabs-contant">1. Overview</a></div>
               <div className="tabs-heading"><a href="#" className="tabs-contant">2. Challenges</a></div>
-              <div className="tabs-heading"><a href="#" className="tabs-contant">3. Participants</a></div>
+              <div className="tabs-heading"><a href="#" className="tabs-contant">3. Submissions</a></div>
             </div>
-            
-            <h1>
+          </div>
+
+         
+          <div className="all-details-part project-overview">
+          <h1>
               {getSelectedProject().payload.name}{" "}
               {/* <IonNote>Id: {getSelectedProject().payload.projectId}</IonNote> */}
             </h1>
             <p>{getSelectedProject().payload.desc}</p>
-          </div>
-
-         
-          <div className="all-details-part">
             <div className="video-list">
             <iframe width="560" height="315" src="https://www.youtube.com/embed/63qyVXWE9Kw" title="YouTube video player" ></iframe>
             </div>
@@ -669,6 +668,60 @@ const Project = (props: RouteComponentProps) => {
                   <li><b>Business Value</b></li>
                 </ul>
             </div>
+          </div>
+          <div className="challenge-item-list">
+              Project Challenge
+            </div>
+          <div className="submission-item-list">
+          { submissions.map((sc) => (
+                    <IonCard
+                      className="submission-card"
+                      onClick={(e) => {
+                        e.preventDefault();
+                        const selectedSub = sc as any;
+                        selectedSub.payload.projectId = getSelectedProject().payload.projectId;
+                        setSelectedSubmission(selectedSub);
+                        props.history.push(
+                          "/main/submission/" + sc.payload.submissionId
+                        );
+                      }}
+                    >
+                      <div className="d-flex">
+                      <div className="submission-img">
+                            <img src={submissionPlaceHolder} alt="submission image"/>
+                        </div>
+                        <IonCardContent>
+                          <h1 className="proj-chall-name">
+                            {sc.payload.name}
+                          </h1>
+                          <h2 className="proj-chall-example"> {sc.payload.submissionId}</h2>
+                          <p className="proj-chall-description">
+                            {sc.payload.desc}
+                          </p>
+                        
+                        <IonList>
+                          <IonItem>
+                              <div className="labels-submission">Challenge ID : </div>
+                              <span></span>ID
+                          </IonItem>
+                          <IonItem>
+                              <div className="labels-submission">Submission : </div>
+                              {sc.payload.submission}
+                          </IonItem>
+                          <IonItem>
+                              <div className="labels-submission">Presentation : </div>
+                              {sc.payload.presentation}
+                          </IonItem>
+                          <IonItem>
+                              <div className="labels-submission">Video Link : </div>
+                              {sc.payload.videoLink}
+                          </IonItem>
+                        </IonList>
+                        </IonCardContent>
+                      </div>
+                    </IonCard>
+                  ))}
+
           </div>
           <IonNote>
             Judging criteria:{" "}
@@ -770,6 +823,17 @@ const Project = (props: RouteComponentProps) => {
           }
           </div>
           <div className="edtion_sidebar">
+           <div className="card-for-btn new-submission">
+               <a> <IonIcon icon={add}></IonIcon> Create new Submission</a>
+            </div>  
+            <div className="card-for-btn new-project">
+               <a> <IonIcon icon={add}></IonIcon> Create new Challenge</a>
+            </div>
+
+            <div className="card-for-btn join-participant">
+               <a> <IonIcon icon={add}></IonIcon> Join as a Participant</a>
+            </div>
+       
             <div className="edtion_child">
             <div className="winner_announc">
               <span>Winners announced soon<b>Dec 1, 2019</b></span>
