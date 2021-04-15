@@ -1056,10 +1056,7 @@ const Profile = (props: RouteComponentProps) => {
                                     <span>{p.payload.generalPublic.length}</span> participants
                                   </p>
                                 </div>
-                                <SubmissionToAcceptComponent
-                                contractId={p.contractId}
-                                projectId={p.payload.projectId}
-                              ></SubmissionToAcceptComponent>
+                                
                               </div>
                              
                             </div>
