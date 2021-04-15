@@ -62,7 +62,7 @@ import {
   flag,
   man,
   pricetags,
-  hammer
+  hammer,
 } from "ionicons/icons";
 
 import Tabs from "../../components/Tabs";
@@ -158,8 +158,6 @@ const Profile = (props: RouteComponentProps) => {
     }
     return "";
   };
-
-
 
   const SubmissionToAcceptComponent = (props: any) => {
     const participantSubmissionProposalAssets = useStreamQueries(
@@ -354,34 +352,51 @@ const Profile = (props: RouteComponentProps) => {
         ) : null}
         <SubHeader {...props} />
         <IonContent>
-        <div className="content-container"> 
-          <IonSplitPane className="menu-container" contentId="main">
-            {/*-- Delete Project confirmation setShowTrashProjectModal --*/}
-            <IonModal
-              isOpen={showTrashProjectModal.status}
-              onDidDismiss={() =>
-                setShowTrashProjectModal({
-                  status: false,
-                  projectID: "",
-                  contractID: "",
-                })
-              }
-              cssClass="my-custom-class-trash trash-popup"
-            >
-              <div className="content trash-project-modal-content">
-                <h1>Are you sure !</h1>
+          <div className="content-container">
+            <IonSplitPane className="menu-container" contentId="main">
+              {/*-- Delete Project confirmation setShowTrashProjectModal --*/}
+              <IonModal
+                isOpen={showTrashProjectModal.status}
+                onDidDismiss={() =>
+                  setShowTrashProjectModal({
+                    status: false,
+                    projectID: "",
+                    contractID: "",
+                  })
+                }
+                cssClass="my-custom-class-trash trash-popup"
+              >
+                <div className="content trash-project-modal-content">
+                  <h1>Are you sure !</h1>
+                  <IonButton
+                    className="confirm-submit-button"
+                    type="button"
+                    onClick={() => {
+                      deleteProjectFromStorage(
+                        showTrashProjectModal.contractID
+                      );
+                    }}
+                  >
+                    Yes
+                  </IonButton>
+                  <IonButton
+                    className="decline-submit-button"
+                    type="button"
+                    onClick={() => {
+                      setShowTrashProjectModal({
+                        status: false,
+                        projectID: "",
+                        contractID: "",
+                      });
+                    }}
+                  >
+                    No
+                  </IonButton>
+                </div>
                 <IonButton
-                  className="confirm-submit-button"
-                  type="button"
-                  onClick={() => {
-                    deleteProjectFromStorage(showTrashProjectModal.contractID);
-                  }}
-                >
-                  Yes
-                </IonButton>
-                <IonButton
-                  className="decline-submit-button"
-                  type="button"
+                  className="modal-default-close-btn"
+                  fill="clear"
+                  color="danger"
                   onClick={() => {
                     setShowTrashProjectModal({
                       status: false,
@@ -390,446 +405,464 @@ const Profile = (props: RouteComponentProps) => {
                     });
                   }}
                 >
-                  No
+                  <IonIcon icon={close}></IonIcon>
                 </IonButton>
-              </div>
-              <IonButton
-                className="modal-default-close-btn"
-                fill="clear"
-                color="danger"
-                onClick={() => {
-                  setShowTrashProjectModal({
-                    status: false,
-                    projectID: "",
-                    contractID: "",
-                  });
-                }}
-              >
-                <IonIcon icon={close}></IonIcon>
-              </IonButton>
-            </IonModal>
+              </IonModal>
 
-            {/*--  the side menu  --*/}
-            <IonMenu contentId="main" className="leftbar-main">
-              <IonHeader className="d-none">
-                <IonToolbar>
-                  <IonTitle></IonTitle>
-                </IonToolbar>
-              </IonHeader>
-              <IonContent>
-                <IonList className="menu-items-list">
-                  {/* <Tabs>
+              {/*--  the side menu  --*/}
+              <IonMenu contentId="main" className="leftbar-main">
+                <IonHeader className="d-none">
+                  <IonToolbar>
+                    <IonTitle></IonTitle>
+                  </IonToolbar>
+                </IonHeader>
+                <IonContent>
+                  <IonList className="menu-items-list">
+                    {/* <Tabs>
                     <Tab title="Lemon">Lemon is yellow</Tab>
                     <Tab title="Strawberry">Strawberry is red</Tab>
                     <Tab title="Pear">Pear is green</Tab>
                   </Tabs> */}
 
-                  <IonItem>
-                    <img slot="start" src={menuItemImg} alt="menu item" />
-                    <IonLabel>Profile</IonLabel>
-                  </IonItem>
-                  <IonItem>
-                    <img slot="start" src={menuItemImg} alt="menu item" />
-                    <IonLabel>Account Settings</IonLabel>
-                  </IonItem>
-                </IonList>
-              </IonContent>
-            </IonMenu>
-            {/*-- the main content --*/}
-            <IonPage className="full-width-container" id="main">
-              {/*--  modal showCreateProjectModal --*/}
-              <IonModal
-                isOpen={showCreateProjectModal}
-                onDidDismiss={() => setShowCreateProjectModal(false)}
-                cssClass="my-custom-class"
-              >
-                <div className="content create-project-modal-content">
-                  <form onSubmit={handleCreateProject}>
-                    <h1>Create Project</h1>
-                    <div className="flex-equal-childs-width">
+                    <IonItem>
+                      <img slot="start" src={menuItemImg} alt="menu item" />
+                      <IonLabel>Profile</IonLabel>
+                    </IonItem>
+                    <IonItem>
+                      <img slot="start" src={menuItemImg} alt="menu item" />
+                      <IonLabel>Account Settings</IonLabel>
+                    </IonItem>
+                  </IonList>
+                </IonContent>
+              </IonMenu>
+              {/*-- the main content --*/}
+              <IonPage className="full-width-container" id="main">
+                {/*--  modal showCreateProjectModal --*/}
+                <IonModal
+                  isOpen={showCreateProjectModal}
+                  onDidDismiss={() => setShowCreateProjectModal(false)}
+                  cssClass="my-custom-class"
+                >
+                  <div className="content create-project-modal-content">
+                    <form onSubmit={handleCreateProject}>
+                      <h1>Create Project</h1>
+                      <div className="flex-equal-childs-width">
+                        <IonItem>
+                          <IonLabel position="floating">Project Name</IonLabel>
+                          <IonInput
+                            required={true}
+                            value={projectDetail.name}
+                            onIonChange={(e) => {
+                              let projId = projectDetail.projectId;
+                              if (!projectIdTouched) {
+                                const d = new Date();
+                                projId =
+                                  e.detail.value!.replace(/\W/g, "_") +
+                                  "_" +
+                                  (d.getSeconds() +
+                                    d.getMinutes() +
+                                    d.getMilliseconds());
+                                projId = projId.toLowerCase();
+                              }
+                              setProjectDetail({
+                                ...projectDetail,
+                                name: e.detail.value!,
+                                projectId: projId,
+                              });
+                            }}
+                          ></IonInput>
+                        </IonItem>
+                        <IonItem>
+                          <IonLabel position="floating">Project ID</IonLabel>
+                          <IonInput
+                            required={true}
+                            value={projectDetail.projectId}
+                            onFocus={(e) => {
+                              setProjectIdTouched(true);
+                            }}
+                            onIonChange={(e) => {
+                              setProjectDetail({
+                                ...projectDetail,
+                                projectId: e.detail.value!,
+                              });
+                            }}
+                          ></IonInput>
+                        </IonItem>
+                      </div>
                       <IonItem>
-                        <IonLabel position="floating">Project Name</IonLabel>
+                        <IonLabel position="floating">Location</IonLabel>
                         <IonInput
                           required={true}
-                          value={projectDetail.name}
-                          onIonChange={(e) => {
-                            let projId = projectDetail.projectId;
-                            if (!projectIdTouched) {
-                              const d = new Date();
-                              projId =
-                                e.detail.value!.replace(/\W/g, "_") +
-                                "_" +
-                                (d.getSeconds() +
-                                  d.getMinutes() +
-                                  d.getMilliseconds());
-                              projId = projId.toLowerCase();
+                          value={projectDetail.location}
+                          onIonChange={(e) =>
+                            setProjectDetail({
+                              ...projectDetail,
+                              location: e.detail.value!,
+                            })
+                          }
+                        ></IonInput>
+                      </IonItem>
+                      <div className="criteria-tags-container">
+                        <IonLabel>Criteria</IonLabel>
+                        <CriteriaTagsInput
+                          onChange={(tags) => {
+                            const arrCriteriaPoint = tags.map(
+                              (t) =>
+                                ({ name: t.name, point: "0" } as CriteriaPoint)
+                            );
+                            setProjectDetail({
+                              ...projectDetail,
+                              criteria: arrCriteriaPoint,
+                            });
+                          }}
+                        ></CriteriaTagsInput>
+                      </div>
+                      <div className="flex-equal-childs-width datebox">
+                        <IonItem>
+                          <IonLabel>Start Date</IonLabel>
+                          <IonDatetime
+                            displayFormat="MM DD YYYY, HH:mm"
+                            placeholder="Select Start Date"
+                            value={projectDetail.startDate}
+                            onIonChange={(e) =>
+                              setProjectDetail({
+                                ...projectDetail,
+                                startDate: new Date(
+                                  e.detail.value!
+                                ).toISOString(),
+                              })
                             }
-                            setProjectDetail({
-                              ...projectDetail,
-                              name: e.detail.value!,
-                              projectId: projId,
-                            });
-                          }}
-                        ></IonInput>
-                      </IonItem>
+                          ></IonDatetime>
+                        </IonItem>
+                        <IonItem>
+                          <IonLabel>End Date</IonLabel>
+                          <IonDatetime
+                            displayFormat="MM DD YYYY, HH:mm"
+                            placeholder="Select End Date"
+                            value={projectDetail.endDate}
+                            onIonChange={(e) =>
+                              setProjectDetail({
+                                ...projectDetail,
+                                endDate: new Date(
+                                  e.detail.value!
+                                ).toISOString(),
+                              })
+                            }
+                          ></IonDatetime>
+                        </IonItem>
+                      </div>
                       <IonItem>
-                        <IonLabel position="floating">Project ID</IonLabel>
-                        <IonInput
-                          required={true}
-                          value={projectDetail.projectId}
-                          onFocus={(e) => {
-                            setProjectIdTouched(true);
-                          }}
-                          onIonChange={(e) => {
-                            setProjectDetail({
-                              ...projectDetail,
-                              projectId: e.detail.value!,
-                            });
-                          }}
-                        ></IonInput>
-                      </IonItem>
-                    </div>
-                    <IonItem>
-                      <IonLabel position="floating">Location</IonLabel>
-                      <IonInput
-                        required={true}
-                        value={projectDetail.location}
-                        onIonChange={(e) =>
-                          setProjectDetail({
-                            ...projectDetail,
-                            location: e.detail.value!,
-                          })
-                        }
-                      ></IonInput>
-                    </IonItem>
-                    <div className="criteria-tags-container">
-                      <IonLabel>Criteria</IonLabel>
-                      <CriteriaTagsInput
-                        onChange={(tags) => {
-                          const arrCriteriaPoint = tags.map(
-                            (t) =>
-                              ({ name: t.name, point: "0" } as CriteriaPoint)
-                          );
-                          setProjectDetail({
-                            ...projectDetail,
-                            criteria: arrCriteriaPoint,
-                          });
-                        }}
-                      ></CriteriaTagsInput>
-                    </div>
-                    <div className="flex-equal-childs-width datebox">
-                      <IonItem>
-                        <IonLabel>Start Date</IonLabel>
-                        <IonDatetime
-                          displayFormat="MM DD YYYY, HH:mm"
-                          placeholder="Select Start Date"
-                          value={projectDetail.startDate}
+                        <IonLabel position="floating">
+                          Project Description
+                        </IonLabel>
+                        <IonTextarea
+                          rows={2}
+                          value={projectDetail.desc}
                           onIonChange={(e) =>
                             setProjectDetail({
                               ...projectDetail,
-                              startDate: new Date(
-                                e.detail.value!
-                              ).toISOString(),
+                              desc: e.detail.value!,
                             })
                           }
-                        ></IonDatetime>
+                        ></IonTextarea>
                       </IonItem>
                       <IonItem>
-                        <IonLabel>End Date</IonLabel>
-                        <IonDatetime
-                          displayFormat="MM DD YYYY, HH:mm"
-                          placeholder="Select End Date"
-                          value={projectDetail.endDate}
-                          onIonChange={(e) =>
-                            setProjectDetail({
-                              ...projectDetail,
-                              endDate: new Date(e.detail.value!).toISOString(),
-                            })
-                          }
-                        ></IonDatetime>
+                        <IonLabel position="stacked">Project Image</IonLabel>
+                        <input
+                          disabled={projectDetail.loading}
+                          accept="images/*"
+                          type="file"
+                          onChange={(e) => {
+                            if (e.target.files && e.target.files.length > 0) {
+                              setProjectDetail({
+                                ...projectDetail,
+                                projectImageFile: e!.target!.files![0],
+                              });
+                            } else {
+                              setProjectDetail({
+                                ...projectDetail,
+                                projectImageFile: undefined,
+                              });
+                            }
+                          }}
+                        />
                       </IonItem>
-                    </div>
-                    <IonItem>
-                      <IonLabel position="floating">
-                        Project Description
-                      </IonLabel>
-                      <IonTextarea
-                        rows={2}
-                        value={projectDetail.desc}
-                        onIonChange={(e) =>
-                          setProjectDetail({
-                            ...projectDetail,
-                            desc: e.detail.value!,
-                          })
-                        }
-                      ></IonTextarea>
-                    </IonItem>
-                    <IonItem>
-                      <IonLabel position="stacked">Project Image</IonLabel>
-                      <input
+                      <p
+                        className="d-flex align-items-center m-left"
+                        hidden={!projectDetail.loading}
+                      >
+                        <IonSpinner className="m-right" />{" "}
+                        <IonNote>Uploading..</IonNote>
+                      </p>
+                      <IonButton
                         disabled={projectDetail.loading}
-                        accept="images/*"
-                        type="file"
-                        onChange={(e) => {
-                          if (e.target.files && e.target.files.length > 0) {
-                            setProjectDetail({
-                              ...projectDetail,
-                              projectImageFile: e!.target!.files![0],
-                            });
-                          } else {
-                            setProjectDetail({
-                              ...projectDetail,
-                              projectImageFile: undefined,
-                            });
-                          }
-                        }}
-                      />
-                    </IonItem>
-                    <p
-                      className="d-flex align-items-center m-left"
-                      hidden={!projectDetail.loading}
-                    >
-                      <IonSpinner className="m-right" />{" "}
-                      <IonNote>Uploading..</IonNote>
-                    </p>
-                    <IonButton
-                      disabled={projectDetail.loading}
-                      className="submit-button"
-                      type="submit"
-                    >
-                      Create
-                    </IonButton>
-                  </form>
-                </div>
-                <IonButton
-                  className="modal-default-close-btn"
-                  fill="clear"
-                  color="danger"
-                  onClick={() => {
-                    resetCreateProject();
-                    setShowCreateProjectModal(false);
-                  }}
-                >
-                  <IonIcon icon={close}></IonIcon>
-                </IonButton>
-              </IonModal>
-
-              {/*-- modal showRequestModal --*/}
-              <IonModal
-                isOpen={showRequestModal}
-                onDidDismiss={() => setShowRequestModal(false)}
-                cssClass="my-custom-class"
-              >
-                <div className="content create-project-modal-content">
-                  <form onSubmit={handleJoinProject}>
-                    <h1>Register project</h1>
-                    <div className="flex-equal-childs-width">
-                      <IonItem>
-                        <IonLabel position="floating">Project ID</IonLabel>
-
-                        <IonInput
-                          required={true}
-                          value={registerProjectId}
-                          onIonChange={(e) => {
-                            setRegisterProjectId(
-                              (e.detail.value! as unknown) as string
-                            );
-                          }}
-                        ></IonInput>
-                      </IonItem>
-                      <IonItem>
-                        <IonLabel position="floating">Client Name</IonLabel>
-                        <IonInput
-                          required={true}
-                          value={registerProjectClient}
-                          onIonChange={(e) => {
-                            setRegisterProjectClient(
-                              (e.detail.value! as unknown) as string
-                            );
-                          }}
-                        ></IonInput>
-                      </IonItem>
-                    </div>
-
-                    <IonButton
-                      onClick={(e) => {
-                        setRegisterProjectClient("");
-                        setRegisterProjectId("");
-                        setShowRequestModal(false);
-                        handleJoinProject(e);
-                      }}
-                      className="submit-button"
-                      type="submit"
-                    >
-                      Join
-                    </IonButton>
-                  </form>
-                </div>
-                <IonButton
-                  className="modal-default-close-btn"
-                  fill="clear"
-                  color="danger"
-                  onClick={() => {
-                    resetCreateProject();
-                    setShowCreateProjectModal(false);
-                  }}
-                >
-                  <IonIcon icon={close}></IonIcon>
-                </IonButton>
-              </IonModal>
-
-              {/*-- modal AddParticipantToProject --*/}
-              <IonModal
-                isOpen={showParticipantModal}
-                onDidDismiss={() => setShowParticipantModal(false)}
-                cssClass="my-custom-class"
-              >
-                <div className="content create-project-modal-content">
-                  <form onSubmit={handleJoinProject}>
-                    <h1>Add Participant</h1>
-                    <div className="flex-equal-childs-width">
-                      <IonItem>
-                        <IonLabel position="floating">Participant ID</IonLabel>
-
-                        <IonInput
-                          required={true}
-                          value={participantId}
-                          onIonChange={(e) => {
-                            setParicipantId(
-                              (e.detail.value! as unknown) as string
-                            );
-                          }}
-                        ></IonInput>
-                      </IonItem>
-                    </div>
-                  </form>
-                </div>
-                <IonButton
-                  className="modal-default-close-btn"
-                  fill="clear"
-                  color="danger"
-                  onClick={() => {
-                    resetCreateProject();
-                    setShowCreateProjectModal(false);
-                  }}
-                >
-                  <IonIcon icon={close}></IonIcon>
-                </IonButton>
-              </IonModal>
-
-              <div className="wrapper">
-                <div className="profile-info-container">
-                  <div className="profile-img-container">
-                    {projectAssets.length > 0 && projectAssets[0].payload.clientProfile.pictureUrl != "" ? 
-                    
-                    <img
-                      src={projectAssets[0].payload.clientProfile.pictureUrl}
-                      alt="profile image"
-                    />
-                  :
-
-                    <img
-                    src="https://via.placeholder.com/214x198.png"
-                    alt="profile image"
-                  />
-                  }
-                    <input
-                      className="profile-picture-input"
-                      type="file"
-                      accept="image/*"
-                    />
-                  </div>
-                  <div className="profile-info">
-                    <div className="profile-header">
-                    <h1>{user.party}</h1>
-                      <IonButton size="large" className="edit-button">
-                        {" "}
-                        Edit{" "}
+                        className="submit-button"
+                        type="submit"
+                      >
+                        Create
                       </IonButton>
+                    </form>
+                  </div>
+                  <IonButton
+                    className="modal-default-close-btn"
+                    fill="clear"
+                    color="danger"
+                    onClick={() => {
+                      resetCreateProject();
+                      setShowCreateProjectModal(false);
+                    }}
+                  >
+                    <IonIcon icon={close}></IonIcon>
+                  </IonButton>
+                </IonModal>
+
+                {/*-- modal showRequestModal --*/}
+                <IonModal
+                  isOpen={showRequestModal}
+                  onDidDismiss={() => setShowRequestModal(false)}
+                  cssClass="my-custom-class"
+                >
+                  <div className="content create-project-modal-content">
+                    <form onSubmit={handleJoinProject}>
+                      <h1>Register project</h1>
+                      <div className="flex-equal-childs-width">
+                        <IonItem>
+                          <IonLabel position="floating">Project ID</IonLabel>
+
+                          <IonInput
+                            required={true}
+                            value={registerProjectId}
+                            onIonChange={(e) => {
+                              setRegisterProjectId(
+                                (e.detail.value! as unknown) as string
+                              );
+                            }}
+                          ></IonInput>
+                        </IonItem>
+                        <IonItem>
+                          <IonLabel position="floating">Client Name</IonLabel>
+                          <IonInput
+                            required={true}
+                            value={registerProjectClient}
+                            onIonChange={(e) => {
+                              setRegisterProjectClient(
+                                (e.detail.value! as unknown) as string
+                              );
+                            }}
+                          ></IonInput>
+                        </IonItem>
+                      </div>
+
+                      <IonButton
+                        onClick={(e) => {
+                          setRegisterProjectClient("");
+                          setRegisterProjectId("");
+                          setShowRequestModal(false);
+                          handleJoinProject(e);
+                        }}
+                        className="submit-button"
+                        type="submit"
+                      >
+                        Join
+                      </IonButton>
+                    </form>
+                  </div>
+                  <IonButton
+                    className="modal-default-close-btn"
+                    fill="clear"
+                    color="danger"
+                    onClick={() => {
+                      resetCreateProject();
+                      setShowCreateProjectModal(false);
+                    }}
+                  >
+                    <IonIcon icon={close}></IonIcon>
+                  </IonButton>
+                </IonModal>
+
+                {/*-- modal AddParticipantToProject --*/}
+                <IonModal
+                  isOpen={showParticipantModal}
+                  onDidDismiss={() => setShowParticipantModal(false)}
+                  cssClass="my-custom-class"
+                >
+                  <div className="content create-project-modal-content">
+                    <form onSubmit={handleJoinProject}>
+                      <h1>Add Participant</h1>
+                      <div className="flex-equal-childs-width">
+                        <IonItem>
+                          <IonLabel position="floating">
+                            Participant ID
+                          </IonLabel>
+
+                          <IonInput
+                            required={true}
+                            value={participantId}
+                            onIonChange={(e) => {
+                              setParicipantId(
+                                (e.detail.value! as unknown) as string
+                              );
+                            }}
+                          ></IonInput>
+                        </IonItem>
+                      </div>
+                    </form>
+                  </div>
+                  <IonButton
+                    className="modal-default-close-btn"
+                    fill="clear"
+                    color="danger"
+                    onClick={() => {
+                      resetCreateProject();
+                      setShowCreateProjectModal(false);
+                    }}
+                  >
+                    <IonIcon icon={close}></IonIcon>
+                  </IonButton>
+                </IonModal>
+
+                <div className="wrapper">
+                  <div className="profile-info-container">
+                    <div className="profile-img-container">
+                      {projectAssets.length > 0 &&
+                      projectAssets[0].payload.clientProfile.pictureUrl !=
+                        "" ? (
+                        <img
+                          src={
+                            projectAssets[0].payload.clientProfile.pictureUrl
+                          }
+                          alt="profile image"
+                        />
+                      ) : (
+                        <img
+                          src="https://via.placeholder.com/214x198.png"
+                          alt="profile image"
+                        />
+                      )}
+                      <input
+                        className="profile-picture-input"
+                        type="file"
+                        accept="image/*"
+                      />
                     </div>
-               
-                    <div className="profile-about">
-                      {console.log("userData",projectAssets.length > 0 && projectAssets[0].payload.clientProfile.pictureUrl)}
-                      
-                      <h2>About</h2>
-                      <p>
-                        Lorem ipsum dolor sit amet consectetur adipisicing elit.
-                        Nihil, neque. Nulla quae pariatur voluptas, tenetur
-                        perferendis voluptatibus incidunt provident impedit
-                        sapiente eius voluptatum perspiciatis sint quisquam iste
-                        nam cupiditate dolores.
-                      </p>
-                      <p>
-                        Linkedin: <a href="#">Information here</a>
-                      </p>
-                      <p>
-                        Github: <a href="#">Information here</a>
-                      </p>
-                      {getUserType() === "client" ? (
-                        <div>
-                          <IonButton
-                            onClick={() => setShowCreateProjectModal(true)}
-                            className="create-project-button extra-create-newproject-btn"
-                          >
-                            Create New Hackathon
-                          </IonButton>
-                          
-                        </div>
-                      ) : null}
+                    <div className="profile-info">
+                      <div className="profile-header">
+                        <h1>{user.party}</h1>
+                        <IonButton size="large" className="edit-button">
+                          {" "}
+                          Edit{" "}
+                        </IonButton>
+                      </div>
+
+                      <div className="profile-about">
+                        {console.log(
+                          "userData",
+                          projectAssets.length > 0 &&
+                            projectAssets[0].payload.clientProfile.pictureUrl
+                        )}
+
+                        <h2>About</h2>
+                        <p>
+                          Lorem ipsum dolor sit amet consectetur adipisicing
+                          elit. Nihil, neque. Nulla quae pariatur voluptas,
+                          tenetur perferendis voluptatibus incidunt provident
+                          impedit sapiente eius voluptatum perspiciatis sint
+                          quisquam iste nam cupiditate dolores.
+                        </p>
+                        <p>
+                          Linkedin: <a href="#">Information here</a>
+                        </p>
+                        <p>
+                          Github: <a href="#">Information here</a>
+                        </p>
+                        {getUserType() === "client" ? (
+                          <div>
+                            <IonButton
+                              onClick={() => setShowCreateProjectModal(true)}
+                              className="create-project-button extra-create-newproject-btn"
+                            >
+                              Create New Hackathon
+                            </IonButton>
+                          </div>
+                        ) : null}
+                      </div>
                     </div>
                   </div>
-                </div>
-                {getUserType() === "client" ? (
-                  clientProjectAssets.filter(
-                    (c) => (user as any).party === c.payload.client
-                  ).length > 0 ? (
-                    <IonList>
-                      <IonListHeader>Your Hackathons</IonListHeader>
-                      {clientProjectAssets
-                        .filter((c) => (user as any).party === c.payload.client)
-                        .map((p) => (
-                          <div className="listing-projects-name">
-                            <div className="created-projects-listing">
-                              <div
-                                className="left--project-image"
-                                onClick={(e) => {
-                                  e.preventDefault();
-                                  setSelectedProject(p);
-                                  props.history.push(
-                                    "/main/project/" + p.payload.projectId
-                                  );
-                                }}
-                              >
-                                { p.payload.pictureUrl != "" ?
-                                  <img src={p.payload.pictureUrl} alt="peoject image" />
-                                :
-                                <img src={mediumImage} alt="peoject image" />
-                                }
-                              </div>
-                              <div
-                                className="center-project-contant"
-                                onClick={(e) => {
-                                  e.preventDefault();
-                                  setSelectedProject(p);
-                                  props.history.push(
-                                    "/main/project/" + p.payload.projectId
-                                  );
-                                }}
-                              >
-                                <h2 className="title-project">
-                                  {p.payload.name}
-                                </h2>
-                                <div className="online-and-days">
-                                  <div className="left-days">20Days left</div>
-                                  <div className="online-point">
-                                    {" "}
-                                    <IonIcon icon={globe}></IonIcon> Online
-                                  </div>
+                  {getUserType() === "client" ? (
+                    clientProjectAssets.filter(
+                      (c) => (user as any).party === c.payload.client
+                    ).length > 0 ? (
+                      <IonList>
+                        <IonListHeader>Your Hackathons</IonListHeader>
+                        {clientProjectAssets
+                          .filter(
+                            (c) => (user as any).party === c.payload.client
+                          )
+                          .map((p) => (
+                            <div className="listing-projects-name">
+                              <div className="created-projects-listing">
+                                <div
+                                  className="left--project-image"
+                                  onClick={(e) => {
+                                    e.preventDefault();
+                                    setSelectedProject(p);
+                                    props.history.push(
+                                      "/main/project/" + p.payload.projectId
+                                    );
+                                  }}
+                                >
+                                  {p.payload.pictureUrl != "" ? (
+                                    <img
+                                      src={p.payload.pictureUrl}
+                                      alt="peoject image"
+                                    />
+                                  ) : (
+                                    <img
+                                      src={mediumImage}
+                                      alt="peoject image"
+                                    />
+                                  )}
                                 </div>
-                                <div className="price-chanllanges-parti">
-                                  <div className="project-price-lsiitng">
-                                    <h3 className="price-heading">Prizes</h3>
-                                    <p className="price-listing">
+                                <div
+                                  className="center-project-contant"
+                                  onClick={(e) => {
+                                    e.preventDefault();
+                                    setSelectedProject(p);
+                                    props.history.push(
+                                      "/main/project/" + p.payload.projectId
+                                    );
+                                  }}
+                                >
+                                  <h2 className="title-project">
+                                    {p.payload.name}
+                                  </h2>
+                                  <div className="online-and-days">
+                                    <div className="left-days">20Days left</div>
+                                    <div className="online-point">
+                                      {" "}
+                                      <IonIcon icon={globe}></IonIcon> Online
+                                    </div>
+                                  </div>
+                                  <div className="price-chanllanges-parti">
+                                    <div className="project-price-lsiitng">
+                                      <h3 className="price-heading">Prizes</h3>
+                                      {p.payload.prizes.length > 0 ? (
+                                        p.payload.prizes.map((k) => (
+                                          <div>
+                                            <p className="price-listing">
+                                              <IonIcon icon={trophy}></IonIcon>{" "}
+                                              <b>
+                                                {k.value}
+                                                {k.currency}{" "}
+                                              </b>{" "}
+                                              {k.name}
+                                            </p>
+                                          </div>
+                                        ))
+                                      ) : (
+                                        <p>Not Available Yet</p>
+                                      )}
+                                      {/* <p className="price-listing">
                                       <IonIcon icon={trophy}></IonIcon>{" "}
                                       <b>$180,000 </b> in first price
                                     </p>
@@ -840,88 +873,93 @@ const Profile = (props: RouteComponentProps) => {
                                     <p className="price-listing">
                                       <IonIcon icon={trophy}></IonIcon>{" "}
                                       <b>$380,000 </b> in third price
-                                    </p>
-                                  </div>
-                                  <div className="Challanges-list">
-                                    {" "}
-                                    <IonIcon icon={flag}></IonIcon>{" "}
-                                    <span>5</span> Challanges{" "}
-                                  </div>
-                                  <div className="participants">
-                                    <p className="participants-numbers">
+                                    </p> */}
+                                    </div>
+                                    <div className="Challanges-list">
                                       {" "}
-                                      <IonIcon icon={man}></IonIcon>{" "}
-                                      <span>{p.payload.generalPublic.length}</span> participants
-                                    </p>
-                                    
+                                      <IonIcon icon={flag}></IonIcon>{" "}
+                                      <span>5</span> Challanges{" "}
+                                    </div>
+                                    <div className="participants">
+                                      <p className="participants-numbers">
+                                        {" "}
+                                        <IonIcon icon={man}></IonIcon>{" "}
+                                        <span>
+                                          {p.payload.generalPublic.length}
+                                        </span>{" "}
+                                        participants
+                                      </p>
+                                    </div>
+                                  </div>
+                                </div>
+                                <div className="left-project-details">
+                                  <div className="right-sidebar">
+                                    <IonIcon icon={calendar}></IonIcon> Start
+                                    Date <span>02-02-2021</span>
+                                  </div>
+                                  <div className="right-sidebar">
+                                    <IonIcon icon={calendar}></IonIcon> End Date{" "}
+                                    <span>10-03-2021</span>
+                                  </div>
+                                  <div className="right-sidebar">
+                                    <IonIcon icon={pricetags}></IonIcon> Criteria :
+                                    <div>
+                                    <span className="Criteria-lisitng">
+                                      {p.payload.criteria &&
+                                        p.payload.criteria.map((k) => (
+                                          <li>{k.name}</li>
+                                        ))}
+                                    </span>
+                                  </div>
+                                  </div>
+                                  {console.log("Prize Data", p.payload)}
+                                  <div className="edit-delete-list">
+                                    <IonItem className="project-controls-listing">
+                                      <IonIcon
+                                        icon={hammer}
+                                        onClick={(e) => {
+                                          e.stopPropagation();
+                                          console.log("the selected::", p);
+
+                                          setSelectedProject(p);
+                                          props.history.push(
+                                            "/main/scores/" +
+                                              p.payload.projectId
+                                          );
+                                        }}
+                                      ></IonIcon>
+                                      <IonIcon
+                                        icon={pencil}
+                                        onClick={(e) => {
+                                          e.stopPropagation();
+                                          console.log("the selected::", p);
+
+                                          setSelectedProject(p);
+                                          props.history.push(
+                                            "/main/projects/" +
+                                              p.payload.projectId +
+                                              "/edit"
+                                          );
+                                        }}
+                                      ></IonIcon>
+                                      <IonIcon
+                                        icon={trash}
+                                        onClick={(e) => {
+                                          e.stopPropagation();
+                                          setShowTrashProjectModal({
+                                            status: true,
+                                            projectID: p.payload.projectId,
+                                            contractID: p.contractId,
+                                          });
+                                        }}
+                                        className="trash-project-button"
+                                      ></IonIcon>
+                                    </IonItem>
                                   </div>
                                 </div>
                               </div>
-                              <div className="left-project-details">
-                                <div className="right-sidebar">
-                                  <IonIcon icon={calendar}></IonIcon> Start Date{" "}
-                                  <span>02-02-2021</span>
-                                </div>
-                                <div className="right-sidebar">
-                                  <IonIcon icon={calendar}></IonIcon> End Date{" "}
-                                  <span>10-03-2021</span>
-                                </div>
-                                <div className="right-sidebar">
-                                  <IonIcon icon={pricetags}></IonIcon> Criteria
-                                  :{" "}
-                                  <span className="Criteria-lisitng">
-                                    {" "}
-                                    Productivity{" "}
-                                  </span>{" "}
-                                </div>
-                                {console.log("Prize Data",p.payload)}
-                                <div className="edit-delete-list">
-                                  <IonItem className="project-controls-listing">
-                                  <IonIcon
-                                      icon={hammer}
-                                      onClick={(e) => {
-                                        e.stopPropagation();
-                                        console.log("the selected::", p);
 
-                                        setSelectedProject(p);
-                                        props.history.push(
-                                          "/main/scores/" +
-                                            p.payload.projectId 
-                                        );
-                                      }}
-                                    ></IonIcon>
-                                    <IonIcon
-                                      icon={pencil}
-                                      onClick={(e) => {
-                                        e.stopPropagation();
-                                        console.log("the selected::", p);
-
-                                        setSelectedProject(p);
-                                        props.history.push(
-                                          "/main/projects/" +
-                                            p.payload.projectId +
-                                            "/edit"
-                                        );
-                                      }}
-                                    ></IonIcon>
-                                    <IonIcon
-                                      icon={trash}
-                                      onClick={(e) => {
-                                        e.stopPropagation();
-                                        setShowTrashProjectModal({
-                                          status: true,
-                                          projectID: p.payload.projectId,
-                                          contractID: p.contractId,
-                                        });
-                                      }}
-                                      className="trash-project-button"
-                                    ></IonIcon>
-                                  </IonItem>
-                                </div>
-                              </div>
-                            </div>
-
-                            {/* <IonItem 
+                              {/* <IonItem 
                               onClick={(e) => {
                                 e.preventDefault();
                                 console.log("the selected::", p);
@@ -972,14 +1010,14 @@ const Profile = (props: RouteComponentProps) => {
                               className="trash-project-button"
                             ></IonIcon>
                             </IonItem> */}
-                          </div>
-                        ))}
-                    </IonList>
-                  ) : null
-                ) : (
-                  <IonList>
-                    <IonListHeader>Hackathons:</IonListHeader>
-                    {/* {getUserType() === "participant" && (
+                            </div>
+                          ))}
+                      </IonList>
+                    ) : null
+                  ) : (
+                    <IonList>
+                      <IonListHeader>Hackathons:</IonListHeader>
+                      {/* {getUserType() === "participant" && (
                       <IonButton
                         onClick={(e) => {
                           setShowRequestModal(true);
@@ -989,135 +1027,156 @@ const Profile = (props: RouteComponentProps) => {
                       </IonButton>
                     )} */}
 
-                    {clientProjectAssets.map((p) => {
-                      return (
-                        <div className="listing-projects-name">
-                          <div className="created-projects-listing">
-                            <div
-                              className="left--project-image"
-                              onClick={(e) => {
-                                e.preventDefault();
-                                setSelectedProject(p);
-                                props.history.push(
-                                  "/main/project/" + p.payload.projectId
-                                );
-                              }}
-                            >
-                              {console.log("payload", p.payload)}
-                              <img src={mediumImage} alt="peoject image" />
-                            </div>
-                            <div
-                              className="center-project-contant"
-                              onClick={(e) => {
-                                e.preventDefault();
-                                setSelectedProject(p);
-                                props.history.push(
-                                  "/main/project/" + p.payload.projectId
-                                );
-                              }}
-                            >
-                              <h2 className="title-project">
-                                {p.payload.name}
-                              </h2>
-                              <div className="online-and-days">
-                                <div className="left-days">{Math.ceil(Math.abs(new Date(p.payload.endDate).getTime() - (new Date()).getTime()) / (1000 * 60 * 60 * 24)) }Days left</div>
-                                <div className="online-point">
-                                  {" "}
-                                  <IonIcon icon={globe}></IonIcon> Online
-                                </div>
+                      {clientProjectAssets.map((p) => {
+                        return (
+                          <div className="listing-projects-name">
+                            <div className="created-projects-listing">
+                              <div
+                                className="left--project-image"
+                                onClick={(e) => {
+                                  e.preventDefault();
+                                  setSelectedProject(p);
+                                  props.history.push(
+                                    "/main/project/" + p.payload.projectId
+                                  );
+                                }}
+                              >
+                                {console.log("payload", p.payload)}
+                                <img src={mediumImage} alt="peoject image" />
                               </div>
-                              <div>Location: {p.payload.location}</div>
-                              <div className="price-chanllanges-parti">
-                                <div className="project-price-lsiitng">
-                                  <h3 className="price-heading">Prizes</h3>
-                                  <p className="price-listing">
-                                    <IonIcon icon={trophy}></IonIcon>{" "}
-                                    <b>$180,000 </b> in first price
-                                  </p>
-                                  <p className="price-listing">
-                                    <IonIcon icon={trophy}></IonIcon>{" "}
-                                    <b>$280,000 </b> in second price
-                                  </p>
-                                  <p className="price-listing">
-                                    <IonIcon icon={trophy}></IonIcon>{" "}
-                                    <b>$380,000 </b> in third price
-                                  </p>
-                                </div>
-                                <div className="Challanges-list">
-                                  {" "}
-                                  <IonIcon
-                                    icon={flag}
-                                  ></IonIcon> <span>{p.payload.challenges.length}</span> Challange{p.payload.challenges.length>1&&"s"}
-                                </div>
-                                <div className="participants">
-                                  <p className="participants-numbers">
+                              <div
+                                className="center-project-contant"
+                                onClick={(e) => {
+                                  e.preventDefault();
+                                  setSelectedProject(p);
+                                  props.history.push(
+                                    "/main/project/" + p.payload.projectId
+                                  );
+                                }}
+                              >
+                                <h2 className="title-project">
+                                  {p.payload.name}
+                                </h2>
+                                <div className="online-and-days">
+                                  <div className="left-days">
+                                    {Math.ceil(
+                                      Math.abs(
+                                        new Date(p.payload.endDate).getTime() -
+                                          new Date().getTime()
+                                      ) /
+                                        (1000 * 60 * 60 * 24)
+                                    )}
+                                    Days left
+                                  </div>
+                                  <div className="online-point">
                                     {" "}
-                                    <IonIcon icon={man}></IonIcon>{" "}
-                                    <span>{p.payload.generalPublic.length}</span> participants
-                                  </p>
+                                    <IonIcon icon={globe}></IonIcon> Online
+                                  </div>
                                 </div>
-                                
+                                <div>Location: {p.payload.location}</div>
+                                <div className="price-chanllanges-parti">
+                                  <div className="project-price-lsiitng">
+                                    <h3 className="price-heading">Prizes</h3>
+                                    <p className="price-listing">
+                                      <IonIcon icon={trophy}></IonIcon>{" "}
+                                      <b>$180,000 </b> in first price
+                                    </p>
+                                    <p className="price-listing">
+                                      <IonIcon icon={trophy}></IonIcon>{" "}
+                                      <b>$280,000 </b> in second price
+                                    </p>
+                                    <p className="price-listing">
+                                      <IonIcon icon={trophy}></IonIcon>{" "}
+                                      <b>$380,000 </b> in third price
+                                    </p>
+                                  </div>
+                                  <div className="Challanges-list">
+                                    {" "}
+                                    <IonIcon icon={flag}></IonIcon>{" "}
+                                    <span>{p.payload.challenges.length}</span>{" "}
+                                    Challange
+                                    {p.payload.challenges.length > 1 && "s"}
+                                  </div>
+                                  <div className="participants">
+                                    <p className="participants-numbers">
+                                      {" "}
+                                      <IonIcon icon={man}></IonIcon>{" "}
+                                      <span>
+                                        {p.payload.generalPublic.length}
+                                      </span>{" "}
+                                      participants
+                                    </p>
+                                  </div>
+                                </div>
                               </div>
-                             
-                            </div>
-                            <div className="left-project-details">
-                              <div className="right-sidebar">
-                                <IonIcon icon={calendar}></IonIcon> Start Date{" "}
-                                <span>{new Date(p.payload.startDate).toLocaleString()}</span>
-                              </div>
-                              <div className="right-sidebar">
-                                <IonIcon icon={calendar}></IonIcon> End Date{" "}
-                                <span>{new Date(p.payload.endDate).toLocaleString()}</span>
-                              </div>
-                              <div className="right-sidebar">
-                                <IonIcon icon={pricetags}></IonIcon> Criteria :{" "}
-                                <span className="Criteria-lisitng">
-                                  {p.payload.criteria.map(k=>k.name)}
-                                </span>{" "}
-                              </div>
+                              <div className="left-project-details">
+                                <div className="right-sidebar">
+                                  <IonIcon icon={calendar}></IonIcon> Start Date{" "}
+                                  <span>
+                                    {new Date(
+                                      p.payload.startDate
+                                    ).toDateString()}
+                                  </span>
+                                </div>
+                                <div className="right-sidebar">
+                                  <IonIcon icon={calendar}></IonIcon> End Date{" "}
+                                  <span>
+                                    {new Date(p.payload.endDate).toDateString()}
+                                  </span>
+                                </div>
+                                <div className="right-sidebar">
+                                  <IonIcon icon={pricetags}></IonIcon> Criteria :
+                                  <div>
+                                    <span className="Criteria-lisitng">
+                                      {p.payload.criteria &&
+                                        p.payload.criteria.map((k) => (
+                                          <li>{k.name}</li>
+                                        ))}
+                                    </span>
+                                  </div>
+                                </div>
 
-                              <div className="edit-delete-list">
-                                <IonItem className="project-controls-listing">
-                                  <IonIcon
-                                    icon={pencil}
-                                    onClick={(e) => {
-                                      e.stopPropagation();
-                                      console.log("the selected::", p);
+                                <div className="edit-delete-list">
+                                  <IonItem className="project-controls-listing">
+                                    <IonIcon
+                                      icon={pencil}
+                                      onClick={(e) => {
+                                        e.stopPropagation();
+                                        console.log("the selected::", p);
 
-                                      setSelectedProject(p);
-                                      props.history.push(
-                                        "/main/projects/" +
-                                          p.payload.projectId +
-                                          "/edit"
-                                      );
-                                    }}
-                                  ></IonIcon>
-                                  <IonIcon
-                                    icon={trash}
-                                    onClick={(e) => {
-                                      e.stopPropagation();
-                                      setShowTrashProjectModal({
-                                        status: true,
-                                        projectID: p.payload.projectId,
-                                        contractID: p.contractId,
-                                      });
-                                    }}
-                                    className="trash-project-button"
-                                  ></IonIcon>
-                                </IonItem>
+                                        setSelectedProject(p);
+                                        props.history.push(
+                                          "/main/projects/" +
+                                            p.payload.projectId +
+                                            "/edit"
+                                        );
+                                      }}
+                                    ></IonIcon>
+                                    <IonIcon
+                                      icon={trash}
+                                      onClick={(e) => {
+                                        e.stopPropagation();
+                                        setShowTrashProjectModal({
+                                          status: true,
+                                          projectID: p.payload.projectId,
+                                          contractID: p.contractId,
+                                        });
+                                      }}
+                                      className="trash-project-button"
+                                    ></IonIcon>
+                                  </IonItem>
+                                </div>
                               </div>
                             </div>
                           </div>
-                        </div>
-                      );
-                    })}
-                  </IonList>
-                )}
-              </div>
-            </IonPage>
-          </IonSplitPane>
-         
-        </div>
+                        );
+                      })}
+                    </IonList>
+                  )}
+                </div>
+              </IonPage>
+            </IonSplitPane>
+          </div>
         </IonContent>
       </IonPage>
     );

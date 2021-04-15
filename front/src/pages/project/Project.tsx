@@ -1,10 +1,7 @@
 import React, { useState } from "react";
 import { RouteComponentProps } from "react-router-dom";
 
-import {
-  useUserDispatch,
-  useUserState,
-} from "../../context/UserContext";
+import { useUserDispatch, useUserState } from "../../context/UserContext";
 
 import {
   getSelectedProject,
@@ -52,18 +49,21 @@ import {
   pencil,
   logoFacebook,
   logoInstagram,
-  logoTwitter
+  logoTwitter,
 } from "ionicons/icons";
 import "./Project.scss";
 import { useLedger, useQuery, useStreamQueries } from "@daml/react";
+
 import {
   AddChallenge,
   ClientProject,
   ClientRole,
   ParticipantSubmission,
   ProposeSubmission,
-  ParticipantSubmissionProposal
+  ParticipantSubmissionProposal,
+  AcceptSubmission,
 } from "@daml.js/cosmart-0.0.1/lib/Main";
+
 import submissionPlaceHolder from "../../assets/img/img-proj-placeholder.png";
 import SubHeader from "../../components/Header/subheader";
 import Footer from "../../components/Footer/footer";
@@ -79,7 +79,9 @@ const Project = (props: RouteComponentProps) => {
   const submissions = useStreamQueries(ParticipantSubmission, () => [
     { client: getSelectedProject().payload.client },
   ]).contracts;
-  const client = useStreamQueries(ClientRole).contracts;
+  const clientProject = useStreamQueries(ClientProject).contracts;
+
+  clientProject[0] && console.log("data1 ", clientProject[0].payload);
   const getUserType = (): "" | "client" | "participant" | "judge" => {
     if (
       selectedProj.filter(
@@ -98,9 +100,8 @@ const Project = (props: RouteComponentProps) => {
     return "";
   };
 
-  const [searchText, setSearchText] = useState("");
   const [showChallengeModal, setShowChallengeModal] = useState(false);
-   
+
   const [
     showDltChallenderConfirmation,
     deleteChallenderConfirmation,
@@ -124,6 +125,16 @@ const Project = (props: RouteComponentProps) => {
     setChallengeDetail(defaultChallengeDetail);
     setChallengeIdTouched(false);
   };
+
+  const acceptSubmission = (contractId: any) => {
+    ledger
+      .exercise(
+        ParticipantSubmissionProposal.AcceptSubmission,
+        contractId,
+        {submissionId: ""}
+      ).then(data=> console.log("accepted"))
+  };
+
 
   const handleChallengeSubmit = async (evt: any) => {
     evt.preventDefault();
@@ -347,7 +358,7 @@ const Project = (props: RouteComponentProps) => {
       });
     console.log(event.target.elements.challengeName.value);*/
   };
- 
+
   const SubmissionFormComponent = (props: any) => {
     const defaultSubmissionDetail: ProposeSubmission = {
       generalPublicParticipant: (user as any).party,
@@ -403,7 +414,7 @@ const Project = (props: RouteComponentProps) => {
                 }
               ></IonInput>
             </IonItem>
-            
+
             <IonItem>
               <IonLabel position="floating">Submission Description*</IonLabel>
               <IonInput
@@ -417,7 +428,7 @@ const Project = (props: RouteComponentProps) => {
                 }
               ></IonInput>
             </IonItem>
-            
+
             <IonButton className="submit-button" type="submit">
               Create
             </IonButton>
@@ -434,7 +445,9 @@ const Project = (props: RouteComponentProps) => {
         >
           <IonIcon icon={close}></IonIcon>
         </IonButton>
-        <p className="subm-message">Lorem ipsum, or lipsum as it is sometimes known, is dummy text used in laying out print, graphic or web designs. </p>
+        <p className="subm-message">
+          You can add more details to your submission after it is approved.
+        </p>
       </>
     );
   };
@@ -443,52 +456,52 @@ const Project = (props: RouteComponentProps) => {
     <IonPage>
       <SubHeader {...props} />
       <IonContent>
-      <div className="content-container"> 
-        <div className="image-heading-and-contant">
-          <IonCard className="top-banner-details">
-            
-            {getSelectedProject() && getSelectedProject().payload.pictureUrl != "" ? 
-            <img
-              className="project-picture"
-              src={getSelectedProject().payload.pictureUrl}
-              alt="project image"
-            />
-            :
-            <img
-              className="project-picture"
-              src={topbannerImg}
-              alt="project image"
-            />
-          }
+        <div className="content-container">
+          <div className="image-heading-and-contant">
+            <IonCard className="top-banner-details">
+              {getSelectedProject() &&
+              getSelectedProject().payload.pictureUrl != "" ? (
+                <img
+                  className="project-picture"
+                  src={getSelectedProject().payload.pictureUrl}
+                  alt="project image"
+                />
+              ) : (
+                <img
+                  className="project-picture"
+                  src={topbannerImg}
+                  alt="project image"
+                />
+              )}
 
-            <IonCardContent className="left-contant-details">
-            <IonButton
-              className="go-back"
-              fill="clear"
-              onClick={(e) => props.history.goBack()}
-            >
-              <IonIcon slot="start" icon={arrowBack}></IonIcon>
-              Back
-            </IonButton>
-              <h2>Category Type</h2>
-              <p>
-                We feature amazing projects that would bring in next level
-                revolution in Fintech. Lorem ipsum dolor sit amet, consectetur
-                adipiscing elit. Sed vel leo suscipit, elementum metus vel,
-                tempus massa. Curabitur ac felis eu lorem congue pharetra
-              </p>
+              <IonCardContent className="left-contant-details">
+                <IonButton
+                  className="go-back"
+                  fill="clear"
+                  onClick={(e) => props.history.goBack()}
+                >
+                  <IonIcon slot="start" icon={arrowBack}></IonIcon>
+                  Back
+                </IonButton>
+                <h2>Category Type</h2>
+                <p>
+                  We feature amazing projects that would bring in next level
+                  revolution in Fintech. Lorem ipsum dolor sit amet, consectetur
+                  adipiscing elit. Sed vel leo suscipit, elementum metus vel,
+                  tempus massa. Curabitur ac felis eu lorem congue pharetra
+                </p>
 
-              <h3>Partners</h3>
-              <div className="partners-images d-flex">
-                <div className="images-partner-parent">
-                  <img src={getSelectedProject().payload.pictureUrl} />
+                <h3>Partners</h3>
+                <div className="partners-images d-flex">
+                  <div className="images-partner-parent">
+                    <img src={getSelectedProject().payload.pictureUrl} />
+                  </div>
+                  <div className="images-partner-parent">
+                    <img src={getSelectedProject().payload.pictureUrl} />
+                  </div>
                 </div>
-                <div className="images-partner-parent">
-                  <img src={getSelectedProject().payload.pictureUrl} />
-                </div>
-              </div>
-            </IonCardContent>
-            {/* <IonCardContent>
+              </IonCardContent>
+              {/* <IonCardContent>
               <div className="d-flex align-items-center justify-content-space-between">
                 <IonLabel>
                   <div className="d-flex align-items-center">
@@ -516,13 +529,13 @@ const Project = (props: RouteComponentProps) => {
                 </IonButton>
               </div>
             </IonCardContent> */}
-          </IonCard>
-        </div>
+            </IonCard>
+          </div>
 
-        <div className="proj-wrapper">
-          <div className="edtion_main_section">
-            <div className="content_part">
-              {/* <div className="top-part-contant">
+          <div className="proj-wrapper">
+            <div className="edtion_main_section">
+              <div className="content_part">
+                {/* <div className="top-part-contant">
                 <div className="tabs-section">
                   <div className="tabs-heading">
                     <a href="#" className="tabs-contant">
@@ -543,320 +556,288 @@ const Project = (props: RouteComponentProps) => {
               </div>
                */}
 
-              <div className="top-part-contant">
-                <Tabs className="tabs-section">
-                  <Tab title="1. Overview" className="tabs-contant">
-                    <div className="all-details-part project-overview">
-                      <h1>
-                        {getSelectedProject().payload.name}{" "}
-                        {/* <IonNote>Id: {getSelectedProject().payload.projectId}</IonNote> */}
-                      </h1>
-                      <p>{getSelectedProject().payload.desc}</p>
-                      <div className="video-list">
-                        <iframe
-                          width="560"
-                          height="315"
-                          src="https://www.youtube.com/embed/63qyVXWE9Kw"
-                          title="YouTube video player"
-                        ></iframe>
+                <div className="top-part-contant">
+                  <Tabs className="tabs-section">
+                    <Tab title="1. Overview" className="tabs-contant">
+                      <div className="all-details-part project-overview">
+                        <h1>
+                          {getSelectedProject().payload.name}{" "}
+                          {/* <IonNote>Id: {getSelectedProject().payload.projectId}</IonNote> */}
+                        </h1>
+                        
+                        <div className="video-list">
+                          <iframe
+                            width="560"
+                            height="315"
+                            src={getSelectedProject().payload.projectvideoLink ? getSelectedProject().payload.projectvideoLink : "https://www.youtube.com/embed/IQHk9UCbQq4"}
+                            title="YouTube video player"
+                          ></iframe>
+                        </div>
+
+                        <p>{getSelectedProject().payload.desc}</p>
+
+                        <div className="prizes-part">
+                          <h2>PRIZES</h2>
+                          {/* <h5>
+                            <b>$10,000</b> in prizes
+                          </h5> */}
+                          <div className="prize_list">
+
+                            {clientProject[0] && clientProject[0].payload.prizes.map(k=>(
+                              <div className="">
+                              <h3>
+                                <span>*</span> {k.value}{k.currency} {k.name}
+                              </h3>
+                              <p>
+                                {k.description}
+                              </p>
+                            </div>
+                            
+                            ))}
+                          </div>
+                        </div>
+
+                        <div className="list_inner">
+                          <h2>ELIGIBILITY</h2>
+                          <p>
+                            To be qualified to participate in this hackathon,
+                            you must meet the following requirements:
+                          </p>
+                          <ul>
+                            <li>You must be a current university student.</li>
+                            <li>Teams must consist of 2–4 members.</li>
+                            <li>
+                              By participating in the hackathon, you consent to
+                              your image being used in any promotional or media
+                              material for Accenture.
+                            </li>
+                            <li>
+                              You cannot be a current employee of Accenture
+                            </li>
+                            <li>
+                              You must be an Australian or New Zealand Citizen,
+                              or an Australian Permanent Resident.
+                            </li>
+                            <li>
+                              You must sign up&nbsp;
+                              <a href="https://forms.gle/HRYzsNQVBW3zBRxa7">
+                                here
+                              </a>{" "}
+                              before the 18th of November.
+                            </li>
+                          </ul>
+                        </div>
+
+                        <div className="list_inner">
+                          <h2>REQUIREMENTS</h2>
+                          <p>
+                            Below are the submission requirements for the
+                            hackathon.
+                          </p>
+                          <ul>
+                            <li>
+                              At the end of the time period, a working demo and
+                              presentation must be ready for the judges.
+                            </li>
+                            <li>
+                              All code must be uploaded by the end of the time
+                              period to some code repository (such as GitHub).
+                              Any submission or adjustment after this time will
+                              not be considered.
+                            </li>
+                            <li>
+                              Presentations will be 7 minutes long, with an
+                              additional 3 minutes for questions from the
+                              judges.
+                            </li>
+                            <li>
+                              Links for submissions will be provided as we
+                              arrive closer to the date.
+                            </li>
+                          </ul>
+                        </div>
+
+                        <div className="judges">
+                          <h2>JUDGES</h2>
+                          <ul>
+                            <li>
+                              <img src={userImg} />
+                              <span>
+                                <b>Mantri Boange</b>
+                                <i>
+                                  Recruiting Senior Analyst / Accenture
+                                  Technology
+                                </i>
+                              </span>
+                            </li>
+                            <li>
+                              <img src={userImg} />
+                              <span>
+                                <b>Mantri Boange</b>
+                                <i>
+                                  Recruiting Senior Analyst / Accenture
+                                  Technology
+                                </i>
+                              </span>
+                            </li>
+                            <li>
+                              <img src={userImg} />
+                              <span>
+                                <b>Mantri Boange</b>
+                                <i>
+                                  Recruiting Senior Analyst / Accenture
+                                  Technology
+                                </i>
+                              </span>
+                            </li>
+                            <li>
+                              <img src={userImg} />
+                              <span>
+                                <b>Mantri Boange</b>
+                                <i>
+                                  Recruiting Senior Analyst / Accenture
+                                  Technology
+                                </i>
+                              </span>
+                            </li>
+                          </ul>
+                        </div>
+                        <div className="list_inner judging_criteria">
+                          <h2>JUDGING CRITERIA</h2>
+                          <ul>
+                            <li>Presentation Quality</li>
+                            <li>Banking Revolution Relevance</li>
+                            <li>Quality of Application Execution</li>
+                            <li>Business Value</li>
+                          </ul>
+                        </div>
+                      </div>
+                    </Tab>
+                    <Tab title="2. Challanges (6)" className="tabs-contant">
+                      <div className="challanges-listing">
+                        <div className="chanlanges-titles">
+                        {clientProject[0] ? clientProject[0].payload.challenges.map(key => 
+                              (<div>
+                                <h1>{key.nameOf}</h1>
+                                <p>{key.description}</p>
+                              </div>)
+
+                              )
+                        : null}
+                        </div>
                       </div>
 
-                      <div className="">
-                        <p>
-                          We are excited to host this hackathon focusing on the
-                          Banking Revolution.
-                        </p>
-                        <p>
-                          Banking is currently one of the most innovative
-                          industries in technology and we want to see how YOU
-                          can use your skills to explore bringing further
-                          innovation to this exciting industry! People use their
-                          bank several times a day, they enable us to make some
-                          of the biggest and smallest decisions in our lives.
-                        </p>
-                        <p>
-                          The Banking Revolution refers to areas of
-                          transformation that could drastically change the way a
-                          bank operates internally for its employees or
-                          externally for its consumers. Some examples of these
-                          innovations include blockchain, FinTech,
-                          revolutionising banking apps, client interaction and
-                          customer service improvements.
-                        </p>
-                        <p>
-                          Over 24 hours your challenge is to build a working
-                          prototype for the banking industry. What you choose to
-                          do, is up to you! The hackathon will conclude with
-                          teams presenting their ideas, followed by a
-                          cocktail-style celebration.
-                        </p>
-                        <p>
-                          We will have a team of our experts available for you
-                          to bounce ideas off, and offer some moral support.
-                        </p>
-                        <p>
-                          If you would like to know more about the type of work
-                          Accenture is involved within FinTech, checkout our
-                          Banking Technology Vision 2019 report or find out more
-                          about current banking trends on our Fintech blog.
-                        </p>
-                        <p>
-                          Keen to get involved? Then why not get a team together
-                          and register today. Sign up here before the 18th of
-                          November. Teams are selected on a first-come,
-                          first-serve basis.
-                        </p>
-                      </div>
-
-                      <div className="prizes-part">
-                        <h2>PRIZES</h2>
-                        <h5>
-                          <b>$10,000</b> in prizes
-                        </h5>
-                        <div className="prize_list">
-                          <div className="">
-                            <h3>
-                              <span>*</span> First Prize
-                            </h3>
-                            <p>
-                              A Macbook Pro 13 Inch (1.4GHz quad-core processor,
-                              128GB storage, Touch Bar and Touch ID) for each
-                              person in the first-place team.
-                            </p>
-                          </div>
-                          <div className="">
-                            <h3>
-                              <span>*</span> Second Prize
-                            </h3>
-                            <p>
-                              A Macbook Pro 13 Inch (1.4GHz quad-core processor,
-                              128GB storage, Touch Bar and Touch ID) for each
-                              person in the first-place team.
-                            </p>
-                          </div>
-                          <div className="">
-                            <h3>
-                              <span>*</span> Third Prize
-                            </h3>
-                            <p>
-                              A Macbook Pro 13 Inch (1.4GHz quad-core processor,
-                              128GB storage, Touch Bar and Touch ID) for each
-                              person in the first-place team.
-                            </p>
+                      <div className="challanges-listing">
+                        <div className="logo-challanges">
+                          {/* <img src={getSelectedProject().p.pictureUrl} /> */}
+                        </div>
+                        <div className="chanlanges-titles">
+                          <h1>What is lorem ipsum ?</h1>
+                          <p>
+                            {" "}
+                            Lorem ipsum dolor sit amet, consectetur adipiscing
+                            elit. Sed vel leo suscipit, Lorem ipsum dolor sit
+                            amet, consectetur adipiscing elit. Sed vel leo
+                            suscipit, Lorem ipsum dolor sit amet, consectetur
+                            adipiscing elit. Sed vel leo suscipit,
+                          </p>
+                          <div className="amount-main">
+                            <h1 className="highlight-amount">
+                              {" "}
+                              <span>Fund</span> $30
+                            </h1>
                           </div>
                         </div>
                       </div>
 
-                      <div className="list_inner">
-                        <h2>ELIGIBILITY</h2>
-                        <p>
-                          To be qualified to participate in this hackathon, you
-                          must meet the following requirements:
-                        </p>
-                        <ul>
-                          <li>You must be a current university student.</li>
-                          <li>Teams must consist of 2–4 members.</li>
-                          <li>
-                            By participating in the hackathon, you consent to
-                            your image being used in any promotional or media
-                            material for Accenture.
-                          </li>
-                          <li>You cannot be a current employee of Accenture</li>
-                          <li>
-                            You must be an Australian or New Zealand Citizen, or
-                            an Australian Permanent Resident.
-                          </li>
-                          <li>
-                            You must sign up&nbsp;
-                            <a href="https://forms.gle/HRYzsNQVBW3zBRxa7">
-                              here
-                            </a>{" "}
-                            before the 18th of November.
-                          </li>
-                        </ul>
-                      </div>
-
-                      <div className="list_inner">
-                        <h2>REQUIREMENTS</h2>
-                        <p>
-                          Below are the submission requirements for the
-                          hackathon.
-                        </p>
-                        <ul>
-                          <li>
-                            At the end of the time period, a working demo and
-                            presentation must be ready for the judges.
-                          </li>
-                          <li>
-                            All code must be uploaded by the end of the time
-                            period to some code repository (such as GitHub). Any
-                            submission or adjustment after this time will not be
-                            considered.
-                          </li>
-                          <li>
-                            Presentations will be 7 minutes long, with an
-                            additional 3 minutes for questions from the judges.
-                          </li>
-                          <li>
-                            Links for submissions will be provided as we arrive
-                            closer to the date.
-                          </li>
-                        </ul>
-                      </div>
-
-                      <div className="judges">
-                        <h2>JUDGES</h2>
-                        <ul>
-                          <li>
-                            <img src={userImg} />
-                            <span>
-                              <b>Mantri Boange</b>
-                              <i>
-                                Recruiting Senior Analyst / Accenture Technology
-                              </i>
-                            </span>
-                          </li>
-                          <li>
-                            <img src={userImg} />
-                            <span>
-                              <b>Mantri Boange</b>
-                              <i>
-                                Recruiting Senior Analyst / Accenture Technology
-                              </i>
-                            </span>
-                          </li>
-                          <li>
-                            <img src={userImg} />
-                            <span>
-                              <b>Mantri Boange</b>
-                              <i>
-                                Recruiting Senior Analyst / Accenture Technology
-                              </i>
-                            </span>
-                          </li>
-                          <li>
-                            <img src={userImg} />
-                            <span>
-                              <b>Mantri Boange</b>
-                              <i>
-                                Recruiting Senior Analyst / Accenture Technology
-                              </i>
-                            </span>
-                          </li>
-                        </ul>
-                      </div>
-                      <div className="list_inner judging_criteria">
-                        <h2>JUDGING CRITERIA</h2>
-                        <ul>
-                          <li>
-                            Presentation Quality
-                          </li>
-                          <li>
-                            Banking Revolution Relevance
-                          </li>
-                          <li>
-                           Quality of Application Execution
-                          </li>
-                          <li>
-                           Business Value
-                          </li>
-                        </ul>
-                      </div>
-                    </div>
-                  </Tab>
-                  <Tab title="2. Challanges (6)" className="tabs-contant">
-                   
-                      
                       <div className="challanges-listing">
-                              <div className="logo-challanges">
-                                  <img src={getSelectedProject().payload.pictureUrl} />
-                               </div> 
-                               <div className="chanlanges-titles">
-                                <h1>What is lorem ipsum ?</h1>
-                                <p> Lorem ipsum dolor sit amet, consectetur adipiscing elit. Sed vel leo suscipit,
-                                Lorem ipsum dolor sit amet, consectetur adipiscing elit. Sed vel leo suscipit,
-                                Lorem ipsum dolor sit amet, consectetur adipiscing elit. Sed vel leo suscipit,
-                                </p>
-                                <div className="amount-main">
-                                <h1 className="highlight-amount"> <span>Fund</span> $30</h1>
-                               </div> 
-                              </div>
-                      </div>
-
-                      <div className="challanges-listing">
-                              <div className="logo-challanges">
-                                  <img src={getSelectedProject().payload.pictureUrl} />
-                               </div> 
-                               <div className="chanlanges-titles">
-                                <h1>What is lorem ipsum ?</h1>
-                                <p> Lorem ipsum dolor sit amet, consectetur adipiscing elit. Sed vel leo suscipit,
-                                Lorem ipsum dolor sit amet, consectetur adipiscing elit. Sed vel leo suscipit,
-                                Lorem ipsum dolor sit amet, consectetur adipiscing elit. Sed vel leo suscipit,
-                                </p>
-                                <div className="amount-main">
-                                <h1 className="highlight-amount"> <span>Fund</span> $30</h1>
-                               </div> 
-                              </div>
-                      </div>
-
-                      <div className="challanges-listing">
-                              <div className="logo-challanges">
-                                  <img src={getSelectedProject().payload.pictureUrl} />
-                               </div> 
-                               <div className="chanlanges-titles">
-                                <h1>What is lorem ipsum ?</h1>
-                                <p> Lorem ipsum dolor sit amet, consectetur adipiscing elit. Sed vel leo suscipit,
-                                Lorem ipsum dolor sit amet, consectetur adipiscing elit. Sed vel leo suscipit,
-                                Lorem ipsum dolor sit amet, consectetur adipiscing elit. Sed vel leo suscipit,
-                                </p>
-                                <div className="amount-main">
-                                <h1 className="highlight-amount"> <span>Fund</span> $30</h1>
-                               </div> 
-                              </div>
-                      </div>
-
-                  </Tab>
-                  <Tab title="3. Submissions (5)" className="tabs-contant">
-                    <div className="submission-item-list">
-                      {console.log("participantSubmissionProposalAssets",participantSubmissionProposalAssets)}
-                     { participantSubmissionProposalAssets.map(
-                    (sbmt) => (
-                      <div className="submission-listing">
-                          
-                        <div className="left-image-submission">
-                        <img 
-                          src={topbannerImg}
-                          alt="project image"
-                        />
+                        <div className="logo-challanges">
+                          <img src={getSelectedProject().payload.pictureUrl} />
                         </div>
-                                <div className="right-contant-submission">
-                                <h1>{sbmt.payload.subName}</h1>
-                                <h3>What is the Idea about: </h3>
-                                <p> Lorem ipsum dolor sit amet, consectetur adipiscing elit. Sed vel leo suscipit, elementum metus vel, tempus massa. Curabitur ac felis eu lorem congue pharetra.......</p>
-                      
-                                <ul>
-                                  <li>Milestones Achieved: <span> 3/5 </span> </li>
-                                    <li>Fund: <span>2000 Euros </span></li> 
-                                    <li>Total Votes: <span> 200 Votes </span></li>
-                                </ul>
+                        <div className="chanlanges-titles">
+                          <h1>What is lorem ipsum ?</h1>
+                          <p>
+                            {" "}
+                            Lorem ipsum dolor sit amet, consectetur adipiscing
+                            elit. Sed vel leo suscipit, Lorem ipsum dolor sit
+                            amet, consectetur adipiscing elit. Sed vel leo
+                            suscipit, Lorem ipsum dolor sit amet, consectetur
+                            adipiscing elit. Sed vel leo suscipit,
+                          </p>
+                          <div className="amount-main">
+                            <h1 className="highlight-amount">
+                              {" "}
+                              <span>Fund</span> $30
+                            </h1>
+                          </div>
+                        </div>
+                      </div>
+                    </Tab>
+                    <Tab title="3. Submissions (5)" className="tabs-contant">
+                      <div className="submission-item-list">
+                        {console.log(
+                          "participantSubmissionProposalAssets",
+                          participantSubmissionProposalAssets
+                        )}
+                        {participantSubmissionProposalAssets.map((sbmt) => (
+                          <div className="submission-listing">
+                            <div className="left-image-submission">
+                              <img src={topbannerImg} alt="project image" />
+                            </div>
+                            <div className="right-contant-submission">
+                              <h1>{sbmt.payload.subName}</h1>
+                              <p>
+                                {sbmt.payload.subDesc}
+                              </p>
+                          {console.log("data here", sbmt)}
+                              {/* <ul>
+                                <li>
+                                  Milestones Achieved: <span> 3/5 </span>{" "}
+                                </li>
+                                <li>
+                                  Fund: <span>2000 Euros </span>
+                                </li>
+                                <li>
+                                  Total Votes: <span> 200 Votes </span>
+                                </li>
+                              </ul> */}
 
-                                <div className="sponsors-challenge">
-                                {getUserType() === "judge" &&
+                              <div className="sponsors-challenge">
+                                {getUserType() === "judge" && (
                                   <div className="submit-your-score">
-                                    <input type="number" name="submissionscore"/>
-                                  <a href="javascript:void 0" className="btn view-details-btn">Submit Score</a>
+                                    <input
+                                      type="number"
+                                      name="submissionscore"
+                                    />
+                                    <a
+                                      href="javascript:void 0"
+                                      className="btn view-details-btn"
+                                    >
+                                      Submit Score
+                                    </a>
                                   </div>
-                                }
-                                  <a href="javascript:void 0" className="btn view-details-btn" onClick={(e) => {
-                                        props.history.push(
-                                        "/main/submission/" +
+                                )}
+                                <a
+                                  href="javascript:void 0"
+                                  className="btn view-details-btn"
+                                  onClick={(e) => {
+                                    props.history.push(
+                                      "/main/submission/" +
                                         getSelectedProject().payload.projectId
-                                      );
-                                    }}>View details</a> &nbsp;
-                                      {getUserType() === "client" &&
-                                      <a href="javascript:void 0" className="btn view-details-btn">Accept Submission</a>
-                                    }
-                                      {/* <div className="sponsors-main">
+                                    );
+                                  }}
+                                >
+                                  View details
+                                </a>{" "}
+                                &nbsp;
+                                {getUserType() === "client" && (
+                                  <IonButton onClick={(e)=>{acceptSubmission(sbmt.contractId)}}
+                                    className="btn view-details-btn"
+                                  >
+                                    Accept Submission
+                                  </IonButton>
+                                )}
+                                {/* <div className="sponsors-main">
                                         <h4>Sponsors : </h4>
                                         <img src={topbannerImg} alt="project image" />
                                       </div>
@@ -864,132 +845,134 @@ const Project = (props: RouteComponentProps) => {
                                         <h4>Challenge : </h4>
                                         <img src={topbannerImg} alt="project image"/>
                                       </div> */}
-                                </div>
-                                </div>
-                      </div>  
-                      )  )}
-
-                               
-
-                      {submissions.map((sc) => (
-                        <IonCard
-                          className="submission-card"
-                          onClick={(e) => {
-                            e.preventDefault();
-                            const selectedSub = sc as any;
-                            selectedSub.payload.projectId = getSelectedProject().payload.projectId;
-                            setSelectedSubmission(selectedSub);
-                            props.history.push(
-                              "/main/submission/" + sc.payload.submissionId
-                            );
-                          }}
-                        >
-                          <div className="d-flex">
-                            <div className="submission-img">
-                              <img
-                                src={submissionPlaceHolder}
-                                alt="submission image"
-                              />
+                              </div>
                             </div>
-                            <IonCardContent>
-                              <h1 className="proj-chall-name">
-                                {sc.payload.name}
-                              </h1>
-                              <h2 className="proj-chall-example">
-                                {" "}
-                                {sc.payload.submissionId}
-                              </h2>
-                              <p className="proj-chall-description">
-                                {sc.payload.desc}
-                              </p>
-
-                              <IonList>
-                                <IonItem>
-                                  <div className="labels-submission">
-                                    Challenge ID :{" "}
-                                  </div>
-                                  <span></span>ID
-                                </IonItem>
-                                <IonItem>
-                                  <div className="labels-submission">
-                                    Submission :{" "}
-                                  </div>
-                                  {sc.payload.submission}
-                                </IonItem>
-                                <IonItem>
-                                  <div className="labels-submission">
-                                    Presentation :{" "}
-                                  </div>
-                                  {sc.payload.presentation}
-                                </IonItem>
-                                <IonItem>
-                                  <div className="labels-submission">
-                                    Video Link :{" "}
-                                  </div>
-                                  {sc.payload.videoLink}
-                                </IonItem>
-                              </IonList>
-                            </IonCardContent>
                           </div>
-                        </IonCard>
-                      ))}
-                    </div>
-                  </Tab>
-                  <Tab title="Judging criteria" className="tabs-contant">
-                    {/* <IonNote>
+                        ))}
+
+                        {submissions.map((sc) => (
+                          <IonCard
+                            className="submission-card"
+                            onClick={(e) => {
+                              e.preventDefault();
+                              const selectedSub = sc as any;
+                              selectedSub.payload.projectId = getSelectedProject().payload.projectId;
+                              setSelectedSubmission(selectedSub);
+                              props.history.push(
+                                "/main/submission/" + sc.payload.submissionId
+                              );
+                            }}
+                          >
+                            <div className="d-flex">
+                              <div className="submission-img">
+                                <img
+                                  src={submissionPlaceHolder}
+                                  alt="submission image"
+                                />
+                              </div>
+                              <IonCardContent>
+                                <h1 className="proj-chall-name">
+                                  {sc.payload.name}
+                                </h1>
+                                <h2 className="proj-chall-example">
+                                  {" "}
+                                  {sc.payload.submissionId}
+                                </h2>
+                                <p className="proj-chall-description">
+                                  {sc.payload.desc}
+                                </p>
+
+                                {/* <IonList>
+                                  <IonItem>
+                                    <div className="labels-submission">
+                                      Challenge ID :{" "}
+                                    </div>
+                                    <span></span>ID
+                                  </IonItem>
+                                  <IonItem>
+                                    <div className="labels-submission">
+                                      Submission :{" "}
+                                    </div>
+                                    {sc.payload.submission}
+                                  </IonItem>
+                                  <IonItem>
+                                    <div className="labels-submission">
+                                      Presentation :{" "}
+                                    </div>
+                                    {sc.payload.presentation}
+                                  </IonItem>
+                                  <IonItem>
+                                    <div className="labels-submission">
+                                      Video Link :{" "}
+                                    </div>
+                                    {sc.payload.videoLink}
+                                  </IonItem>
+                                </IonList>
+                                */}
+                              </IonCardContent> 
+                            </div>
+                          </IonCard>
+                        ))}
+                      </div>
+                    </Tab>
+                    <Tab title="Judging criteria" className="tabs-contant">
+                      {/* <IonNote>
                       Judging criteria:{" "}
                       {getSelectedProject()
                         .payload.criteria.map((c: any) => c.name)
                         .join(", ")}
                     </IonNote> */}
 
-                    <div className="list_inner judging_criteria">
-                      <h2>JUDGING CRITERIA</h2>
-                      <ul>
-                        <li>Presentation Quality</li>
-                        <li>Banking Revolution Relevance</li>
-                        <li>Quality of Application Execution</li>
-                        <li>Business Value</li>
-                        <li>Presentation Quality</li>
-                        <li>Banking Revolution Relevance</li>
-                        <li>Quality of Application Execution</li>
-                        <li>Business Value</li>
-                        <li>Presentation Quality</li>
-                        <li>Banking Revolution Relevance</li>
-                        <li>Quality of Application Execution</li>
-                        <li>Business Value</li>
-                      </ul>
-                    </div>
+                      <div className="list_inner judging_criteria">
+                        <h2>JUDGING CRITERIA</h2>
+                        <ul>
+                          <li>Presentation Quality</li>
+                          <li>Banking Revolution Relevance</li>
+                          <li>Quality of Application Execution</li>
+                          <li>Business Value</li>
+                          <li>Presentation Quality</li>
+                          <li>Banking Revolution Relevance</li>
+                          <li>Quality of Application Execution</li>
+                          <li>Business Value</li>
+                          <li>Presentation Quality</li>
+                          <li>Banking Revolution Relevance</li>
+                          <li>Quality of Application Execution</li>
+                          <li>Business Value</li>
+                        </ul>
+                      </div>
+                    </Tab>
+                  </Tabs>
+                </div>
 
-                  </Tab>
-                </Tabs>
-              </div>
-
-              {
-                <div className="text-align-start">
-                  <div className="pos-relative">
-                    <IonSegment
-                      className="justify-content-start"
-                      color="secondary"
-                      onIonChange={(e) => setSelectedSegement(e.detail.value!)}
-                      value={selectedSegement}
-                    >
-                      <IonSegmentButton value="submissions">
-                        <IonLabel>Submissions ({submissions.length})</IonLabel>
-                      </IonSegmentButton>
-                      <IonSegmentButton
-                        value="challenges"
-                        disabled={getChallengesIds().length < 1}
+                {
+                  <div className="text-align-start">
+                    <div className="pos-relative">
+                      <IonSegment
+                        className="justify-content-start"
+                        color="secondary"
+                        onIonChange={(e) =>
+                          setSelectedSegement(e.detail.value!)
+                        }
+                        value={selectedSegement}
                       >
-                        <IonLabel>
-                          Challenges ({getChallengesIds().length})
-                        </IonLabel>
-                      </IonSegmentButton>
-                    </IonSegment>
+                        <IonSegmentButton value="submissions">
+                          <IonLabel>
+                            Submissions ({submissions.length})
+                          </IonLabel>
+                        </IonSegmentButton>
+                        <IonSegmentButton
+                          value="challenges"
+                          disabled={getChallengesIds().length < 1}
+                        >
+                          <IonLabel>
+                            Challenges ({getChallengesIds().length})
+                          </IonLabel>
+                        </IonSegmentButton>
+                      </IonSegment>
 
-                    {getUserType() === "client" ? (
-                      <div className="icon-menu">
-                        {/* <IonFab
+                      {getUserType() === "client" ? (
+                        <div className="icon-menu">
+                          {/* <IonFab
                           vertical="top"
                           horizontal="end"
                           title="Add new Challenge"
@@ -1001,225 +984,259 @@ const Project = (props: RouteComponentProps) => {
                             <IonIcon icon={add} />
                           </IonFabButton>
                         </IonFab> */}
-                        {/*<IonFab className="submittionadd-btn" title="Add new Submission" vertical="top" horizontal="end">
+                          {/*<IonFab className="submittionadd-btn" title="Add new Submission" vertical="top" horizontal="end">
                   <IonFabButton title="Add new Submission" onClick={(e) => setShowCreateSubmissionModal({show:true})}>
                     <IonIcon icon={add}/> 
                   </IonFabButton>
                 </IonFab>*/}
-                      </div>
-                    ) : null}
-                  </div>
-
-                  {selectedSegement === "challenges"
-                    ? getChallengesIds().map((c) => (
-                        <div>
-                          {/* <ChallengeCompoenent challengeId={c}></ChallengeCompoenent> */}
                         </div>
-                      ))
-                    : submissions.map((sc) => (
-                        <IonCard
-                          className="submission-card"
-                          onClick={(e) => {
-                            e.preventDefault();
-                            const selectedSub = sc as any;
-                            selectedSub.payload.projectId = getSelectedProject().payload.projectId;
-                            setSelectedSubmission(selectedSub);
-                            props.history.push(
-                              "/main/submission/" + sc.payload.submissionId
-                            );
-                          }}
-                        >
-                          <div className="d-flex">
-                            <div className="submission-img">
-                              <img
-                                src={submissionPlaceHolder}
-                                alt="submission image"
-                              />
-                            </div>
-                            <IonCardContent>
-                              <h1 className="proj-chall-name">
-                                {sc.payload.name}
-                              </h1>
-                              <h2 className="proj-chall-example">
-                                {" "}
-                                {sc.payload.submissionId}
-                              </h2>
-                              <p className="proj-chall-description">
-                                {sc.payload.desc}
-                              </p>
+                      ) : null}
+                    </div>
 
-                              <IonList>
-                                <IonItem>
-                                  <div className="labels-submission">
-                                    Challenge ID :{" "}
-                                  </div>
-                                  <span></span>ID
-                                </IonItem>
-                                <IonItem>
-                                  <div className="labels-submission">
-                                    Submission :{" "}
-                                  </div>
-                                  {sc.payload.submission}
-                                </IonItem>
-                                <IonItem>
-                                  <div className="labels-submission">
-                                    Presentation :{" "}
-                                  </div>
-                                  {sc.payload.presentation}
-                                </IonItem>
-                                <IonItem>
-                                  <div className="labels-submission">
-                                    Video Link :{" "}
-                                  </div>
-                                  {sc.payload.videoLink}
-                                </IonItem>
-                              </IonList>
-                            </IonCardContent>
+                    {selectedSegement === "challenges"
+                      ? getChallengesIds().map((c) => (
+                          <div>
+                            {/* <ChallengeCompoenent challengeId={c}></ChallengeCompoenent> */}
+                            {clientProject[0] && (
+                            <div>{clientProject[0].payload.challenges}</div>)}
                           </div>
-                        </IonCard>
-                      ))}
-                </div>
-              }
-            </div>
-            <div className="edtion_sidebar">
-              {(getUserType() === "" || getUserType() === "participant") && (
-                <div>
-                  <div className="card-for-btn join-participant">
-                    <IonButton
-                      onClick={(e) =>
-                        setShowCreateSubmissionModal({
-                          show: true,
-                          challengeId: "",
-                        })
-                      }
-                    >
-                      <IonIcon icon={add}></IonIcon>
-                      <IonLabel>Create new Submission</IonLabel>
-                    </IonButton>
+                        ))
+                      : submissions.map((sc) => (
+                          <IonCard
+                            className="submission-card"
+                            onClick={(e) => {
+                              e.preventDefault();
+                              const selectedSub = sc as any;
+                              selectedSub.payload.projectId = getSelectedProject().payload.projectId;
+                              setSelectedSubmission(selectedSub);
+                              props.history.push(
+                                "/main/submission/" + sc.payload.submissionId
+                              );
+                            }}
+                          >
+                            <div className="d-flex">
+                              <div className="submission-img">
+                                <img
+                                  src={submissionPlaceHolder}
+                                  alt="submission image"
+                                />
+                              </div>
+                              <IonCardContent>
+                                <h1 className="proj-chall-name">
+                                  {sc.payload.name}
+                                </h1>
+                                <h2 className="proj-chall-example">
+                                  {" "}
+                                  {sc.payload.submissionId}
+                                </h2>
+                                <p className="proj-chall-description">
+                                  {sc.payload.desc}
+                                </p>
+
+                                <IonList>
+                                  <IonItem>
+                                    <div className="labels-submission">
+                                      Challenge ID :{" "}
+                                    </div>
+                                    <span></span>ID
+                                  </IonItem>
+                                  <IonItem>
+                                    <div className="labels-submission">
+                                      Submission :{" "}
+                                    </div>
+                                    {sc.payload.submission}
+                                  </IonItem>
+                                  <IonItem>
+                                    <div className="labels-submission">
+                                      Presentation :{" "}
+                                    </div>
+                                    {sc.payload.presentation}
+                                  </IonItem>
+                                  <IonItem>
+                                    <div className="labels-submission">
+                                      Video Link :{" "}
+                                    </div>
+                                    {sc.payload.videoLink}
+                                  </IonItem>
+                                </IonList>
+                              </IonCardContent>
+                            </div>
+                          </IonCard>
+                        ))}
                   </div>
-
-                  <div className="card-for-btn join-participant">
-                    <IonButton onClick={(e) => {}}>
-                      <IonIcon icon={add}></IonIcon>
-                      <IonLabel>Join as a Participant</IonLabel>
-                    </IonButton>
-                  </div>
-                </div>
-              )}
-              {getUserType() === "client" && (
-                <div className="card-for-btn join-participant">
-                  <IonButton onClick={(e) => setShowChallengeModal(true)}>
-                    <IonIcon icon={add}></IonIcon>
-                    <IonLabel>Create new Challenge</IonLabel>
-                  </IonButton>
-                </div>
-              )}
-              <div className="edtion_child">
-                <div className="winner_announc">
-                  <span>
-                    Winners announced soon<b>Dec 1, 2019</b>
-                  </span>
-                  <a href="#">View schedule</a>
-                </div>
-                <div className="iconlist_sidebar">
-                  <ul>
-                    <li>
-                        <div className="left-days details-page-leftdays">20Days left</div>
-                    </li>
-
-                    <li>
-                        <div className="Challanges-list"> 
-                          <IonIcon icon={add}></IonIcon>
-                          <span>5</span> Challanges 
-                        </div>  
-                    </li>
-
-                    <li>
-                      <p className="participants-numbers">
-                      <IonIcon icon={add}></IonIcon>
-                       <span>2</span> participants</p>
-                    </li>
-
-                    <li>
-                        <p>
-                         <div className="online-point"> <IonIcon icon={add}></IonIcon> Online</div>
-                       </p>
-                    </li>
-
-                    <li>
-                        <div className="right-sidebar">
-                          <IonIcon icon={add}></IonIcon> Start Date : 
-                          <span>02-02-2021</span>
-                        </div>
-                    </li>
-
-                    <li>
-                        <div className="right-sidebar">
-                                  <IonIcon icon={add}></IonIcon> End Date : 
-                                  <span>10-03-2021</span>
-                                </div>
-                    </li>
-
-                    <li>
-                    <div className="right-sidebar details-Criteria">
-                                  <IonIcon icon={add}></IonIcon> Criteria
-                                  :{" "}
-                                  <span className="Criteria-lisitng">
-                                    {" "}
-                                    Productivity{" "}
-                                  </span>{" "}
-                                </div>
-                    </li>
-
-
-                  </ul>
-                </div>
+                }
               </div>
+              <div className="edtion_sidebar">
+                {(getUserType() === "" || getUserType() === "participant") && (
+                  <div>
+                    <div className="card-for-btn join-participant">
+                      <IonButton
+                        onClick={(e) =>
+                          setShowCreateSubmissionModal({
+                            show: true,
+                            challengeId: "",
+                          })
+                        }
+                      >
+                        <IonIcon icon={add}></IonIcon>
+                        <IonLabel>Create new Submission</IonLabel>
+                      </IonButton>
+                    </div>
+
+                    <div className="card-for-btn join-participant">
+                      <IonButton onClick={(e) => {}}>
+                        <IonIcon icon={add}></IonIcon>
+                        <IonLabel>Join as a Participant</IonLabel>
+                      </IonButton>
+                    </div>
+                  </div>
+                )}
+                {getUserType() === "client" && (
+                  <div className="card-for-btn join-participant">
+                    <IonButton onClick={(e) => setShowChallengeModal(true)}>
+                      <IonIcon icon={add}></IonIcon>
+                      <IonLabel>Create new Challenge</IonLabel>
+                    </IonButton>
+                  </div>
+                )}
+                <div className="edtion_child">
+                  <div className="winner_announc">
+                    <span>
+                      Winners announced<b>{clientProject[0] && new Date(clientProject[0].payload.endDate).toDateString()}</b>
+                    </span>
+                    <a href="#">View schedule</a>
+                  </div>
+                  <div className="iconlist_sidebar">
+                    <ul>
+                      <li>
+                        <div className="left-days details-page-leftdays">
+                          20Days left
+                        </div>
+                      </li>
+
+                      <li>
+                        <div className="Challanges-list">
+                          <IonIcon icon={add}></IonIcon>
+                          <span>{clientProject[0] ? clientProject[0].payload.challenges.length: 0}</span> Challanges
+                        </div>
+                      </li>
+
+                      <li>
+                        <p className="participants-numbers">
+                          <IonIcon icon={add}></IonIcon>
+                          <span> {clientProject[0] ? clientProject[0].payload.participants.length: 0} </span> participants
+                        </p>
+                      </li>
+
+                      <li>
+                        <p>
+                          <div className="online-point">
+                            {" "}
+                            <IonIcon icon={add}></IonIcon> Online
+                          </div>
+                        </p>
+                      </li>
+
+                      <li>
+                        <div className="right-sidebar">
+                          <IonIcon icon={add}></IonIcon> Start Date :
+                          <span>{clientProject[0] && new Date(clientProject[0].payload.startDate).toDateString()}</span>
+                        </div>
+                      </li>
+
+                      <li>
+                        <div className="right-sidebar">
+                          <IonIcon icon={add}></IonIcon> End Date :
+                          <span>{clientProject[0] && new Date(clientProject[0].payload.endDate).toDateString()}</span>
+                        </div>
+                      </li>
+
+                      <li>
+                        <div className="right-sidebar details-Criteria">
+                          <IonIcon icon={add}></IonIcon> Criteria :
+                          <div>
+                            <span className="Criteria-lisitng">
+                            {clientProject[0] && clientProject[0].payload.criteria.map(k=>(<li>{k.name}</li>))}
+                            </span>
+                          </div>
+                        </div>
+                      </li>
+                    </ul>
+                  </div>
+                </div>
 
                 <div className="edtion_child">
                   <div className="details-social-icon">
                     <h2>Invite others to compete</h2>
-                  <ul>
-                    <li><a href="#"> <IonIcon icon={logoFacebook}></IonIcon></a></li>
-                    <li><a href="#"> <IonIcon icon={logoTwitter}></IonIcon></a></li>
-                    <li><a href="#"> <IonIcon icon={logoInstagram}></IonIcon></a></li>
-                  </ul>
+                    <ul>
+                      <li>
+                        <a href="#">
+                          {" "}
+                          <IonIcon icon={logoFacebook}></IonIcon>
+                        </a>
+                      </li>
+                      <li>
+                        <a href="#">
+                          {" "}
+                          <IonIcon icon={logoTwitter}></IonIcon>
+                        </a>
+                      </li>
+                      <li>
+                        <a href="#">
+                          {" "}
+                          <IonIcon icon={logoInstagram}></IonIcon>
+                        </a>
+                      </li>
+                    </ul>
                   </div>
-                  
                 </div>
-
+              </div>
             </div>
           </div>
-        </div>
-        {/*-- Delete Project confirmation showDltChallenderConfirmation --*/}
-        <IonModal
-          isOpen={showDltChallenderConfirmation.status}
-          onDidDismiss={() =>
-            deleteChallenderConfirmation({
-              status: false,
-              challengeID: "",
-              contractID: "",
-            })
-          }
-          cssClass="my-custom-class-trash trash-popup"
-        >
-          <div className="content trash-project-modal-content">
-            <h1>Are you sure !</h1>
+          {/*-- Delete Project confirmation showDltChallenderConfirmation --*/}
+          <IonModal
+            isOpen={showDltChallenderConfirmation.status}
+            onDidDismiss={() =>
+              deleteChallenderConfirmation({
+                status: false,
+                challengeID: "",
+                contractID: "",
+              })
+            }
+            cssClass="my-custom-class-trash trash-popup"
+          >
+            <div className="content trash-project-modal-content">
+              <h1>Are you sure !</h1>
+              <IonButton
+                className="confirm-submit-button"
+                type="button"
+                onClick={() => {
+                  deleteChallegeFromStorage(
+                    showDltChallenderConfirmation.challengeID,
+                    showDltChallenderConfirmation.contractID
+                  );
+                }}
+              >
+                Yes
+              </IonButton>
+              <IonButton
+                className="decline-submit-button"
+                type="button"
+                onClick={() => {
+                  deleteChallenderConfirmation({
+                    status: false,
+                    challengeID: "",
+                    contractID: "",
+                  });
+                }}
+              >
+                No
+              </IonButton>
+            </div>
             <IonButton
-              className="confirm-submit-button"
-              type="button"
-              onClick={() => {
-                deleteChallegeFromStorage(
-                  showDltChallenderConfirmation.challengeID,
-                  showDltChallenderConfirmation.contractID
-                );
-              }}
-            >
-              Yes
-            </IonButton>
-            <IonButton
-              className="decline-submit-button"
-              type="button"
+              className="modal-default-close-btn"
+              fill="clear"
+              color="danger"
               onClick={() => {
                 deleteChallenderConfirmation({
                   status: false,
@@ -1228,130 +1245,114 @@ const Project = (props: RouteComponentProps) => {
                 });
               }}
             >
-              No
-            </IonButton>
-          </div>
-          <IonButton
-            className="modal-default-close-btn"
-            fill="clear"
-            color="danger"
-            onClick={() => {
-              deleteChallenderConfirmation({
-                status: false,
-                challengeID: "",
-                contractID: "",
-              });
-            }}
-          >
-            <IonIcon icon={close}></IonIcon>
-          </IonButton>
-        </IonModal>
-        {/*-- Challenge Model */}
-        <IonModal
-          isOpen={showChallengeModal}
-          onDidDismiss={() => setShowChallengeModal(false)}
-          cssClass="my-custom-class"
-        >
-          <div className="content challenge-modal-content">
-            <h1>Create Challenge</h1>
-            <form onSubmit={handleChallengeSubmit}>
-              <div className="flex-equal-childs-width">
-                <IonItem>
-                  <IonLabel position="floating">Challenge Name</IonLabel>
-                  <IonInput
-                    required={true}
-                    value={challengeDetail.nameOf}
-                    onIonChange={(e) => {
-                      let id = challengeDetail.challengeId;
-                      if (!challengeIdTouched) {
-                        const d = new Date();
-                        id =
-                          e.detail.value!.replace(/\W/g, "_") +
-                          "_" +
-                          (d.getSeconds() +
-                            d.getMinutes() +
-                            d.getMilliseconds());
-                        id = id.toLowerCase();
-                      }
-                      setChallengeDetail({
-                        ...challengeDetail,
-                        nameOf: e.detail.value!,
-                        challengeId: id,
-                      });
-                    }}
-                  ></IonInput>
-                </IonItem>
-                <IonItem>
-                  <IonLabel position="floating">Challenge ID</IonLabel>
-                  <IonInput
-                    required={true}
-                    value={challengeDetail.challengeId}
-                    onFocus={(e) => {
-                      setChallengeIdTouched(true);
-                    }}
-                    onIonChange={(e) => {
-                      setChallengeDetail({
-                        ...challengeDetail,
-                        challengeId: e.detail.value!,
-                      });
-                    }}
-                  ></IonInput>
-                </IonItem>
-              </div>
-              <IonItem>
-                <IonLabel position="floating">Challenge Description</IonLabel>
-                <IonTextarea
-                  rows={2}
-                  value={challengeDetail.description}
-                  onIonChange={(e) =>
-                    setChallengeDetail({
-                      ...challengeDetail,
-                      description: e.detail.value!,
-                    })
-                  }
-                ></IonTextarea>
-              </IonItem>
-              <IonItem>
-                <IonLabel position="floating">Challenge Prize</IonLabel>
-                <IonInput
-                  required={true}
-                  type="number"
-                  value={challengeDetail.prize}
-                  onIonChange={(e) =>
-                    setChallengeDetail({
-                      ...challengeDetail,
-                      prize: e.detail.value!,
-                    })
-                  }
-                ></IonInput>
-              </IonItem>
-              <IonButton className="submit-button" type="submit">
-                Create
-              </IonButton>
-            </form>
-            <IonButton
-              className="modal-default-close-btn"
-              fill="clear"
-              color="danger"
-              onClick={() => {
-                setShowChallengeModal(false);
-              }}
-            >
               <IonIcon icon={close}></IonIcon>
             </IonButton>
-          </div>
-        </IonModal>
-        <IonModal
-          isOpen={showCreateSubmissionModal.show}
-          onDidDismiss={() => setShowCreateSubmissionModal({ show: false })}
-          cssClass="my-custom-class"
-        >
-          <SubmissionFormComponent></SubmissionFormComponent>
-        </IonModal>
-                <Footer />
+          </IonModal>
+          {/*-- Challenge Model */}
+          <IonModal
+            isOpen={showChallengeModal}
+            onDidDismiss={() => setShowChallengeModal(false)}
+            cssClass="my-custom-class"
+          >
+            <div className="content challenge-modal-content">
+              <h1>Create Challenge</h1>
+              <form onSubmit={handleChallengeSubmit}>
+                <div className="flex-equal-childs-width">
+                  <IonItem>
+                    <IonLabel position="floating">Challenge Name</IonLabel>
+                    <IonInput
+                      required={true}
+                      value={challengeDetail.nameOf}
+                      onIonChange={(e) => {
+                        let id = challengeDetail.challengeId;
+                        if (!challengeIdTouched) {
+                          const d = new Date();
+                          id =
+                            e.detail.value!.replace(/\W/g, "_") +
+                            "_" +
+                            (d.getSeconds() +
+                              d.getMinutes() +
+                              d.getMilliseconds());
+                          id = id.toLowerCase();
+                        }
+                        setChallengeDetail({
+                          ...challengeDetail,
+                          nameOf: e.detail.value!,
+                          challengeId: id,
+                        });
+                      }}
+                    ></IonInput>
+                  </IonItem>
+                  <IonItem>
+                    <IonLabel position="floating">Challenge ID</IonLabel>
+                    <IonInput
+                      required={true}
+                      value={challengeDetail.challengeId}
+                      onFocus={(e) => {
+                        setChallengeIdTouched(true);
+                      }}
+                      onIonChange={(e) => {
+                        setChallengeDetail({
+                          ...challengeDetail,
+                          challengeId: e.detail.value!,
+                        });
+                      }}
+                    ></IonInput>
+                  </IonItem>
+                </div>
+                <IonItem>
+                  <IonLabel position="floating">Challenge Description</IonLabel>
+                  <IonTextarea
+                    rows={2}
+                    value={challengeDetail.description}
+                    onIonChange={(e) =>
+                      setChallengeDetail({
+                        ...challengeDetail,
+                        description: e.detail.value!,
+                      })
+                    }
+                  ></IonTextarea>
+                </IonItem>
+                <IonItem>
+                  <IonLabel position="floating">Challenge Prize</IonLabel>
+                  <IonInput
+                    required={true}
+                    type="number"
+                    value={challengeDetail.prize}
+                    onIonChange={(e) =>
+                      setChallengeDetail({
+                        ...challengeDetail,
+                        prize: e.detail.value!,
+                      })
+                    }
+                  ></IonInput>
+                </IonItem>
+                <IonButton className="submit-button" type="submit">
+                  Create
+                </IonButton>
+              </form>
+              <IonButton
+                className="modal-default-close-btn"
+                fill="clear"
+                color="danger"
+                onClick={() => {
+                  setShowChallengeModal(false);
+                }}
+              >
+                <IonIcon icon={close}></IonIcon>
+              </IonButton>
+            </div>
+          </IonModal>
+          <IonModal
+            isOpen={showCreateSubmissionModal.show}
+            onDidDismiss={() => setShowCreateSubmissionModal({ show: false })}
+            cssClass="my-custom-class"
+          >
+            <SubmissionFormComponent></SubmissionFormComponent>
+          </IonModal>
+          <Footer />
         </div>
       </IonContent>
-      
     </IonPage>
   );
 };
