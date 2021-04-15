@@ -15,6 +15,7 @@ import {
   AddParticipant,
   PrizeData,
   ChallengeData,
+  JudgeRole,
 } from "@daml.js/cosmart-0.0.1/lib/Main";
 
 import "./Profile.scss";
@@ -128,9 +129,9 @@ const Profile = (props: RouteComponentProps) => {
   console.log("clientProjectAssets", clientProjectAssets);
 
   const projectAssets = useStreamQueries(ClientRole).contracts;
-  const profileData = useStreamQueries(ClientRole).contracts;
   const participantAssets = useStreamQueries(ParticipantRole).contracts;
-  const participantRoleAssets = useStreamQueries(ParticipantRole).contracts;
+  const judgeAssets = useStreamQueries(JudgeRole).contracts;
+  
 
   console.log("participantAssets", participantAssets);
   const getUserType = (): "" | "client" | "participant" | "judge" => {
@@ -150,11 +151,18 @@ const Profile = (props: RouteComponentProps) => {
       return "client";
     }
     if (
-      participantRoleAssets.filter(
+      participantAssets.filter(
         (p: any) => p.payload.participant === (user as any).party
       ).length > 0
     ) {
       return "participant";
+    }
+
+    if (
+      judgeAssets.filter(c => (user as any).party === c.payload.judge)
+        .length > 0
+    ) {
+      return "judge";
     }
     return "";
   };
@@ -335,6 +343,210 @@ const Profile = (props: RouteComponentProps) => {
       .getDownloadURL();
     console.log("downloadURL", downloadURL);
   };
+
+  const userProfileData = () => {
+    console.log("judgeAssets", judgeAssets);
+    const d = {firstName: "", lastName: "", email: "", job: "", about: "", company: "", pictureUrl: ""}
+    switch (getUserType()) {
+      case "judge":
+        const ja = judgeAssets.filter(j => j.payload.judge === (user as any).party);
+        if(ja.length > 0){
+          d.firstName = ja[0].payload.judgeProfile.firstName;
+          d.lastName = ja[0].payload.judgeProfile.lastName;
+          d.email = ja[0].payload.judgeProfile.email;
+          d.job = ja[0].payload.judgeProfile.job;
+          d.about = ja[0].payload.judgeProfile.about;
+          d.company = ja[0].payload.judgeProfile.company;
+          d.pictureUrl = ja[0].payload.judgeProfile.pictureUrl;
+        }
+        break;
+      case "participant":
+        const pa = participantAssets.filter(p => p.payload.participant === (user as any).party);
+        if(pa.length > 0){
+          d.firstName = pa[0].payload.participantProfile.firstName;
+          d.lastName = pa[0].payload.participantProfile.lastName;
+          d.email = pa[0].payload.participantProfile.email;
+          d.job = pa[0].payload.participantProfile.job;
+          d.about = pa[0].payload.participantProfile.about;
+          d.company = pa[0].payload.participantProfile.company;
+          d.pictureUrl = pa[0].payload.participantProfile.pictureUrl;
+        }
+        break;
+      case "client":
+        const ca = projectAssets.filter(c => c.payload.client === (user as any).party);
+        if(ca.length > 0){
+          d.firstName = ca[0].payload.clientProfile.firstName;
+          d.lastName = ca[0].payload.clientProfile.lastName;
+          d.email = ca[0].payload.clientProfile.email;
+          d.job = ca[0].payload.clientProfile.job;
+          d.about = ca[0].payload.clientProfile.about;
+          d.company = ca[0].payload.clientProfile.company;
+          d.pictureUrl = ca[0].payload.clientProfile.pictureUrl;
+        }
+        break;
+    }
+    return d;
+  }
+
+  const HackathonComponenent = (hackathonProps: any) => {
+    const p = hackathonProps.project;
+    return (
+      <div className="listing-projects-name">
+                            <div className="created-projects-listing">
+                              <div
+                                className="left--project-image"
+                                onClick={(e) => {
+                                  e.preventDefault();
+                                  setSelectedProject(p);
+                                  props.history.push(
+                                    "/main/project/" + p.payload.projectId
+                                  );
+                                }}
+                              >
+                                {console.log("payload", p.payload)}
+                                <img src={mediumImage} alt="peoject image" />
+                              </div>
+                              <div
+                                className="center-project-contant"
+                                onClick={(e) => {
+                                  e.preventDefault();
+                                  setSelectedProject(p);
+                                  props.history.push(
+                                    "/main/project/" + p.payload.projectId
+                                  );
+                                }}
+                              >
+                                <h2 className="title-project">
+                                  {p.payload.name}
+                                </h2>
+                                <div className="online-and-days">
+                                  <div className="left-days">
+                                    {Math.ceil(
+                                      Math.abs(
+                                        new Date(p.payload.endDate).getTime() -
+                                          new Date().getTime()
+                                      ) /
+                                        (1000 * 60 * 60 * 24)
+                                    )}
+                                    {" "} Days left
+                                  </div>
+                                  <div className="online-point">
+                                    {" "}
+                                    <IonIcon icon={globe}></IonIcon> {p.payload.location}
+                                  </div>
+                                </div>
+                                <div className="price-chanllanges-parti">
+                                  <div className="project-price-lsiitng">
+                                    <h3 className="price-heading">Prizes</h3>
+                                    {
+                                      p.payload.prizes.map((prize: any) => (
+                                        <p className="price-listing">
+                                          <IonIcon icon={trophy}></IonIcon>{" "}
+                                          <b>{prize.value} {prize.currency}</b> {prize.description}
+                                        </p>
+                                      ))
+                                    }
+                                  </div>
+                                  <div className="Challanges-list">
+                                    {" "}
+                                    <IonIcon icon={flag}></IonIcon>{" "}
+                                    <span>{p.payload.challenges.length}</span>{" "}
+                                    Challange
+                                    {p.payload.challenges.length > 1 && "s"}
+                                  </div>
+                                  <div className="participants">
+                                    <p className="participants-numbers">
+                                      {" "}
+                                      <IonIcon icon={man}></IonIcon>{" "}
+                                      <span>
+                                        {p.payload.generalPublic.length}
+                                      </span>{" "}
+                                      participants
+                                    </p>
+                                  </div>
+                                </div>
+                              </div>
+                              <div className="left-project-details">
+                                <div className="right-sidebar">
+                                  <IonIcon icon={calendar}></IonIcon> Start Date{" "}
+                                  <span>
+                                    {new Date(
+                                      p.payload.startDate
+                                    ).toDateString()}
+                                  </span>
+                                </div>
+                                <div className="right-sidebar">
+                                  <IonIcon icon={calendar}></IonIcon> End Date{" "}
+                                  <span>
+                                    {new Date(p.payload.endDate).toDateString()}
+                                  </span>
+                                </div>
+                                <div className="right-sidebar">
+                                  <IonIcon icon={pricetags}></IonIcon> Criteria :
+                                  <div>
+                                    <span className="Criteria-lisitng">
+                                      {p.payload.criteria &&
+                                        p.payload.criteria.map((k: any) => (
+                                          <li>{k.name}</li>
+                                        ))}
+                                    </span>
+                                  </div>
+                                </div>
+
+                                {
+                                      getUserType() === 'client' && (
+                                        <div className="edit-delete-list">
+                                        <IonItem className="project-controls-listing">
+                                      
+                                          <IonIcon
+                                            icon={hammer}
+                                            onClick={(e) => {
+                                              e.stopPropagation();
+                                              console.log("the selected::", p);
+
+                                              setSelectedProject(p);
+                                              props.history.push(
+                                                "/main/scores/" +
+                                                  p.payload.projectId
+                                              );
+                                            }}
+                                          ></IonIcon>
+                                      
+                                      <IonIcon
+                                        icon={pencil}
+                                        onClick={(e) => {
+                                          e.stopPropagation();
+                                          console.log("the selected::", p);
+
+                                          setSelectedProject(p);
+                                          props.history.push(
+                                            "/main/projects/" +
+                                              p.payload.projectId +
+                                              "/edit"
+                                          );
+                                        }}
+                                      ></IonIcon>
+                                      <IonIcon
+                                        icon={trash}
+                                        onClick={(e) => {
+                                          e.stopPropagation();
+                                          setShowTrashProjectModal({
+                                            status: true,
+                                            projectID: p.payload.projectId,
+                                            contractID: p.contractId,
+                                          });
+                                        }}
+                                        className="trash-project-button"
+                                      ></IonIcon>
+                                    </IonItem>
+                                  </div>
+                                      )
+                                }
+                              </div>
+                            </div>
+                          </div>
+    )
+  }
 
   if (!user.isAuthenticated) {
     return null;
@@ -747,7 +959,7 @@ const Profile = (props: RouteComponentProps) => {
                     </div>
                     <div className="profile-info">
                       <div className="profile-header">
-                        <h1>{user.party}</h1>
+                        <h1>{user.party} ({userProfileData().firstName} {userProfileData().lastName})</h1>
                         <IonButton size="large" className="edit-button">
                           {" "}
                           Edit{" "}
@@ -755,20 +967,11 @@ const Profile = (props: RouteComponentProps) => {
                       </div>
 
                       <div className="profile-about">
-                        {console.log(
-                          "userData",
-                          projectAssets.length > 0 &&
-                            projectAssets[0].payload.clientProfile.pictureUrl
-                        )}
-
                         <h2>About</h2>
                         <p>
-                          Lorem ipsum dolor sit amet consectetur adipisicing
-                          elit. Nihil, neque. Nulla quae pariatur voluptas,
-                          tenetur perferendis voluptatibus incidunt provident
-                          impedit sapiente eius voluptatum perspiciatis sint
-                          quisquam iste nam cupiditate dolores.
+                        {userProfileData().about}
                         </p>
+                        <p>Email: <a href={"mailto:"+userProfileData().email}>{userProfileData().email}</a></p>
                         <p>
                           Linkedin: <a href="#">Information here</a>
                         </p>
@@ -799,378 +1002,16 @@ const Profile = (props: RouteComponentProps) => {
                             (c) => (user as any).party === c.payload.client
                           )
                           .map((p) => (
-                            <div className="listing-projects-name">
-                              <div className="created-projects-listing">
-                                <div
-                                  className="left--project-image"
-                                  onClick={(e) => {
-                                    e.preventDefault();
-                                    setSelectedProject(p);
-                                    props.history.push(
-                                      "/main/project/" + p.payload.projectId
-                                    );
-                                  }}
-                                >
-                                  {p.payload.pictureUrl != "" ? (
-                                    <img
-                                      src={p.payload.pictureUrl}
-                                      alt="peoject image"
-                                    />
-                                  ) : (
-                                    <img
-                                      src={mediumImage}
-                                      alt="peoject image"
-                                    />
-                                  )}
-                                </div>
-                                <div
-                                  className="center-project-contant"
-                                  onClick={(e) => {
-                                    e.preventDefault();
-                                    setSelectedProject(p);
-                                    props.history.push(
-                                      "/main/project/" + p.payload.projectId
-                                    );
-                                  }}
-                                >
-                                  <h2 className="title-project">
-                                    {p.payload.name}
-                                  </h2>
-                                  <div className="online-and-days">
-                                    <div className="left-days">20Days left</div>
-                                    <div className="online-point">
-                                      {" "}
-                                      <IonIcon icon={globe}></IonIcon> Online
-                                    </div>
-                                  </div>
-                                  <div className="price-chanllanges-parti">
-                                    <div className="project-price-lsiitng">
-                                      <h3 className="price-heading">Prizes</h3>
-                                      {p.payload.prizes.length > 0 ? (
-                                        p.payload.prizes.map((k) => (
-                                          <div>
-                                            <p className="price-listing">
-                                              <IonIcon icon={trophy}></IonIcon>{" "}
-                                              <b>
-                                                {k.value}
-                                                {k.currency}{" "}
-                                              </b>{" "}
-                                              {k.name}
-                                            </p>
-                                          </div>
-                                        ))
-                                      ) : (
-                                        <p>Not Available Yet</p>
-                                      )}
-                                      {/* <p className="price-listing">
-                                      <IonIcon icon={trophy}></IonIcon>{" "}
-                                      <b>$180,000 </b> in first price
-                                    </p>
-                                    <p className="price-listing">
-                                      <IonIcon icon={trophy}></IonIcon>{" "}
-                                      <b>$280,000 </b> in second price
-                                    </p>
-                                    <p className="price-listing">
-                                      <IonIcon icon={trophy}></IonIcon>{" "}
-                                      <b>$380,000 </b> in third price
-                                    </p> */}
-                                    </div>
-                                    <div className="Challanges-list">
-                                      {" "}
-                                      <IonIcon icon={flag}></IonIcon>{" "}
-                                      <span>5</span> Challanges{" "}
-                                    </div>
-                                    <div className="participants">
-                                      <p className="participants-numbers">
-                                        {" "}
-                                        <IonIcon icon={man}></IonIcon>{" "}
-                                        <span>
-                                          {p.payload.generalPublic.length}
-                                        </span>{" "}
-                                        participants
-                                      </p>
-                                    </div>
-                                  </div>
-                                </div>
-                                <div className="left-project-details">
-                                  <div className="right-sidebar">
-                                    <IonIcon icon={calendar}></IonIcon> Start
-                                    Date <span>02-02-2021</span>
-                                  </div>
-                                  <div className="right-sidebar">
-                                    <IonIcon icon={calendar}></IonIcon> End Date{" "}
-                                    <span>10-03-2021</span>
-                                  </div>
-                                  <div className="right-sidebar">
-                                    <IonIcon icon={pricetags}></IonIcon> Criteria :
-                                    <div>
-                                    <span className="Criteria-lisitng">
-                                      {p.payload.criteria &&
-                                        p.payload.criteria.map((k) => (
-                                          <li>{k.name}</li>
-                                        ))}
-                                    </span>
-                                  </div>
-                                  </div>
-                                  {console.log("Prize Data", p.payload)}
-                                  <div className="edit-delete-list">
-                                    <IonItem className="project-controls-listing">
-                                      <IonIcon
-                                        icon={hammer}
-                                        onClick={(e) => {
-                                          e.stopPropagation();
-                                          console.log("the selected::", p);
-
-                                          setSelectedProject(p);
-                                          props.history.push(
-                                            "/main/scores/" +
-                                              p.payload.projectId
-                                          );
-                                        }}
-                                      ></IonIcon>
-                                      <IonIcon
-                                        icon={pencil}
-                                        onClick={(e) => {
-                                          e.stopPropagation();
-                                          console.log("the selected::", p);
-
-                                          setSelectedProject(p);
-                                          props.history.push(
-                                            "/main/projects/" +
-                                              p.payload.projectId +
-                                              "/edit"
-                                          );
-                                        }}
-                                      ></IonIcon>
-                                      <IonIcon
-                                        icon={trash}
-                                        onClick={(e) => {
-                                          e.stopPropagation();
-                                          setShowTrashProjectModal({
-                                            status: true,
-                                            projectID: p.payload.projectId,
-                                            contractID: p.contractId,
-                                          });
-                                        }}
-                                        className="trash-project-button"
-                                      ></IonIcon>
-                                    </IonItem>
-                                  </div>
-                                </div>
-                              </div>
-
-                              {/* <IonItem 
-                              onClick={(e) => {
-                                e.preventDefault();
-                                console.log("the selected::", p);
-
-                                setSelectedProject(p);
-                                props.history.push(
-                                  "/main/project/" + p.payload.projectId
-                                );
-                              }}
-                            >
-                              <IonIcon slot="start" icon={open}></IonIcon>
-                            </IonItem> 
-                         <div className="list-proj">
-                              <div className="new-project-name"><span>Name:</span> {p.payload.name}</div>
-                              <div className="new-project-id"><span>Project ID:</span> {p.payload.projectId} </div>
-                            </div>
-                            <SubmissionToAcceptComponent
-                              contractId={p.contractId}
-                              projectId={p.payload.projectId}
-                            ></SubmissionToAcceptComponent>
-
-                            <IonLabel className="project-info"></IonLabel>
-                              <IonItem className="project-controls-listing">
-                            <IonIcon
-                              icon={pencil}
-                              onClick={(e) => {
-                                e.stopPropagation();
-                                console.log("the selected::", p);
-
-                                setSelectedProject(p);
-                                props.history.push(
-                                  "/main/projects/" +
-                                    p.payload.projectId +
-                                    "/edit"
-                                );
-                              }}
-                            ></IonIcon>
-                            <IonIcon
-                              icon={trash}
-                              onClick={(e) => {
-                                e.stopPropagation();
-                                setShowTrashProjectModal({
-                                  status: true,
-                                  projectID: p.payload.projectId,
-                                  contractID: p.contractId,
-                                });
-                              }}
-                              className="trash-project-button"
-                            ></IonIcon>
-                            </IonItem> */}
-                            </div>
+                            <HackathonComponenent project={p}></HackathonComponenent>
                           ))}
                       </IonList>
                     ) : null
                   ) : (
                     <IonList>
                       <IonListHeader>Hackathons:</IonListHeader>
-                      {/* {getUserType() === "participant" && (
-                      <IonButton
-                        onClick={(e) => {
-                          setShowRequestModal(true);
-                        }}
-                      >
-                        Register for Project
-                      </IonButton>
-                    )} */}
-
-                      {clientProjectAssets.map((p) => {
-                        return (
-                          <div className="listing-projects-name">
-                            <div className="created-projects-listing">
-                              <div
-                                className="left--project-image"
-                                onClick={(e) => {
-                                  e.preventDefault();
-                                  setSelectedProject(p);
-                                  props.history.push(
-                                    "/main/project/" + p.payload.projectId
-                                  );
-                                }}
-                              >
-                                {console.log("payload", p.payload)}
-                                <img src={mediumImage} alt="peoject image" />
-                              </div>
-                              <div
-                                className="center-project-contant"
-                                onClick={(e) => {
-                                  e.preventDefault();
-                                  setSelectedProject(p);
-                                  props.history.push(
-                                    "/main/project/" + p.payload.projectId
-                                  );
-                                }}
-                              >
-                                <h2 className="title-project">
-                                  {p.payload.name}
-                                </h2>
-                                <div className="online-and-days">
-                                  <div className="left-days">
-                                    {Math.ceil(
-                                      Math.abs(
-                                        new Date(p.payload.endDate).getTime() -
-                                          new Date().getTime()
-                                      ) /
-                                        (1000 * 60 * 60 * 24)
-                                    )}
-                                    Days left
-                                  </div>
-                                  <div className="online-point">
-                                    {" "}
-                                    <IonIcon icon={globe}></IonIcon> Online
-                                  </div>
-                                </div>
-                                <div>Location: {p.payload.location}</div>
-                                <div className="price-chanllanges-parti">
-                                  <div className="project-price-lsiitng">
-                                    <h3 className="price-heading">Prizes</h3>
-                                    <p className="price-listing">
-                                      <IonIcon icon={trophy}></IonIcon>{" "}
-                                      <b>$180,000 </b> in first price
-                                    </p>
-                                    <p className="price-listing">
-                                      <IonIcon icon={trophy}></IonIcon>{" "}
-                                      <b>$280,000 </b> in second price
-                                    </p>
-                                    <p className="price-listing">
-                                      <IonIcon icon={trophy}></IonIcon>{" "}
-                                      <b>$380,000 </b> in third price
-                                    </p>
-                                  </div>
-                                  <div className="Challanges-list">
-                                    {" "}
-                                    <IonIcon icon={flag}></IonIcon>{" "}
-                                    <span>{p.payload.challenges.length}</span>{" "}
-                                    Challange
-                                    {p.payload.challenges.length > 1 && "s"}
-                                  </div>
-                                  <div className="participants">
-                                    <p className="participants-numbers">
-                                      {" "}
-                                      <IonIcon icon={man}></IonIcon>{" "}
-                                      <span>
-                                        {p.payload.generalPublic.length}
-                                      </span>{" "}
-                                      participants
-                                    </p>
-                                  </div>
-                                </div>
-                              </div>
-                              <div className="left-project-details">
-                                <div className="right-sidebar">
-                                  <IonIcon icon={calendar}></IonIcon> Start Date{" "}
-                                  <span>
-                                    {new Date(
-                                      p.payload.startDate
-                                    ).toDateString()}
-                                  </span>
-                                </div>
-                                <div className="right-sidebar">
-                                  <IonIcon icon={calendar}></IonIcon> End Date{" "}
-                                  <span>
-                                    {new Date(p.payload.endDate).toDateString()}
-                                  </span>
-                                </div>
-                                <div className="right-sidebar">
-                                  <IonIcon icon={pricetags}></IonIcon> Criteria :
-                                  <div>
-                                    <span className="Criteria-lisitng">
-                                      {p.payload.criteria &&
-                                        p.payload.criteria.map((k) => (
-                                          <li>{k.name}</li>
-                                        ))}
-                                    </span>
-                                  </div>
-                                </div>
-
-                                <div className="edit-delete-list">
-                                  <IonItem className="project-controls-listing">
-                                    <IonIcon
-                                      icon={pencil}
-                                      onClick={(e) => {
-                                        e.stopPropagation();
-                                        console.log("the selected::", p);
-
-                                        setSelectedProject(p);
-                                        props.history.push(
-                                          "/main/projects/" +
-                                            p.payload.projectId +
-                                            "/edit"
-                                        );
-                                      }}
-                                    ></IonIcon>
-                                    <IonIcon
-                                      icon={trash}
-                                      onClick={(e) => {
-                                        e.stopPropagation();
-                                        setShowTrashProjectModal({
-                                          status: true,
-                                          projectID: p.payload.projectId,
-                                          contractID: p.contractId,
-                                        });
-                                      }}
-                                      className="trash-project-button"
-                                    ></IonIcon>
-                                  </IonItem>
-                                </div>
-                              </div>
-                            </div>
-                          </div>
-                        );
-                      })}
+                      {clientProjectAssets.map((p) => (
+                        <HackathonComponenent project={p}></HackathonComponenent>
+                      ))}
                     </IonList>
                   )}
                 </div>

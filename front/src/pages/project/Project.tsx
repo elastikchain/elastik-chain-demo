@@ -79,9 +79,6 @@ const Project = (props: RouteComponentProps) => {
   const submissions = useStreamQueries(ParticipantSubmission, () => [
     { client: getSelectedProject().payload.client },
   ]).contracts;
-  const clientProject = useStreamQueries(ClientProject).contracts;
-
-  clientProject[0] && console.log("data1 ", clientProject[0].payload);
   const getUserType = (): "" | "client" | "participant" | "judge" => {
     if (
       selectedProj.filter(
@@ -358,7 +355,16 @@ const Project = (props: RouteComponentProps) => {
       });
     console.log(event.target.elements.challengeName.value);*/
   };
-
+  const parseVideoLink = (videoLink: string) => {
+    let res = videoLink;
+    if(!res) res = "https://www.youtube.com/embed/IQHk9UCbQq4";
+    if(!res.startsWith("http")) res = "http://"+res;
+    if((res.indexOf("youtube") > -1 || res.indexOf("youtu.be") > -1) && res.indexOf("/embed") < 0){
+      const arr = res.split(".com/");
+      res = arr[0] + ".com/embed" + arr[1];
+    }
+    return res;
+  }
   const SubmissionFormComponent = (props: any) => {
     const defaultSubmissionDetail: ProposeSubmission = {
       generalPublicParticipant: (user as any).party,
@@ -569,7 +575,7 @@ const Project = (props: RouteComponentProps) => {
                           <iframe
                             width="560"
                             height="315"
-                            src={getSelectedProject().payload.projectvideoLink ? getSelectedProject().payload.projectvideoLink : "https://www.youtube.com/embed/IQHk9UCbQq4"}
+                            src={parseVideoLink(getSelectedProject().payload.projectvideoLink)}
                             title="YouTube video player"
                           ></iframe>
                         </div>
@@ -583,7 +589,7 @@ const Project = (props: RouteComponentProps) => {
                           </h5> */}
                           <div className="prize_list">
 
-                            {clientProject[0] && clientProject[0].payload.prizes.map(k=>(
+                            {selectedProj[0] && selectedProj[0].payload.prizes.map(k=>(
                               <div className="">
                               <h3>
                                 <span>*</span> {k.value}{k.currency} {k.name}
@@ -658,48 +664,22 @@ const Project = (props: RouteComponentProps) => {
                         </div>
 
                         <div className="judges">
-                          <h2>JUDGES</h2>
+                          <h2>JUDGES ({selectedProj[0] && selectedProj[0].payload.judges ? selectedProj[0].payload.judges.length : "0"})</h2>
                           <ul>
-                            <li>
-                              <img src={userImg} />
-                              <span>
-                                <b>Mantri Boange</b>
-                                <i>
-                                  Recruiting Senior Analyst / Accenture
-                                  Technology
-                                </i>
-                              </span>
-                            </li>
-                            <li>
-                              <img src={userImg} />
-                              <span>
-                                <b>Mantri Boange</b>
-                                <i>
-                                  Recruiting Senior Analyst / Accenture
-                                  Technology
-                                </i>
-                              </span>
-                            </li>
-                            <li>
-                              <img src={userImg} />
-                              <span>
-                                <b>Mantri Boange</b>
-                                <i>
-                                  Recruiting Senior Analyst / Accenture
-                                  Technology
-                                </i>
-                              </span>
-                            </li>
-                            <li>
-                              <img src={userImg} />
-                              <span>
-                                <b>Mantri Boange</b>
-                                <i>
-                                  Recruiting Senior Analyst / Accenture
-                                  Technology
-                                </i>
-                              </span>
-                            </li>
+                            {
+                              selectedProj[0] && selectedProj[0].payload.judges.map(j => (
+                                <li>
+                                  <img src={userImg} />
+                                  <span>
+                                    <b>{j}</b>
+                                    <i>
+                                      Recruiting Senior Analyst / Accenture
+                                      Technology
+                                    </i>
+                                  </span>
+                                </li>
+                              ))
+                            }
                           </ul>
                         </div>
                         <div className="list_inner judging_criteria">
@@ -714,19 +694,18 @@ const Project = (props: RouteComponentProps) => {
                       </div>
                     </Tab>
                     <Tab title="2. Challanges (6)" className="tabs-contant">
-                      <div className="challanges-listing">
-                        <div className="chanlanges-titles">
-                        {clientProject[0] ? clientProject[0].payload.challenges.map(key => 
-                              (<div>
+                    {selectedProj[0] ? selectedProj[0].payload.challenges.map(key => 
+                      (
+                        <div className="challanges-listing">
+                          <div className="chanlanges-titles">
+                            <div>
                                 <h1>{key.nameOf}</h1>
                                 <p>{key.description}</p>
-                              </div>)
-
-                              )
-                        : null}
+                              </div>
+                          </div>
                         </div>
-                      </div>
-
+                      )
+                    ) : null}
                       <div className="challanges-listing">
                         <div className="logo-challanges">
                           {/* <img src={getSelectedProject().p.pictureUrl} /> */}
@@ -850,6 +829,10 @@ const Project = (props: RouteComponentProps) => {
                           </div>
                         ))}
 
+                        {console.log(
+                          "submissions",
+                          participantSubmissionProposalAssets
+                        )}
                         {submissions.map((sc) => (
                           <IonCard
                             className="submission-card"
@@ -859,7 +842,7 @@ const Project = (props: RouteComponentProps) => {
                               selectedSub.payload.projectId = getSelectedProject().payload.projectId;
                               setSelectedSubmission(selectedSub);
                               props.history.push(
-                                "/main/submission/" + sc.payload.submissionId
+                                "/main/submission/" + sc.payload.name
                               );
                             }}
                           >
@@ -997,8 +980,8 @@ const Project = (props: RouteComponentProps) => {
                       ? getChallengesIds().map((c) => (
                           <div>
                             {/* <ChallengeCompoenent challengeId={c}></ChallengeCompoenent> */}
-                            {clientProject[0] && (
-                            <div>{clientProject[0].payload.challenges}</div>)}
+                            {selectedProj[0] && (
+                            <div>{selectedProj[0].payload.challenges}</div>)}
                           </div>
                         ))
                       : submissions.map((sc) => (
@@ -1102,7 +1085,7 @@ const Project = (props: RouteComponentProps) => {
                 <div className="edtion_child">
                   <div className="winner_announc">
                     <span>
-                      Winners announced<b>{clientProject[0] && new Date(clientProject[0].payload.endDate).toDateString()}</b>
+                      Winners announced<b>{selectedProj[0] && new Date(selectedProj[0].payload.endDate).toDateString()}</b>
                     </span>
                     <a href="#">View schedule</a>
                   </div>
@@ -1110,21 +1093,28 @@ const Project = (props: RouteComponentProps) => {
                     <ul>
                       <li>
                         <div className="left-days details-page-leftdays">
-                          20Days left
+                        {selectedProj[0] && Math.ceil(
+                                      Math.abs(
+                                        new Date(selectedProj[0].payload.endDate).getTime() -
+                                          new Date().getTime()
+                                      ) /
+                                        (1000 * 60 * 60 * 24)
+                                    )}
+                                    {" "} Days left
                         </div>
                       </li>
 
                       <li>
                         <div className="Challanges-list">
                           <IonIcon icon={add}></IonIcon>
-                          <span>{clientProject[0] ? clientProject[0].payload.challenges.length: 0}</span> Challanges
+                          <span>{selectedProj[0] ? selectedProj[0].payload.challenges.length: 0}</span> Challanges
                         </div>
                       </li>
 
                       <li>
                         <p className="participants-numbers">
                           <IonIcon icon={add}></IonIcon>
-                          <span> {clientProject[0] ? clientProject[0].payload.participants.length: 0} </span> participants
+                          <span> {selectedProj[0] ? selectedProj[0].payload.participants.length: 0} </span> participants
                         </p>
                       </li>
 
@@ -1132,7 +1122,7 @@ const Project = (props: RouteComponentProps) => {
                         <p>
                           <div className="online-point">
                             {" "}
-                            <IonIcon icon={add}></IonIcon> Online
+                            <IonIcon icon={add}></IonIcon> {selectedProj[0] ? selectedProj[0].payload.location : "" }
                           </div>
                         </p>
                       </li>
@@ -1140,14 +1130,14 @@ const Project = (props: RouteComponentProps) => {
                       <li>
                         <div className="right-sidebar">
                           <IonIcon icon={add}></IonIcon> Start Date :
-                          <span>{clientProject[0] && new Date(clientProject[0].payload.startDate).toDateString()}</span>
+                          <span>{selectedProj[0] && new Date(selectedProj[0].payload.startDate).toDateString()}</span>
                         </div>
                       </li>
 
                       <li>
                         <div className="right-sidebar">
                           <IonIcon icon={add}></IonIcon> End Date :
-                          <span>{clientProject[0] && new Date(clientProject[0].payload.endDate).toDateString()}</span>
+                          <span>{selectedProj[0] && new Date(selectedProj[0].payload.endDate).toDateString()}</span>
                         </div>
                       </li>
 
@@ -1156,7 +1146,7 @@ const Project = (props: RouteComponentProps) => {
                           <IonIcon icon={add}></IonIcon> Criteria :
                           <div>
                             <span className="Criteria-lisitng">
-                            {clientProject[0] && clientProject[0].payload.criteria.map(k=>(<li>{k.name}</li>))}
+                            {selectedProj[0] && selectedProj[0].payload.criteria.map(k=>(<li>{k.name}</li>))}
                             </span>
                           </div>
                         </div>
