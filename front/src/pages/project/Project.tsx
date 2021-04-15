@@ -62,6 +62,7 @@ import {
   ClientRole,
   ParticipantSubmission,
   ProposeSubmission,
+  ParticipantSubmissionProposal
 } from "@daml.js/cosmart-0.0.1/lib/Main";
 import submissionPlaceHolder from "../../assets/img/img-proj-placeholder.png";
 import SubHeader from "../../components/Header/subheader";
@@ -99,7 +100,7 @@ const Project = (props: RouteComponentProps) => {
 
   const [searchText, setSearchText] = useState("");
   const [showChallengeModal, setShowChallengeModal] = useState(false);
-
+   
   const [
     showDltChallenderConfirmation,
     deleteChallenderConfirmation,
@@ -111,6 +112,10 @@ const Project = (props: RouteComponentProps) => {
     description: "",
     prize: "",
   };
+  const participantSubmissionProposalAssets = useStreamQueries(
+    ParticipantSubmissionProposal,
+    () => [{ projectId: getSelectedProject().payload.projectId }]
+  ).contracts;
   const [challengeDetail, setChallengeDetail] = useState(
     defaultChallengeDetail
   );
@@ -813,9 +818,11 @@ const Project = (props: RouteComponentProps) => {
                   </Tab>
                   <Tab title="3. Submissions (5)" className="tabs-contant">
                     <div className="submission-item-list">
-                      
+                      {console.log("participantSubmissionProposalAssets",participantSubmissionProposalAssets)}
+                     { participantSubmissionProposalAssets.map(
+                    (sbmt) => (
                       <div className="submission-listing">
-
+                          
                         <div className="left-image-submission">
                         <img 
                           src={topbannerImg}
@@ -823,7 +830,7 @@ const Project = (props: RouteComponentProps) => {
                         />
                         </div>
                                 <div className="right-contant-submission">
-                                <h1>Submission Example</h1>
+                                <h1>{sbmt.payload.subName}</h1>
                                 <h3>What is the Idea about: </h3>
                                 <p> Lorem ipsum dolor sit amet, consectetur adipiscing elit. Sed vel leo suscipit, elementum metus vel, tempus massa. Curabitur ac felis eu lorem congue pharetra.......</p>
                       
@@ -834,12 +841,21 @@ const Project = (props: RouteComponentProps) => {
                                 </ul>
 
                                 <div className="sponsors-challenge">
+                                {getUserType() === "judge" &&
+                                  <div className="submit-your-score">
+                                    <input type="number" name="submissionscore"/>
+                                  <a href="javascript:void 0" className="btn view-details-btn">Submit Score</a>
+                                  </div>
+                                }
                                   <a href="javascript:void 0" className="btn view-details-btn" onClick={(e) => {
                                         props.history.push(
                                         "/main/submission/" +
                                         getSelectedProject().payload.projectId
                                       );
-                                    }}>View details</a>
+                                    }}>View details</a> &nbsp;
+                                      {getUserType() === "client" &&
+                                      <a href="javascript:void 0" className="btn view-details-btn">Accept Submission</a>
+                                    }
                                       {/* <div className="sponsors-main">
                                         <h4>Sponsors : </h4>
                                         <img src={topbannerImg} alt="project image" />
@@ -851,71 +867,9 @@ const Project = (props: RouteComponentProps) => {
                                 </div>
                                 </div>
                       </div>  
+                      )  )}
 
-
-                      <div className="submission-listing">
-
-                        <div className="left-image-submission">
-                        <img 
-                          src={topbannerImg}
-                          alt="project image"
-                        />
-                        </div>
-                                <div className="right-contant-submission">
-                                <h1>Submission Example</h1>
-                                <h3>What is the Idea about: </h3>
-                                <p> Lorem ipsum dolor sit amet, consectetur adipiscing elit. Sed vel leo suscipit, elementum metus vel, tempus massa. Curabitur ac felis eu lorem congue pharetra.......</p>
-                      
-                                <ul>
-                                  <li>Milestones Achieved: <span> 3/5 </span> </li>
-                                    <li>Fund: <span>2000 Euros </span></li> 
-                                    <li>Total Votes: <span> 200 Votes </span></li>
-                                </ul>
-
-                                <div className="sponsors-challenge">
-                                      <div className="sponsors-main">
-                                        <h4>Sponsors : </h4>
-                                        <img src={topbannerImg} alt="project image" />
-                                      </div>
-                                      <div className="challengers-main">
-                                        <h4>Challenge : </h4>
-                                        <img src={topbannerImg} alt="project image"/>
-                                      </div>
-                                </div>
-                                </div>
-                      </div>  
-
-                      <div className="submission-listing">
-
-                        <div className="left-image-submission">
-                        <img 
-                          src={topbannerImg}
-                          alt="project image"
-                        />
-                        </div>
-                                <div className="right-contant-submission">
-                                <h1>Submission Example</h1>
-                                <h3>What is the Idea about: </h3>
-                                <p> Lorem ipsum dolor sit amet, consectetur adipiscing elit. Sed vel leo suscipit, elementum metus vel, tempus massa. Curabitur ac felis eu lorem congue pharetra.......</p>
-                      
-                                <ul>
-                                  <li>Milestones Achieved: <span> 3/5 </span> </li>
-                                    <li>Fund: <span>2000 Euros </span></li> 
-                                    <li>Total Votes: <span> 200 Votes </span></li>
-                                </ul>
-
-                                <div className="sponsors-challenge">
-                                      <div className="sponsors-main">
-                                        <h4>Sponsors : </h4>
-                                        <img src={topbannerImg} alt="project image" />
-                                      </div>
-                                      <div className="challengers-main">
-                                        <h4>Challenge : </h4>
-                                        <img src={topbannerImg} alt="project image"/>
-                                      </div>
-                                </div>
-                                </div>
-                      </div>          
+                               
 
                       {submissions.map((sc) => (
                         <IonCard
