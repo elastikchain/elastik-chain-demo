@@ -77,3 +77,492 @@
 .criteria-tags-container{
     overflow: visible;
 }
+ion-list-header.md.hydrated {
+    font-size: 28px;
+    font-weight: 500;
+    margin-bottom: 20px;
+}
+
+.list-proj {
+    display: inline-block;
+    width: 100%;
+}
+.proj-details {
+    width: 100%;
+}
+
+
+//  Add css for create project
+
+.content.challenge-modal-content form {
+    margin-top: 40px;
+}
+
+.create-project-modal-content form h1, 
+.content.challenge-modal-content h1 {
+    text-align: left;
+    color: #000;
+    font-size: 22px;
+}
+
+.create-project-modal-content form .item-input, 
+.content.challenge-modal-content form .item-input {
+    margin-right: 0px;
+    margin-left: 0px;
+    margin-bottom: 20px;
+}
+
+.create-project-modal-content form .item-input ion-label, 
+.content.challenge-modal-content form .item-input ion-label {
+    transform: initial;
+    font-family: ABeeZee;
+    font-style: normal;
+    font-weight: normal;
+    font-size: 14px;
+    line-height: 13px;
+/* identical to box height, or 93% */
+    color: #464545;
+    margin-bottom: 5px;
+}
+
+.create-project-modal-content form .item-input input.native-input.sc-ion-input-md, 
+.content.challenge-modal-content form .item-input input.native-input.sc-ion-input-md {
+    border: 1px solid #ccc;
+    border-radius: 2px;
+    margin-bottom: 15px;
+    height: 40px;
+    line-height: 40px;
+    color: #8D8D8D;
+    font-size: 14px;
+}
+
+.criteria-tags-container {
+    text-align: left;
+    margin: 0px 15px 15px 15px;
+}
+
+.flex-equal-childs-width ion-item.item.md.ion-activatable {
+    border: 1px solid #ccc;
+}
+
+.flex-equal-childs-width.datebox {
+    margin: 30px 10px 30px 10px;
+}
+
+
+.create-project-modal-content ion-textarea, 
+.content.challenge-modal-content ion-textarea {
+    border: 1px solid #ccc;
+    min-height: 80px;
+}
+
+
+
+.create-project-modal-content ion-textarea textarea.native-textarea.sc-ion-textarea-md, 
+.content.challenge-modal-content ion-textarea textarea.native-textarea.sc-ion-textarea-md {
+    min-height: 80px;
+    padding: 15px 15px 0px 15px;
+}
+
+.create-project-modal-content ion-item.item.md.ion-focusable input[type="file"] {
+    width: 95%;
+    border: 1px solid #ccc;
+    padding: 10px 10px;
+    margin: 10px 0px;
+}
+
+.create-project-modal-content  ion-button.submit-button, 
+.content.challenge-modal-content  ion-button.submit-button {
+    height: 50px;
+    margin: 20px 0px;
+    min-width: 130px;
+}
+
+ion-button.create-project-button.extra-create-button {
+    display: none;
+}
+
+.full-width-container .wrapper {
+    max-width: 100%;
+    overflow-y: auto;
+    margin: 0px 0px 0px 50px;
+    padding-right: 100px;
+}
+
+.wrapper .profile-info-container .profile-info .profile-header .edit-button {
+    border: 1px solid #007FB1;
+}
+
+ion-button.edit-button.button-solid {
+    --background: #ffffff;
+    color: #007FB1;
+    box-shadow: none;
+}
+
+.wrapper .profile-info-container .profile-info .profile-header {
+    max-width: 100%;
+}
+
+
+.full-width-container .wrapper .profile-info .profile-about h1 {
+    font-family: ABeeZee;
+    font-style: normal;
+    font-weight: normal;
+    font-size: 18px;
+    line-height: 22px;
+    color: #646464;
+}
+
+.full-width-container .wrapper .profile-info .profile-about p {
+    font-family: ABeeZee;
+    font-style: normal;
+    font-weight: normal;
+    font-size: 14px;
+    line-height: 24px;
+    color: #646464;
+}
+
+ion-button.create-project-button.extra-create-newproject-btn {
+    height: 50px;
+    min-width: 218px;
+}                
+       
+
+.d-none {
+    display: none;
+}
+
+.full-width-container .wrapper .listing-projects-name ion-item.item.md.in-list.ion-focusable.hydrated {
+    // width: 88px;
+    display: inline-block;
+}
+
+.full-width-container .wrapper .listing-projects-name .list-proj {
+    display: inline-block;
+    width: 85%;
+    vertical-align: top;
+}
+
+.listing-projects-name {
+    border: 1px solid #ccc;
+    padding: 0px;
+    margin-bottom: 40px;
+    position: relative;
+    border-left: 5px solid #143b6c;
+}
+
+.listing-projects-name .list-proj {}
+
+.listing-projects-name ion-item.project-controls-listing.item {
+    width: auto;
+    --border-width: 0 0 0px 0;
+    --border-color: #fff;
+    // position: absolute;
+    // top: 12px;
+    // right: 0px;
+}
+
+.new-project-name {
+    font-size: 16px;
+    color: #143b6c;
+}
+
+.new-project-id {
+    font-size: 12px;
+    margin: 4px 0px;
+    color: #737373;
+}
+
+.listing-projects-name ion-item.project-controls-listing.item ion-icon.md.hydrated {
+    color: #2e7fb1;
+    font-size: 20px;
+    margin: 0px 4px;
+    border: 1px solid #ccc;
+    padding: 6px;
+    min-width: 18px;
+    height: 18px;
+}
+
+.wrapper .profile-info-container .profile-info .profile-header h1 {
+    margin-top: 0px;
+    color: #143b6c;
+}
+
+.profile-info-container {
+    border-bottom: 1px solid #ccc;
+    padding: 30px 30px;
+    margin-bottom: 30px;
+}
+
+.listing-projects-name ion-item.proj-details ion-button.md.button {
+    height: 40px;
+    min-width: 210px;
+    margin-right: -2px;
+}
+
+
+.submission-card .submission-img {
+    width: 60%;
+    margin-bottom: 0px;
+    padding-bottom: 0px;
+    border-radius: 0px;
+}
+
+.submission-card ion-card-content.md.card-content-md {
+    width: 100%;
+}
+
+.submission-card .submission-img img {
+    width: 100%;
+    border-radius: 0px;
+}
+
+.submission-card ion-card-content.md.card-content-md h1.proj-chall-name {
+    font-family: Nixie One;
+    font-style: normal;
+    font-weight: normal;
+    font-size: 24px;
+    line-height: 52px;
+/* or 217% */
+    color: #646464;
+}
+
+.submission-card ion-card-content.md.card-content-md h2.proj-chall-example {
+    font-family: ABeeZee;
+    font-style: normal;
+    font-weight: normal;
+    font-size: 18px;
+    line-height: 22px;
+/* or 122% */
+    color: #646464;
+}
+
+.submission-card ion-card-content.md.card-content-md p.proj-chall-description {
+    font-family: ABeeZee;
+    font-style: normal;
+    font-weight: normal;
+    font-size: 15px;
+    line-height: 23px;
+/* or 122% */
+    color: #646464;
+    display: -webkit-box;
+    -webkit-line-clamp: 2;
+    -webkit-box-orient: vertical;
+    overflow: hidden;
+    text-overflow: ellipsis;
+}
+
+.submission-card .item .sc-ion-label-md-h {
+    margin: 0px;
+}
+.submission-card {
+    box-shadow: none;
+    margin-bottom: 30px;
+}
+
+.item-native {
+    --border: 0 0 0px 0;
+    border-width: var(--border-width);
+    border-width: var(--border-width);
+}
+
+.labels-submission {
+    font-family: ABeeZee;
+    font-style: normal;
+    font-weight: normal;
+    font-size: 14px;
+    line-height: 26px;
+    color: #646464;
+    margin-right: 10px;
+}
+
+
+.created-projects-listing {
+    display: flex;
+}
+
+.left--project-image {
+    flex: 0 0 12%;
+    padding: 20px;
+}
+
+.center-project-contant {
+    flex: 0 0 60%;
+    padding: 20px;
+}
+
+.left-project-details {
+    flex: 0 0 20%;
+    padding: 46px 20px 20px 20px;
+    border-left: 1px solid #ccc;
+    position: relative;
+}
+
+.edit-delete-list {
+    position: absolute;
+    top: 5px;
+    right: 20px;
+}
+
+.left--project-image img {
+    width: 100%;
+}
+
+h2.title-project {
+    font-size: 26px;
+    color: #143b6c;
+    font-weight: 500;
+    margin-top: 0;
+}
+
+.price-chanllanges-parti {
+    display: flex;
+    margin-top: 10px;
+}
+
+.project-price-lsiitng {
+}
+
+.project-price-lsiitng p.price-listing {
+    margin: 4px 0px;
+    font-family: ABeeZee;
+    font-style: normal;
+    font-weight: normal;
+    font-size: 14px;
+    line-height: 24px;
+    color: #143b6c;
+}
+
+h3.price-heading {
+    color: #143b6c;
+    font-size: 16px;
+    margin: 0px 0px 10px 0px;
+    border-bottom: 2px solid #143b6c;
+    display: inline-block;
+}
+
+.project-price-lsiitng p.price-listing ion-icon.md.hydrated {
+    margin-right: 5px;
+    color: #333;
+}
+
+.online-and-days {
+    display: flex;
+    justify-content: space-between;
+}
+
+.Challanges-list {
+    background-color: #143b6c14;
+    padding: 8px 20px;
+    border-radius: 20px;
+    display: inline-table;
+    color: #333333;
+}
+
+.left-days {
+    background-color: #143b6c;
+    color: #fff;
+    padding: 5px 20px;
+    border-radius: 20px;
+}
+
+p.participants-numbers {
+    margin: 5px 0px;
+    color: #333;
+}
+
+.online-point {
+    color: #333333;
+}
+
+p.participants-numbers span {
+    color: #143b6c;
+}
+
+.project-price-lsiitng {
+    flex: 0 0 40%;
+}
+
+.Challanges-list {
+    flex: 0 0 15%;
+    text-align: center;
+}
+
+.participants {
+    flex: 0 0 41%;
+    justify-content: flex-end;
+    display: flex;
+}
+
+.right-sidebar {
+    color: #333;
+    margin: 15px 0px;
+}
+
+.right-sidebar ion-icon.md.hydrated {
+    margin-right: 5px;
+}
+
+span.Criteria-lisitng {
+    padding: 7px 15px;
+    margin-left: 80px;
+    margin-top: -25px;
+    display: inline-block;
+}
+
+.listing-projects-name:hover {
+    border: 1px solid #143b6c;
+    border-left: 5px solid #143b6c;
+}
+
+.Challanges-list ion-icon.md.hydrated {
+    margin-right: 6px;
+    height: 12px;
+}
+
+
+@media screen and (max-width: 1366px) {
+    .left--project-image {
+        flex: 0 0 12%;
+        padding: 10px;
+    }
+    .center-project-contant {
+        flex: 0 0 60%;
+        padding: 10px;
+    }
+
+    .left-project-details {
+        flex: 0 0 20%;
+        padding: 40px 10px 10px 10px;
+    }
+    .edit-delete-list {
+        position: absolute;
+        top: 0px;
+        right: 0px;
+    }
+    
+    .Challanges-list {
+        margin: 5px 0px;
+        flex: 0 0 20%;
+    }
+
+    .price-chanllanges-parti {
+        display: flex;
+        margin-top: 10px;
+        flex-wrap: wrap;
+    }
+
+    .participants {
+        flex: 0 0 30%;
+        justify-content: flex-end;
+        display: flex;
+        align-items: center;
+    }
+
+    .project-price-lsiitng {
+        flex: 0 0 100%;
+    }
+
+    
+  }
+  

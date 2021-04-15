@@ -7,15 +7,10 @@ import TableBody from "@material-ui/core/TableBody";
 import Button from "@material-ui/core/Button";
 // import Ledger from "@daml/ledger";
 import { useStreamQueries, useLedger, useParty } from "@daml/react";
-import { InviteClient, Platform, 
-  ClientInvitation, AcceptRequest, 
-  InviteJudge, JudgeInvitation, 
-  ParticipantInvitation, InviteParticipant,
-  CreateProject, ClientRole, AddChallenge, ClientProject,
-  RegisterForProject, ParticipantRole, RequestToJoinProject,
+import { Platform, AcceptRequest,CreateProject, ClientRole, AddChallenge, ClientProject, ParticipantRole, RequestToJoinProject,
   ParticipantSubmission,
   ProposeTeammate,
-  ProposeSubmission
+  ProposeSubmission,CriteriaPoint,PrizeData
 } from "@daml.js/cosmart-0.0.1/lib/Main";
 import { InputDialog, InputDialogProps } from "./InputDialog";
 import useStyles from "./styles";
@@ -29,13 +24,13 @@ export default function Report() {
   const clientProjectAssets = useStreamQueries(ClientProject).contracts;  
   console.log('clientProjectAssets', clientProjectAssets);
   const projectAssets = useStreamQueries(ClientRole).contracts;
-  const judgeInvitationAssets = useStreamQueries(JudgeInvitation).contracts;
+  //const judgeInvitationAssets = useStreamQueries(JudgeInvitation).contracts;
   const requestToJoinProjectAssets = useStreamQueries(RequestToJoinProject).contracts;
 
   const participantSubmissionAssets = useStreamQueries(ParticipantSubmission).contracts;
-  const participantInvitationAssets = useStreamQueries(ParticipantInvitation).contracts;
+  //const participantInvitationAssets = useStreamQueries(ParticipantInvitation).contracts;
   const participantRoleAssets = useStreamQueries(ParticipantRole).contracts;
-  const clientInvitationAssets = useStreamQueries(ClientInvitation).contracts;
+  //const clientInvitationAssets = useStreamQueries(ClientInvitation).contracts;
   const user = useUserState();
 
   // const defaultInviteCustomsMarProps : InputDialogProps<InviteCustomsMar> = {
@@ -83,7 +78,7 @@ export default function Report() {
   //   setInviteCustomsGuaProps({ ...defaultInviteCustomsGuaProps, open: true, onClose})
   // };
 
-  const defaultInviteClientProps : InputDialogProps<InviteClient> = {
+  const defaultInviteClientProps : any = {
     open: false,
     title: "Invite client",
     defaultValue: { client : "" },
@@ -97,14 +92,14 @@ export default function Report() {
   const [ inviteClientProps, setInviteClientProps ] = useState(defaultInviteClientProps);
   // One can pass the original contracts CreateEvent
   function showInviteClient(asset : Platform.CreateEvent) {
-    async function onClose(state : InviteClient | null) {
+    async function onClose(state :  null) {
       setInviteClientProps({ ...defaultInviteClientProps, open: false});
-      await ledger.exercise(Platform.InviteClient, asset.contractId, state);
+     // await ledger.exercise(Platform.InviteClient, asset.contractId, state);
     };
     setInviteClientProps({ ...defaultInviteClientProps, open: true, onClose})
   };
 
-  const defaultInviteParticipantProps : InputDialogProps<InviteParticipant> = {
+  const defaultInviteParticipantProps : any = {
     open: false,
     title: "Invite participant",
     defaultValue: { participant : "" },
@@ -117,15 +112,15 @@ export default function Report() {
   const [ inviteParticipantProps, setInviteParticipantProps ] = useState(defaultInviteParticipantProps);
   // One can pass the original contracts CreateEvent
   function showInviteParticipant(asset : Platform.CreateEvent) {
-    async function onClose(state : InviteParticipant | null) {
+    async function onClose(state :  null) {
       setInviteParticipantProps({ ...defaultInviteParticipantProps, open: false});
-      await ledger.exercise(Platform.InviteParticipant, asset.contractId, state);
+      //await ledger.exercise(Platform.InviteParticipant, asset.contractId, state);
       alert("Invitation sent to the participant successfully!");
     };
     setInviteParticipantProps({ ...defaultInviteParticipantProps, open: true, onClose})
   };
 
-  const defaultInviteJudgeProps : InputDialogProps<InviteJudge> = {
+  const defaultInviteJudgeProps : any = {
     open: false,
     title: "Invite Judge",
     defaultValue: { judge : "" },
@@ -138,77 +133,24 @@ export default function Report() {
   const [ inviteJudgeProps, setInviteJudgeProps ] = useState(defaultInviteJudgeProps);
   // One can pass the original contracts CreateEvent
   function showInviteJudge(asset : Platform.CreateEvent) {
-    async function onClose(state : InviteJudge | null) {
+    async function onClose(state :  null) {
       setInviteJudgeProps({ ...defaultInviteJudgeProps, open: false});
-      await ledger.exercise(Platform.InviteJudge, asset.contractId, state);
+     // await ledger.exercise(Platform.InviteJudge, asset.contractId, state);
       alert("Invitation sent to the Judge successfully!");
     };
     setInviteJudgeProps({ ...defaultInviteJudgeProps, open: true, onClose })
   };
 
-  const defaultCreateProjectProps : InputDialogProps<CreateProject> = {
-    open: false,
-    title: "Create Project",
-    defaultValue: { 
-      name : "", 
-      projectId: "", 
-      startDate: "", 
-      endDate: "", 
-      location: "", 
-      desc: "", 
-      criteria: [], 
-      pictureUrl: "",
-      public: publicParty
-    },
-    fields: {
-      name : {
-        label: "Project Name",
-        type: "text"
-      },
-      startDate : {
-        label: "Project Start Date",
-        type: "text"
-      },
-      endDate : {
-        label: "Project End Date",
-        type: "text"
-      },
-      location : {
-        label: "Project Location",
-        type: "text"
-      },
-      projectId: {
-        label: "Project Id",
-        type: "text"
-      },
-      desc: {
-        label: "Project Descritpion",
-        type: "text"
-      },
-      criteria: {
-        label: "Project criteria",
-        type: "text"
-      },
-      public: {
-        label: "Public party",
-        type: "text"
-      },
-      pictureUrl: {
-        label: "Project Picture url",
-        type: "text"
-      }
-    },
-    onClose: async function() {}
-  };
-  const [ createProjectProps, setCreateProjectProps ] = useState(defaultCreateProjectProps);
+ 
+  const [ createProjectProps, setCreateProjectProps ] = useState("");
   // One can pass the original contracts CreateEvent
   function showCreateProject(asset : ClientRole.CreateEvent) {
     async function onClose(state : CreateProject | null) {
-      setCreateProjectProps({ ...defaultCreateProjectProps, open: false});
+     // setCreateProjectProps({ ...defaultCreateProjectProps, open: false});
       await ledger.exercise(ClientRole.CreateProject, asset.contractId, state);
       alert("Project has been created successfully!");
     };
-    setCreateProjectProps({ ...defaultCreateProjectProps, open: true, onClose})
+   // setCreateProjectProps({ ...defaultCreateProjectProps, open: true, onClose})
   };
   
   const defaultAddUpdateChallengeProps : InputDialogProps<AddChallenge> = {
@@ -246,57 +188,11 @@ export default function Report() {
     setAddUpdateChallengeProps({ ...defaultAddUpdateChallengeProps, open: true, onClose})
   };
 
-  const defaultAddUpdateSubmissionProps : InputDialogProps<ProposeSubmission> = {
-    open: false,
-    title: "Submission",
-    defaultValue: { 
-      participant: party, subName: "", subDesc: "", presentation: "", submission: "", challengeId: "", judge: "Yuling", videoLink: ""
-    },
-    fields: {
-      participant: {
-        label: "Participant",
-        type: "text",
-      },
-      subName: {
-        label: "Submission Name",
-        type: "text" 
-      },
-      subDesc: {
-        label: "Submission Description",
-        type: "text" 
-      },
-      submission: {
-        label: "Submission",
-        type: "text" 
-      },
-      presentation: {
-        label: "Presentation",
-        type: "text" 
-      },
-      videoLink: {
-        label: "Video Link",
-        type: "text" 
-      },
-      challengeId: {
-        label: "Challenge Id",
-        type: "text" 
-      },
-      judge: {
-        label: "judge",
-        type: "text" 
-      }
-    },
-    onClose: async function() {}
-  };
-  const [ addUpdateSubmissionProps, setAddUpdateSubmissionProps ] = useState(defaultAddUpdateSubmissionProps);
+ 
+  const [ addUpdateSubmissionProps, setAddUpdateSubmissionProps ] = useState("");
   // One can pass the original contracts CreateEvent
   function showParticipantSubmission(asset : ClientProject.CreateEvent) {
-    async function onClose(state : ProposeSubmission | null) {
-      setAddUpdateSubmissionProps({ ...defaultAddUpdateSubmissionProps, open: false});
-      await ledger.exercise(ClientProject.ProposeSubmission, asset.contractId, state);
-      alert("Submission has been created successfully!");
-    };
-    setAddUpdateSubmissionProps({ ...defaultAddUpdateSubmissionProps, open: true, onClose})
+    
   };
 
   const defaultProposeTeammateProps : InputDialogProps<ProposeTeammate> = {
@@ -359,15 +255,9 @@ export default function Report() {
 
   // const [ AcceptRequestProps, setAcceptRequestProps ] = useState(defaultAcceptRequestProps);
   // One can pass the original contracts CreateEvent
-  async function showAcceptRequest(asset : ClientInvitation.CreateEvent) {
-    await ledger.exercise(ClientInvitation.AcceptRequest, asset.contractId, AcceptRequest);
-    alert('Your request accepted successfully!');
-  };
+  
 
-  async function showAcceptParticipant(asset : ParticipantInvitation.CreateEvent) {
-    await ledger.exercise(ParticipantInvitation.AcceptParticipantRequest, asset.contractId, {participantProfile: {firstName: (user as any).party, lastName: "", company: "", email: "", job: "", about: "", pictureUrl: ""}});
-    alert('Your request accepted successfully!');
-  };
+ 
 
   async function showAcceptParticipantRequestToProject(asset: RequestToJoinProject.CreateEvent) {
     await ledger.exercise(RequestToJoinProject.AddParticipantToProject, asset.contractId, AcceptRequest);
@@ -376,7 +266,7 @@ export default function Report() {
 
   
 
-  const defaultRegisterForProjectProps : InputDialogProps<RegisterForProject> = {
+  const defaultRegisterForProjectProps : any = {
     open: false,
     title: "Register For A Project",
     defaultValue: { projectId: "", client: "" },
@@ -395,18 +285,9 @@ export default function Report() {
   const [ registerForProjectProps, setRegisterForProjectProps ] = useState(defaultRegisterForProjectProps);
   // One can pass the original contracts CreateEvent
   function showRegiterForProject(asset : ParticipantRole.CreateEvent) {
-    async function onClose(state : RegisterForProject | null) {
-      setRegisterForProjectProps({ ...defaultRegisterForProjectProps, open: false});
-      await ledger.exercise(ParticipantRole.RegisterForProject, asset.contractId, state);
-      alert("Registred For A Project Successfully!");
-    };
-    setRegisterForProjectProps({ ...defaultRegisterForProjectProps, open: true, onClose})
+    
   };
 
-  async function showAcceptJudge(asset : JudgeInvitation.CreateEvent) {
-    await ledger.exercise(JudgeInvitation.AcceptjudgeRequest, asset.contractId, AcceptRequest);
-    alert('Your request accepted successfully!');
-  };
 
   // type UserSpecifiedAppraise = Pick<Appraise, "newValue">;
   // const today = (new Date()).toISOString().slice(0,10);
@@ -483,10 +364,8 @@ export default function Report() {
       <InputDialog { ...inviteJudgeProps } />
       <InputDialog { ...inviteClientProps } />
       <InputDialog { ...inviteParticipantProps } />
-      <InputDialog { ...createProjectProps } />
-      <InputDialog { ...addUpdateChallengeProps } /> 
+       <InputDialog { ...addUpdateChallengeProps } /> 
       <InputDialog { ...registerForProjectProps } /> 
-      <InputDialog { ...addUpdateSubmissionProps } /> 
       <InputDialog { ...addTeammateProps } /> 
       
       {/* <InputDialog { ...inviteImporterProps } /> */}
@@ -508,17 +387,7 @@ export default function Report() {
           </TableRow>
         </TableHead>
         <TableBody>
-          {clientInvitationAssets.filter((c: any) => (user as any).party === c.payload.client).map((a: any) => (
-            <TableRow key={a.contractId} className={classes.tableRow}>
-              <TableCell key={6} className={classes.tableCellButton}>
-                {/* <Button color="primary" size="small" className={classes.choiceButton} variant="contained" disabled={a.payload.operator !== party} onClick={() => showInviteCustomsMar(a)}>InviteCustomsMar</Button> */}
-                {/* <Button color="primary" size="small" className={classes.choiceButton} variant="contained" disabled={a.payload.operator !== party} onClick={() => showAcceptRequest(a)}>Accept invite</Button> */}
-              <Button color="primary" size="small" className={classes.choiceButton} variant="contained" disabled={a.payload.client !== party} onClick={() => showAcceptRequest(a) }>Accept Invitation</Button>
-                             {/* <Button color="primary" size="small" className={classes.choiceButton} variant="contained" >InviteImporter</Button> */}
-
-              </TableCell>
-            </TableRow>
-          ))}
+         
           {participantSubmissionAssets.filter((c: any) => (user as any).party === c.payload.participant).map((a: any) => (
             <TableRow key={a.contractId} className={classes.tableRow}>
               <TableCell key={6} className={classes.tableCellButton}>
@@ -526,17 +395,15 @@ export default function Report() {
               </TableCell>
             </TableRow>
           ))}
-          {participantInvitationAssets.filter((c: any) => (user as any).party === c.payload.participant).map((a: any) => (
+          {/*participantInvitationAssets.filter((c: any) => (user as any).party === c.payload.participant).map((a: any) => (
             <TableRow key={a.contractId} className={classes.tableRow}>
               <TableCell key={6} className={classes.tableCellButton}>
-                {/* <Button color="primary" size="small" className={classes.choiceButton} variant="contained" disabled={a.payload.operator !== party} onClick={() => showInviteCustomsMar(a)}>InviteCustomsMar</Button> */}
-                {/* <Button color="primary" size="small" className={classes.choiceButton} variant="contained" disabled={a.payload.operator !== party} onClick={() => showAcceptRequest(a)}>Accept invite</Button> */}
-              <Button color="primary" size="small" className={classes.choiceButton} variant="contained" disabled={a.payload.participant !== party} onClick={() => showAcceptParticipant(a) }>Accept Invitation As A Participant</Button>
-                             {/* <Button color="primary" size="small" className={classes.choiceButton} variant="contained" >InviteImporter</Button> */}
+               <Button color="primary" size="small" className={classes.choiceButton} variant="contained" disabled={a.payload.participant !== party} onClick={() => showAcceptParticipant(a) }>Accept Invitation As A Participant</Button>
+                           
 
               </TableCell>
             </TableRow>
-          ))}
+          ))*/}
           {clientProjectAssets.map((a: any) => (
             <TableRow key={a.contractId} className={classes.tableRow}>
               <TableCell key={6} className={classes.tableCellButton}>
@@ -552,13 +419,13 @@ export default function Report() {
             </TableRow>
           ))}
           
-          {judgeInvitationAssets.filter((c: any) => (user as any).party === c.payload.judge).map((a: any) => (
+          {/*judgeInvitationAssets.filter((c: any) => (user as any).party === c.payload.judge).map((a: any) => (
             <TableRow key={a.contractId} className={classes.tableRow}>
               <TableCell key={6} className={classes.tableCellButton}>
               <Button color="primary" size="small" className={classes.choiceButton} variant="contained" disabled={a.payload.judge !== party} onClick={() => showAcceptJudge(a) }>Accept Invitation As A Judge</Button>
               </TableCell>
             </TableRow>
-          ))}
+          ))*/}
           {requestToJoinProjectAssets.map((a: any) => (
             <TableRow key={a.contractId} className={classes.tableRow}>
               <TableCell key={6} className={classes.tableCellButton}>

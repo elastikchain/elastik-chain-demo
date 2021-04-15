@@ -12,7 +12,9 @@ module Main where
 -- *code optimization for profile
 
 import Daml.Script
--- import DA.Date
+import DA.Date
+import DA.Time
+import DA.List
 -- import DA.Set (Set)
 -- import DA.Set qualified as S
 
@@ -42,8 +44,7 @@ data ChallengeData = ChallengeData
     challengeId: Text 
     nameOf:Text
     prize: Text
-    participant: Party
-    judge: Party 
+    description: Text
   deriving(Eq, Show)
   
 data ParticipantSubmissionData =  ParticipantSubmissionData
@@ -52,7 +53,7 @@ data ParticipantSubmissionData =  ParticipantSubmissionData
     subName: Text 
     subDesc:  Text
     submission: Text
-    challengeId: Text
+    -- challengeId: Text
   deriving(Eq, Show)
 
 data CriteriaPoint = CriteriaPoint
@@ -72,9 +73,61 @@ data ProfileData = ProfileData
     pictureUrl:Text
   deriving(Eq, Show)
 
---  ----------------------------------------------------------------
+data PrizeData = PrizeData
+  with
+    name:Text
+    value:Text
+    currency:Text
+    description:Text
+  deriving(Eq, Show)
 
--- Invite all parties by operator
+
+
+----------------------------------------------------------------
+template Registry
+  with 
+    projectKeys: [(Text,Party)]
+    participants: [Party]
+    operator: Party 
+  where 
+    signatory operator
+
+    key (operator) : (Party)
+    maintainer key
+
+    controller operator can 
+      AddParticipantToProjectListing: ContractId Registry
+        with 
+          participant: Party 
+        do 
+          -- add this new participants to all current project listings
+          forA projectKeys
+            $ \ (projKey,client)
+              -> do
+                -- exerciseByKey @ClientProjectListing (operator, projKey) AddParticipantToListing with participant 
+                exerciseByKey @ClientProject (client, projKey) AddParticipantToGeneralPublic with participant 
+
+
+        
+          -- now add to the participant list so they can be added to new project listings
+          create this with participants = participant::participants 
+
+    controller operator can 
+      AddProjectListing: ContractId Registry
+        with 
+          projectKey: Text 
+          client: Party
+        do 
+          
+          -- first add all current participants to this project listing
+          -- exerciseByKey @ClientProjectListing (operator, projectKey) AddMultipleParticipantToListing with newParticipants = participants
+          exerciseByKey @ClientProject(client, projectKey) AddGeneralPublic with newParticipants = participants
+          -- now add project to registry 
+          create this with projectKeys = (projectKey,client)::projectKeys, operator 
+          
+
+
+-- operator creates platform and registry
 template Platform 
   with 
     operator: Party 
@@ -82,50 +135,38 @@ template Platform
     signatory operator
 
     controller operator can
-      nonconsuming InviteClient: ContractId ClientInvitation
-        with 
-          client: Party 
-        do create ClientInvitation with ..
+      nonconsuming CreateRegistry: ContractId Registry
+        do create Registry with projectKeys = [], participants = [], operator     
 
-    controller operator can
-      nonconsuming InviteParticipant: ContractId ParticipantInvitation
-        with 
-          participant: Party 
-        do create ParticipantInvitation with ..
 
-    controller operator can
-      nonconsuming InviteJudge: ContractId JudgeInvitation
-        with 
-          judge: Party 
-        do create JudgeInvitation with .. 
-
---  ----------------------------------------------------------------
 
 -- Judge invitation / Request to join a hackathon
-template JudgeInvitation
+template JudgeRequestTojoin -- checkbox to chose this contract
   with
     judge: Party 
     operator: Party
+    judgeProfile: ProfileData
   where 
-    signatory operator 
+    signatory judge 
 
-    controller judge can 
-      AcceptjudgeRequest: ContractId JudgeRole
+    controller operator can 
+      AcceptJudgeRequest: ContractId JudgeRole
         do create JudgeRole with ..
 
 template JudgeRole
   with 
     judge: Party 
     operator: Party 
+    judgeProfile: ProfileData
   where 
     signatory judge, operator
 
     controller judge can 
-      nonconsuming AddEditJudProfile: ContractId JudgeProfile
+      AddEditJudProfile: ContractId JudgeRole
         with
-          judgeProfile:ProfileData
+          newJudgeProfile:ProfileData
         do
-          create JudgeProfile with ..
+          create this with judgeProfile=newJudgeProfile
 
     controller judge can 
       nonconsuming JudgeForProject: ContractId RequestToJudgeProject
@@ -143,7 +184,7 @@ template RequestToJudgeProject
   where 
     signatory judge 
 
-    controller operator can 
+    controller client can 
       AddJudgeToProject: ContractId ClientProject 
         do 
           exerciseByKey @ClientProject (client, projectId) AddJudge with judge
@@ -151,58 +192,133 @@ template RequestToJudgeProject
 --  ----------------------------------------------------------------
 
 -- Participant invitation / Request to join a hackathon
-template ParticipantInvitation
+template ParticipantRequestToJoin
   with
     participant: Party 
     operator: Party
+    participantProfile: ProfileData
   where 
-    signatory operator 
+    signatory participant
 
-    controller participant can
+    controller operator can
       AcceptParticipantRequest: ContractId ParticipantRole
-        with  
-          participantProfile:ProfileData 
-          -- email: Text
-            do create ParticipantRole with ..
+          do 
+            exerciseByKey @Registry (operator) AddParticipantToProjectListing with participant
+            create ParticipantRole with ..
 
 template ParticipantRole
   with 
     participant: Party 
     operator: Party
     participantProfile:ProfileData
-    -- email: Text
   where 
     signatory participant, operator 
 
     key (operator,participantProfile.email):(Party,Text)
-    -- key (operator,email):(Party,Text)
     maintainer key._1
-
-    -- controller participant can 
-    --   UpdateParProfile: ContractId ParticipantRole
-    --     with
-    --       firstName:Text
-    --       lastName:Text
-    --       job:Text
-    --       company:Text
-    --       about:Text
-    --     do
-    --       let o1 = participantProfile with firstName,lastName,job,company,about,email = participantProfile.email
-    --       create this with participant,operator, participantProfile = o1
 
     controller participant can 
       UpdateParProfile: ContractId ParticipantRole
         with
-          participantProfile1:ProfileData
+          newparticipantProfile:ProfileData
         do
-          create ParticipantRole with participantProfile=participantProfile1,participant,operator
+          create ParticipantRole with participantProfile=newparticipantProfile,participant,operator
     
-    controller participant can 
-      nonconsuming RegisterForProject: ContractId RequestToJoinProject
+    -- *** do this from ClientProjectListing instead
+    -- controller participant can 
+    --   nonconsuming RegisterForProject: ContractId RequestToJoinProject
+    --     with 
+    --       projectId: Text 
+    --       client: Party
+    --     do create RequestToJoinProject with ..
+
+
+--  ----------------------------------------------------------------
+
+-- client invitation
+template ClientRequestToJoin -- checkbox / check if the cleintRole
+  with
+    client: Party 
+    operator: Party
+    clientProfile: ProfileData
+  where 
+    signatory client 
+
+    controller operator can 
+      AcceptRequest: ContractId ClientRole
+        do create ClientRole with ..
+
+template ClientRole
+  with 
+    client: Party 
+    operator: Party 
+    clientProfile: ProfileData
+  where 
+    signatory client, operator 
+    
+    controller client can 
+      AddEditCliProfile: ContractId ClientRole 
+        with
+          newClientProfile:ProfileData
+        do
+          create this with clientProfile=newClientProfile
+
+    controller client can 
+      nonconsuming CreateProject: ContractId ClientProjectProposal 
         with 
-          projectId: Text 
-          client: Party
-        do create RequestToJoinProject with ..
+          name: Text 
+          desc: Text
+          projectId: Text
+          startDate: Time
+          endDate: Time
+          location: Text
+          criteria: [CriteriaPoint]
+          pictureUrl:Text
+          rules: [Text]
+          termsLink:Text
+          privacyLink:Text
+          prizes:[PrizeData]
+          projectvideoLink: Text
+        do 
+          create ClientProjectProposal with operator, client, projectId, location, startDate, endDate, name, desc, criteria,pictureUrl,challenges = [], participants = [], judges = [], projects=[], rules, termsLink,privacyLink,prizes,projectvideoLink
+--  ----------------------------------------------------------------
+
+-- create a hackathon
+template ClientProjectProposal
+  with 
+    client: Party 
+    operator: Party 
+    projectId: Text
+    name: Text 
+    desc: Text
+    location: Text
+    startDate: Time
+    endDate: Time
+    rules: [Text]
+    termsLink:Text
+    privacyLink:Text
+    prizes:[PrizeData]
+    criteria: [CriteriaPoint]
+    challenges: [Text]
+    participants: [Party]
+    judges: [Party]
+    projects:[Text]
+    pictureUrl:Text
+    projectvideoLink: Text
+  where
+    signatory client 
+    
+    -- create a project listing for participants to see when they are not registered
+    controller operator can 
+      ApproveClientProject: ContractId Registry
+        do 
+          -- create project listing for participants to see online
+          -- create ClientProjectListing with operator, client, projectId, name, participants = []
+          -- now create actual project
+          create ClientProject with operator, client, projectId, location, startDate, endDate, name, desc, criteria,pictureUrl,challenges = [], participants = [], judges = [], projects=[],rules,termsLink,privacyLink,prizes,generalPublic=[],projectvideoLink
+          -- add to registry
+          exerciseByKey @Registry (operator) AddProjectListing with projectKey = projectId,client
+          
 
 template RequestToJoinProject
   with 
@@ -213,56 +329,10 @@ template RequestToJoinProject
   where 
     signatory participant 
 
-    controller operator can 
+    controller client can 
       AddParticipantToProject: ContractId ClientProject 
         do 
           exerciseByKey @ClientProject (client, projectId) AddParticipant with participant
-
---  ----------------------------------------------------------------
-
--- client invitation
-template ClientInvitation
-  with
-    client: Party 
-    operator: Party
-  where 
-    signatory operator 
-
-    controller client can 
-      AcceptRequest: ContractId ClientRole
-        do create ClientRole with ..
-
-template ClientRole
-  with 
-    client: Party 
-    operator: Party 
-  where 
-    signatory client, operator 
-    
-    controller client can 
-      nonconsuming AddEditCliProfile: ContractId ClientProfile
-        with
-          clientProfile:ProfileData
-        do
-          create ClientProfile with ..
-
-    controller client can 
-      nonconsuming CreateProject: ContractId ClientProject 
-        with 
-          name: Text 
-          desc: Text
-          projectId: Text
-          startDate: Time
-          endDate: Time
-          location: Text
-          criteria: [CriteriaPoint]
-          public: Party
-          pictureUrl:Text
-
-        do 
-          create ClientProject with operator, client, projectId, location, startDate, endDate, name, desc, criteria,pictureUrl,challenges = [], participants = [], judges = [], projects=[],public 
-
---  ----------------------------------------------------------------
 
 -- create a hackathon
 template ClientProject
@@ -275,19 +345,53 @@ template ClientProject
     location: Text
     startDate: Time
     endDate: Time
+    rules: [Text]
+    termsLink:Text
+    privacyLink:Text
+    prizes:[PrizeData]
     criteria: [CriteriaPoint]
-    challenges: [Text]
+    challenges: [ChallengeData]
     participants: [Party]
     judges: [Party]
     projects:[Text]
-    public :Party
     pictureUrl:Text
+    generalPublic:[Party]
+    projectvideoLink: Text
   where
-    signatory client 
-    observer participants,judges,public 
+    signatory client, operator 
+    observer participants,judges,generalPublic
     
     key (client,projectId): (Party, Text)
     maintainer key._1
+    
+    controller operator can 
+      AddGeneralPublic: ContractId ClientProject
+        with
+          newParticipants:[Party]
+        do 
+          create this with generalPublic = newParticipants
+      
+    controller operator can 
+      AddParticipantToGeneralPublic: ContractId ClientProject
+        with
+          participant:Party
+        do 
+          create this with generalPublic=participant::generalPublic
+
+    controller client can 
+       AddUpdateClientProject: ContractId ClientProject 
+        with 
+          newDesc: Text 
+          newCriteria: CriteriaPoint 
+          newlocation: Text
+          newstartDate: Time
+          newendDate: Time
+          newrules: [Text]
+          newtermsLink:Text
+          newprivacyLink:Text
+          newprizes:[PrizeData]
+          newProjectvideoLink: Text
+        do create this with client, name, desc=newDesc, challenges,criteria=newCriteria::criteria,location=newlocation,startDate=newstartDate,endDate=newendDate,rules=newrules, termsLink=newtermsLink,privacyLink=newprivacyLink,prizes=newprizes,projectvideoLink=newProjectvideoLink
 
     controller client can 
        AddUpdateDescription: ContractId ClientProject 
@@ -296,10 +400,19 @@ template ClientProject
         do create this with client, name, desc=newDesc, challenges
 
     controller client can 
-       AddUpdateCriteria: ContractId ClientProject 
+      AddCriteria: ContractId ClientProject 
         with 
           newCriteria: CriteriaPoint 
-        do create this with client, name,desc, criteria=newCriteria::criteria, challenges
+        do 
+          create this with client, name,desc, criteria=newCriteria::criteria, challenges
+
+      -- DeleteCriteria: ContractId ClientProject 
+      --   with 
+      --     newCriteria: CriteriaPoint 
+      --   do 
+      --     let newList = delete newCriteria criteria
+      --     create this with criteria=newList
+        
 
     controller client can 
        AddChallenge: ContractId ClientProject 
@@ -307,12 +420,17 @@ template ClientProject
           challengeId: Text 
           nameOf:Text
           prize: Text
-          description: Text
-          -- participant: Party
-          -- judge: Party
+          description: Text  
         do 
-          id <- create Challenge with client,judges,participants,nameOf,prize,challengeId
-          create this with challenges = challengeId::challenges
+          let  challenge = ChallengeData with nameOf,prize,challengeId,description
+          create this with challenges = challenge::challenges
+
+    controller client can 
+       ModifyChallenge: ContractId ClientProject 
+        with 
+          c1:[ChallengeData]
+        do 
+          create this with challenges = c1
 
     choice RemoveClientProject: ContractId ClosedClientProject
         with
@@ -320,15 +438,15 @@ template ClientProject
         controller client
         do create ClosedClientProject with ..
 
-    controller client can 
-       RemoveChallenge: ContractId ClientProject 
-        with 
-          challengeId: Text 
-        do 
-          -- remove an id from table
-          create this with challenges = challengeId::challenges
+    -- controller client can 
+    --    RemoveChallenge: ContractId ClientProject 
+    --     with 
+    --       challengeId: Text 
+    --     do 
+    --       -- remove an id from table
+    --       create this with challenges = challengeId::challenges
     
-    controller operator can 
+    controller client can 
        AddParticipant: ContractId ClientProject 
         with 
           participant: Party 
@@ -338,21 +456,28 @@ template ClientProject
        AddJudge: ContractId ClientProject 
         with 
           judge: Party 
-        do create this with operator, client, name, desc, criteria, challenges, judges = judge::judges
+        do 
+          forA projects
+            $ \ projKey
+              -> do
+                -- exerciseByKey @ClientProjectListing (operator, projKey) AddParticipantToListing with participant 
+                exerciseByKey @ParticipantSubmission (client, projKey) AddJudgToSubmission with judge 
 
+          create this with operator, client, name, desc, criteria, challenges, judges = judge::judges
+          
     nonconsuming choice ProposeSubmission: ContractId ParticipantSubmissionProposal
         with
-          participant: Party 
+          generalPublicParticipant: Party 
           subName: Text 
           subDesc:  Text
           submission: Text
           videoLink: Text
           presentation: Text
-          challengeId: Text
-          judge: Party
-        controller participant
+          -- challengeId: [Text]
+        controller generalPublicParticipant
         do
-          create ParticipantSubmissionProposal with participant,judge,subName,subDesc,submission,client,projectId,challengeId,operator,criteria,videoLink,presentation
+          -- check if participant exist on participants assert ?
+          create ParticipantSubmissionProposal with participant=generalPublicParticipant,subName,subDesc,submission,client,projectId,operator,criteria,videoLink,presentation
           -- proj <- fetch p
           -- create this with projects = proj::projects 
         
@@ -374,7 +499,7 @@ template ClientProject
 template ParticipantSubmissionProposal
   with 
     projectId: Text
-    challengeId: Text
+    -- challengeId: [Text]
     participant: Party 
     subName: Text 
     subDesc:  Text
@@ -383,7 +508,6 @@ template ParticipantSubmissionProposal
     presentation: Text
     client: Party
     operator: Party
-    judge:Party
     criteria: [CriteriaPoint]
   where 
     signatory participant
@@ -393,34 +517,44 @@ template ParticipantSubmissionProposal
         with
           submissionId:Text
         do 
+          (c1,co) <- fetchByKey @ClientProject (client,projectId) 
+
           exerciseByKey @ClientProject (client, projectId) AddSubmissionToList with submissionId
-          create ParticipantSubmission with name=subName,participant,desc=subDesc,submission,client,judge,participants=[],submissionId,challengeId,operator,criteria,judges=[],videoLink,presentation
+
+          create ParticipantSubmission with name=subName,participant,desc=subDesc,submission,client,participants=[],submissionId,judges=co.judges,operator,criteria,videoLink,presentation
           
 
 
--- Should create a challenge after all participants join the client hackathon
-template Challenge
-   with
-    challengeId : Text
-    nameOf: Text 
-    prize: Text 
-    client: Party
-    participants: [Party]
-    judges: [Party]
-    -- participant:Party
-    -- judge: Party
+-- -- Should create a challenge after all participants join the client hackathon
+-- template Challenge
+--    with
+--     challengeId : Text
+--     nameOf: Text 
+--     prize: Text 
+--     client: Party
+--     description: Text
+--     participants: [Party]
+--     judges: [Party]
+--     -- participant:Party
+--     -- judge: Party
 
-  where
-    signatory client
-    observer participants
+--   where
+--     signatory client
+--     observer participants
 
-    controller client can 
-      ModifieChallenge: ContractId Challenge
-        with
-          name1:Text
-          prize1:Text
-        do create this with nameOf = name1,prize=prize1, client, challengeId
+--     controller client can 
+--       ModifieChallenge: ContractId Challenge
+--         with
+--           newname:Text
+--           newprize:Text
+--           newdescription:Text
+--         do create this with nameOf = newname,prize=newprize,description=newdescription, client, challengeId
 
+--     choice RemoveChallenge: ContractId ClosedChallenge
+--         with
+--           comment: Text
+--         controller client
+--         do create ClosedChallenge with ..
 --  ----------------------------------------------------------------
 
 -- create a submission
@@ -429,7 +563,7 @@ template ParticipantSubmission
     participant: Party 
     client: Party
     submissionId: Text
-    challengeId: Text
+    -- challengeId: [Text]
     name: Text 
     desc:  Text
     submission: Text
@@ -437,24 +571,33 @@ template ParticipantSubmission
     presentation: Text
     -- challenges: [Text]
     participants: [Party]
-    judge: Party
     judges: [Party]
     operator: Party
     criteria: [CriteriaPoint] -- should be invisble to the participant
   where
-    signatory participant,client 
-    observer participants,judge,client,operator
+    signatory participant,client
+    observer participants,judges,client,operator
     
     key (participant,submissionId): (Party, Text)
     maintainer key._1
+
+    controller client can 
+      AddJudgToSubmission: ContractId ParticipantSubmission 
+        with
+          judge: Party
+        do
+          create this with judges=judge::judges
 
     controller participant can 
       UpdateSubmission: ContractId ParticipantSubmission 
         with 
           newDesc: Text 
           newName: Text 
-          newchallengeId: Text
-        do create this with  name=newName, desc=newDesc,challengeId=newchallengeId
+          -- newchallengeId: Text
+          newsubmission: Text
+          newvideoLink: Text
+          newpresentation: Text
+        do create this with  name=newName, desc=newDesc,submission=newsubmission,videoLink=newvideoLink,presentation=newpresentation
        
     choice RemoveSubmission: ContractId ClosedParticipantSubmission
         with
@@ -480,17 +623,18 @@ template ParticipantSubmission
         controller leaderParticipant 
         do create this with  participants=participantToAdd::participants
     
-    -- controller  judge can
-    --   JudgeProject : ContractId ParticipantSubmission
+    -- controller judge can
+    --   JudgeProject : ContractId Scorecard
     --     with 
-    --       p : Party
+    --       -- p : Party
     --       subId: Text
-    --       newCriteriaPoint: CriteriaPoint
-    --     do create Scorecard with scorecard=newCriteriaPoint::criteria,client, submissionId=subId, scorecard, judge 
+    --       scores: [CriteriaPoint]
+    --     do create Scorecard with scoretable=scores,client, submissionId=subId, judge 
 
     nonconsuming choice SubmitScorecard: ContractId Scorecard 
         with 
           scores: [CriteriaPoint] 
+          judge: Party
         controller judge 
           do create Scorecard with client, submissionId, scoretable=scores, judge
           
@@ -527,12 +671,12 @@ template ClientProfile
   where 
     signatory client
 
-    -- choice RemoveClientProfile: ContractId ClosedClientProfile
-    --     with
-    --       operator: Party
-    --       comment: Text
-    --     controller client
-    --     do create ClosedClientProfile with ..
+    choice RemoveClientProfile: ContractId ClosedClientProfile
+        with
+          operator: Party
+          comment: Text
+        controller client
+        do create ClosedClientProfile with ..
 
 template JudgeProfile
   with 
@@ -584,7 +728,7 @@ template ClosedParticipantSubmission
     participant: Party 
     client: Party
     submissionId: Text
-    challengeId: Text
+    -- challengeId: Text
     name: Text 
     desc:  Text
     submission: Text
@@ -592,7 +736,7 @@ template ClosedParticipantSubmission
     presentation: Text
     -- challenges: [Text]
     participants: [Party]
-    judge: Party
+    -- judges: Party
     operator: Party
     comment:Text
   where
@@ -610,15 +754,29 @@ template ClosedClientProject
     startDate: Time
     endDate: Time
     criteria: [CriteriaPoint]
-    challenges: [Text]
+    challenges: [ChallengeData]
     participants: [Party]
     judges: [Party]
     projects:[Text]
-    public :Party
     comment:Text
   where
     signatory client 
     observer operator
+
+template ClosedChallenge
+   with
+    -- challengeId : Text
+    nameOf: Text 
+    prize: Text 
+    client: Party
+    description: Text
+    participants: [Party]
+    judges: [Party]
+    -- participant:Party
+    -- judge: Party
+
+  where
+    signatory client
 
 template ClosedClientProfile
   with 
@@ -664,6 +822,14 @@ template Scorecard
         key (judge, submissionId): (Party, Text)
         maintainer key._1
 
+        controller judge can
+            ModifyScorecard: ContractId Scorecard 
+              with 
+                scores: [CriteriaPoint]  
+              do 
+                create this with scoretable=scores
+          
+
 
 
 setup = script do
@@ -672,37 +838,44 @@ setup = script do
   asx <- allocatePartyWithHint "Asx" (PartyIdHint "Asx")
   mohammed <- allocatePartyWithHint "Mohammed" (PartyIdHint "Mohammed")
   yuling <- allocatePartyWithHint "Yuling" (PartyIdHint "Yuling")
-  let participantProfile = ProfileData with firstName="Andy",lastName="ke",email="andy@dabl.com",job="engineer",company="",about="",pictureUrl=""
 
+  let participantProfile = ProfileData with firstName="Andy",lastName="ke",email="andy@dabl.com",job="engineer",company="",about="",pictureUrl=""
+  let clientProfile = ProfileData with firstName="Asx",lastName="Asx",email="asx@dabl.com",job="engineer",company="",about="",pictureUrl=""
+  let judgeProfile = ProfileData with firstName="Yuling",lastName="Yu",email="yling@dabl.com",job="judge",company="",about="",pictureUrl=""
+  let participantProfile1 = ProfileData with firstName="Mohammed",lastName="Id",email="med@dabl.com",job="engineer",company="",about="",pictureUrl=""
 
   platform <- submit elastik do
     createCmd Platform with
       operator = elastik
+  registry <- submit elastik do
+    exerciseCmd platform CreateRegistry 
 
-  invite <- submit elastik do
-    exerciseCmd platform InviteParticipant with
-      participant = andy
-  participant <- submit andy do
-    exerciseCmd invite AcceptParticipantRequest with participantProfile 
+  participantRequest <- submit andy do
+    createCmd ParticipantRequestToJoin with participant = andy, operator = elastik, participantProfile 
+  participantRole <- submit elastik do
+    exerciseCmd participantRequest AcceptParticipantRequest
 
-  invite <- submit elastik do
-    exerciseCmd platform InviteParticipant with
-      participant = mohammed
-  let participantProfile = ProfileData with firstName="Mohammed",lastName="ke",email="med@dabl.com",job="engineer",company="",about="",pictureUrl=""
-  participant <- submit mohammed do
-    exerciseCmd invite AcceptParticipantRequest with participantProfile
+  participantRequest <- submit mohammed do
+    createCmd ParticipantRequestToJoin with participant = mohammed, operator = elastik, participantProfile=participantProfile1
+  participantRole <- submit elastik do
+    exerciseCmd participantRequest AcceptParticipantRequest
 
-  invite <- submit elastik do
-    exerciseCmd platform InviteClient with
-      client = asx
-  client <- submit asx do
-    exerciseCmd invite AcceptRequest
+  clientRequest <- submit asx do
+    createCmd ClientRequestToJoin with client = asx, operator = elastik, clientProfile 
+  clientRole <- submit elastik do
+    exerciseCmd clientRequest AcceptRequest
 
-  invite <- submit elastik do
-    exerciseCmd platform InviteJudge with
-      judge = yuling
-  judge <- submit yuling do
-    exerciseCmd invite AcceptjudgeRequest
+  judgeRequest <- submit yuling do
+    createCmd JudgeRequestTojoin with judge = yuling, operator = elastik, judgeProfile 
+  clientRole <- submit elastik do
+    exerciseCmd judgeRequest AcceptJudgeRequest
+
+  -- clientRole <- submit asx do
+  --   createCmd CreateProject with name="proj1",desc="description",projectId="11",startDate=datetime 1970 Jan 2 0 0 0,endDate=datetime 1970 Jan 2 0 0 0,location="online",criteria=[],pictureUrl="pic.com"
+  -- ClientProjectProposal <- submit elastik do
+  --   exerciseCmd clientRole AcceptJudgeRequest
+
+
 
   -- invite <- submit elastik do
   --   exerciseCmd ClientInvitation CreateProject with
@@ -720,3 +893,40 @@ setup = script do
   -- submit bob do
   --   exerciseCmd bobTV Give with newOwner = alice
 
+
+
+-- template ClientProjectListing
+--   with 
+--     operator:Party
+--     client:Party
+--     projectId: Text
+--     name:Text
+--     participants:[Party]
+--   where
+--   signatory operator
+--   observer participants
+
+--   key(operator,projectId) :(Party,Text)
+--   maintainer key._1
+
+--   controller operator can 
+--     AddParticipantToListing: ContractId ClientProjectListing
+--       with
+--         participant:Party
+--       do create this with participants=participant::participants
+
+--   controller operator can 
+--     AddMultipleParticipantToListing: ContractId ClientProjectListing
+--       with
+--         newParticipants:[Party]
+--       do 
+--         create this with participants = newParticipants
+        
+
+--   nonconsuming choice SubmitRequestToJoinProject: ContractId RequestToJoinProject
+--     with 
+--       participant: Party
+--     controller participant 
+--     do 
+--       --(c1,co) <- fetchByKey @ParticipantRole (operator,email) 
+--       create RequestToJoinProject with ..
