@@ -844,6 +844,7 @@ const Profile = (props: RouteComponentProps) => {
                                       <IonIcon icon={man}></IonIcon>{" "}
                                       <span>{p.payload.generalPublic.length}</span> participants
                                     </p>
+                                    
                                   </div>
                                 </div>
                               </div>

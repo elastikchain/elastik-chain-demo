@@ -62,7 +62,7 @@ const Submission = (props : RouteComponentProps) => {
             <SubHeader  {...props}/>
           
             <IonContent className="submission-content">
-          
+            <div className="content-container"> 
             <div className="submission-wrapper">
             <div className="page-breadcrumb">
                     <IonList className="breadcrumbs">
@@ -206,9 +206,12 @@ const Submission = (props : RouteComponentProps) => {
                             </div>
                         </div>
                     </div>
+                   
+                </div>
+                <Footer />
                 </div>
             </IonContent>
-            <Footer />
+         
         </IonPage>
     )
 }

@@ -1,7 +1,8 @@
 .project-picture{
     width: 100%;
-    height: 26rem;
+    min-height: 380px;
     object-fit: cover;
+    max-height: 480px;
 }
 .challenges-list-header{
     display: flex;
@@ -118,7 +119,7 @@ ion-card-content.left-contant-details h3 {
 
 .tabs-section .tabs-heading {
     background-color: #c5dfff;
-    padding: 20px 20px;
+    padding: 0px;
     min-width: 220px;
     position: relative;
     text-align: center;
@@ -137,9 +138,12 @@ ion-card-content.left-contant-details h3 {
 }
 
 .tabs-section .tabs-heading .tabs-contant {
-    color: #333;
+    color: #143b6c;
     text-decoration: none;
     font-size: 15px;
+    background-color: transparent;
+    min-width: 220px;
+    padding: 23px 0px;
 }
 
 .tabs-section .tabs-heading:hover {
@@ -157,14 +161,27 @@ ion-card-content.left-contant-details h3 {
     border-radius: 0px 30px 30px 0px;
 }
 
+.tabs-section .tabs-heading:hover {
+    background-color: #143b6c;
+}
+
+.tabs-section .tabs-heading:hover button.tabs-contant {
+    color: #fff;
+}
+
+.tabs-section .tabs-heading .tabs-contant:focus {
+    outline: none;
+}
 
 .top-part-contant h1 {
     font-family: Nixie One;
     font-style: normal;
     font-weight: bold;
     font-size: 32px;
-    line-height: 52px;
+    line-height: 32px;
     color: #646464;
+    margin-top: 0px;
+    margin-bottom: 20px;
 }
 
 
@@ -188,19 +205,44 @@ ion-card-content.left-contant-details h3 {
 .all-details-part {
     margin-top: 50px;
     margin-bottom: 30px;
+    padding-right: 50px;
 }
 .video-list {
     margin-bottom: 20px;
 }
 .all-details-part p{
-font-size: 16px;
+font-size: 14px;
 }
 .prizes-part {
     margin-top: 50px;
 }
 .prizes-part h5 {
     font-size: 14px;
+    color: #646464;
 }
+
+.prizes-part h2, .list_inner h2, .judges h2 {
+    font-family: Nixie One;
+    font-style: normal;
+    font-weight: bold;
+    font-size: 22px;
+    line-height: 52px;
+    color: #000000;
+    position: relative;
+    margin: 30px 0px;
+    background-color: #fff;
+    overflow: hidden;
+}
+
+.prizes-part h2:after, .list_inner h2:after, .judges h2:after {
+    content: "";
+    position: absolute;
+    width: 100%;
+    background-color: #e0e0e0;
+    height: 1px;
+    top: 50%;
+}
+
 .prize_list {
     display: inline-block;
     width: 100%;
@@ -238,9 +280,14 @@ font-size: 16px;
     margin-bottom: 0;
 }
 .list_inner ul li {
-    margin-bottom: 30px;
-    margin-top: 20px;
+    font-family: ABeeZee;
+    font-style: normal;
+    font-weight: normal;
+    font-size: 16px;
+    line-height: 24px;
+    color: #646464;
 }
+
 .judges ul {
     list-style: none;
     padding: 0;
@@ -258,12 +305,21 @@ font-size: 16px;
 
 .judges ul li img {
     float: left;
-    width: 70px;
+    width: 65px;
+    height: 65px;
 }
 .judges h2 {
     margin: 0;
 }
-.judges ul li span {display: inline-block;margin-left: 15px;margin-top: 10px;}
+
+.judges ul li span {
+    margin-left: 15px;
+    font-family: ABeeZee;
+    font-style: normal;
+    font-weight: normal;
+    font-size: 16px;
+    color: #646464;
+}
 
 .judges ul li span b {
     font-size: 16px;
@@ -300,6 +356,7 @@ font-size: 16px;
     padding: 30px 0;
     border-radius: 3px;
     box-shadow: 0 4px 4px 0 #0000000f;
+    margin-bottom: 30px;
 }
 .winner_announc {
     display: inline-block;
@@ -341,12 +398,237 @@ font-size: 16px;
     color: #265eac;
 }
 
-.card-for-btn{padding: 10px 30px;
-    background: #265eac;
+.card-for-btn{
+    padding: 0px;
     color: #fff;
     text-align: center;
     margin: 0 auto 20px auto;
     cursor: pointer;
     border-radius: 3px;
 }
-.card-for-btn a{color: #fff; text-transform: uppercase;}
+
+.card-for-btn ion-button {
+    --background: #265eac;
+    --color: var(--ion-color-primary-contrast, #fff);
+    --box-shadow: none;
+    height: 50px;
+    margin: 0px;
+    width: 100%;
+}
+
+.card-for-btn a{
+    color: #fff; 
+    text-transform: uppercase;
+}
+
+.left-days.details-page-leftdays {
+    display: inline-block;
+}
+
+.iconlist_sidebar {
+    padding: 0px 15px;
+}
+
+ion-button.go-back {
+    background-color: #265eac;
+    border-radius: 4px;
+    color: #fff;
+    padding: 0px 20px;
+    margin-bottom: 10px;
+}
+
+.right-sidebar.details-Criteria span.Criteria-lisitng {
+    background-color: #143b6c;
+    padding: 5px 15px;
+    color: #ECEEF3;
+    border-radius: 2px;
+}
+
+
+.details-social-icon {
+    padding: 0px 15px;
+}
+
+.details-social-icon h2 {
+    font-size: 18px;
+    color: #000000;
+    position: relative;
+    margin-top: 0px;
+}
+
+.details-social-icon ul {
+    list-style: none;
+    padding: 0px;
+    display: flex;
+    margin-bottom: 0px;
+}
+
+.details-social-icon ul li {
+    display: flex;
+    width: 40px;
+    height: 40px;
+    background-color: #143b6c;
+    margin-right: 10px;
+    align-items: center;
+    justify-content: center;
+    border-radius: 2px;
+}
+
+.details-social-icon ul li a {
+    align-items: center;
+    justify-content: center;
+    display: flex;
+    color: #fff;
+}
+
+.details-social-icon ul li:hover {
+    background-color: #265eac;
+}
+
+.edtion_main_section .content_part .text-align-start {
+    display: none;
+}
+
+// submission tab
+.submission-listing {
+    display: flex;
+    margin-right: 50px;
+    margin-top: 40px;
+}
+
+.left-image-submission {
+    flex: 0 0 50%;
+}
+
+.right-contant-submission {
+    flex: 0 0 50%;
+    padding: 0px 30px;
+}
+
+.sponsors-challenge {
+    display: flex;
+}
+
+.sponsors-main, .challengers-main {flex: 0 0 30%;margin-right: 20px;}
+
+.sponsors-main h4, .challengers-main h4 {
+    font-family: ABeeZee;
+    font-style: normal;
+    font-weight: normal;
+    font-size: 14px;
+    line-height: 26px;
+    color: #646464;
+}
+
+.challengers-main {}
+
+.left-image-submission {}
+
+.left-image-submission img {
+    height: 100%;
+    width: 100%;
+    object-fit: cover;
+}
+
+.right-contant-submission h3 {
+    font-family: ABeeZee;
+    font-style: normal;
+    font-weight: normal;
+    font-size: 18px;
+    line-height: 22px;
+    color: #646464;
+    margin: 30px 0px 0px 0px;
+}
+
+.right-contant-submission ul {
+    list-style: none;
+    padding: 0px;
+}
+
+.right-contant-submission ul li {
+    font-family: ABeeZee;
+    font-style: normal;
+    font-weight: normal;
+    font-size: 16px;
+    line-height: 24px;
+    color: #646464;
+}
+
+
+.challanges-listing {
+    width: 70%;
+    border: 1px solid #eceff3;
+    background-color: #c5dfff;
+    position: relative;
+    min-height: 180px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    padding-right: 20px;
+    border-radius: 0px 10px 10px 0px;
+    margin-top: 35px;
+}
+
+.amount-main {
+    display: inline-block;
+    width: 150px;
+    height: 100%;
+    vertical-align: top;
+    position: relative;
+    margin-top: 0px;
+    padding-left: 10px;
+}
+
+.chanlanges-titles {
+    /* display: inline-block; */
+    width: calc(100% - 150px);
+}
+
+.chanlanges-titles h1 {
+    font-size: 20px;
+    margin-top: 0px;
+}
+
+.chanlanges-titles p {
+    font-size: 14px;
+    margin: 5px 0px 0px 0px;
+}
+
+.amount-main:before {width: 0;height: 0;border-top: 90px solid transparent;border-left: 100px solid #ffffff;border-bottom: 90px solid transparent;position: absolute;z-index: 0;left: -1px;opacity: 0;}
+
+.amount-main h5, .amount-main h1 {
+    z-index: 99999;
+    margin: 0px;
+}
+
+.challanges-listing:before {
+    content: "";
+    width: 0;
+    height: 0;
+    border-top: 90px solid transparent;
+    border-left: 140px solid #143b6c;
+    border-bottom: 90px solid transparent;
+    position: absolute;
+    left: -1px;
+}
+
+.amount-main h1 {
+    font-size: 40px;
+    color: #fff;
+    line-height: 40px;
+}
+
+.amount-main h5 {
+    margin-bottom: 8px;
+    font-size: 14px;
+    color: #fff;
+}
+
+.chanlanges-titles h1 {
+    color: #143b6c;
+    margin: 0px;
+}
+
+.chanlanges-titles p {
+    color: #143b6c96;
+}

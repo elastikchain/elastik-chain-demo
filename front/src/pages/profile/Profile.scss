@@ -386,7 +386,7 @@ ion-button.create-project-button.extra-create-newproject-btn {
 
 .left-project-details {
     flex: 0 0 20%;
-    padding: 20px;
+    padding: 46px 20px 20px 20px;
     border-left: 1px solid #ccc;
     position: relative;
 }
@@ -394,7 +394,7 @@ ion-button.create-project-button.extra-create-newproject-btn {
 .edit-delete-list {
     position: absolute;
     top: 5px;
-    right: 4px;
+    right: 20px;
 }
 
 .left--project-image img {
@@ -513,3 +513,50 @@ span.Criteria-lisitng {
     margin-right: 6px;
     height: 12px;
 }
+
+
+@media screen and (max-width: 1366px) {
+    .left--project-image {
+        flex: 0 0 12%;
+        padding: 10px;
+    }
+    .center-project-contant {
+        flex: 0 0 60%;
+        padding: 10px;
+    }
+
+    .left-project-details {
+        flex: 0 0 20%;
+        padding: 40px 10px 10px 10px;
+    }
+    .edit-delete-list {
+        position: absolute;
+        top: 0px;
+        right: 0px;
+    }
+    
+    .Challanges-list {
+        margin: 5px 0px;
+        flex: 0 0 20%;
+    }
+
+    .price-chanllanges-parti {
+        display: flex;
+        margin-top: 10px;
+        flex-wrap: wrap;
+    }
+
+    .participants {
+        flex: 0 0 30%;
+        justify-content: flex-end;
+        display: flex;
+        align-items: center;
+    }
+
+    .project-price-lsiitng {
+        flex: 0 0 100%;
+    }
+
+    
+  }
+  

@@ -494,14 +494,7 @@ const Project = (props: RouteComponentProps) => {
       <IonContent>
         <div className="image-heading-and-contant">
           <IonCard className="top-banner-details">
-            <IonButton
-              className="go-back"
-              fill="clear"
-              onClick={(e) => props.history.goBack()}
-            >
-              <IonIcon slot="start" icon={arrowBack}></IonIcon>
-              Back
-            </IonButton>
+            
 
             <img
               className="project-picture"
@@ -510,6 +503,14 @@ const Project = (props: RouteComponentProps) => {
             />
 
             <IonCardContent className="left-contant-details">
+            <IonButton
+              className="go-back"
+              fill="clear"
+              onClick={(e) => props.history.goBack()}
+            >
+              <IonIcon slot="start" icon={arrowBack}></IonIcon>
+              Back
+            </IonButton>
               <h2>Category Type</h2>
               <p>
                 We feature amazing projects that would bring in next level
@@ -666,7 +667,7 @@ const Project = (props: RouteComponentProps) => {
                           </div>
                           <div className="">
                             <h3>
-                              <span>*</span> First Prize
+                              <span>*</span> Second Prize
                             </h3>
                             <p>
                               A Macbook Pro 13 Inch (1.4GHz quad-core processor,
@@ -676,7 +677,7 @@ const Project = (props: RouteComponentProps) => {
                           </div>
                           <div className="">
                             <h3>
-                              <span>*</span> First Prize
+                              <span>*</span> Third Prize
                             </h3>
                             <p>
                               A Macbook Pro 13 Inch (1.4GHz quad-core processor,
@@ -789,26 +790,167 @@ const Project = (props: RouteComponentProps) => {
                         <h2>JUDGING CRITERIA</h2>
                         <ul>
                           <li>
-                            <b>Presentation Quality</b>
+                            Presentation Quality
                           </li>
                           <li>
-                            <b>Banking Revolution Relevance</b>
+                            Banking Revolution Relevance
                           </li>
                           <li>
-                            <b>Quality of Application Execution</b>
+                           Quality of Application Execution
                           </li>
                           <li>
-                            <b>Business Value</b>
+                           Business Value
                           </li>
                         </ul>
                       </div>
                     </div>
                   </Tab>
                   <Tab title="2. Challanges" className="tabs-contant">
-                    <div className="challenge-item-list">Project Challenge</div>
+                   
+                      
+                      <div className="challanges-listing">
+                              <div className="amount-main">
+                                <h5>Fund</h5>
+                                <h1 className="highlight-amount"> $20</h1>
+                               </div> 
+                               <div className="chanlanges-titles">
+                                <h1>What is lorem ipsum ?</h1>
+                                <p> Lorem ipsum dolor sit amet, consectetur adipiscing elit. Sed vel leo suscipit,
+                                Lorem ipsum dolor sit amet, consectetur adipiscing elit. Sed vel leo suscipit,
+                                Lorem ipsum dolor sit amet, consectetur adipiscing elit. Sed vel leo suscipit,
+                                </p>
+                              </div>
+                      </div>
+
+                      <div className="challanges-listing">
+                              <div className="amount-main">
+                                <h5>Fund</h5>
+                                <h1 className="highlight-amount"> $30</h1>
+                               </div> 
+                               <div className="chanlanges-titles">
+                                <h1>What is lorem ipsum ?</h1>
+                                <p> Lorem ipsum dolor sit amet, consectetur adipiscing elit. Sed vel leo suscipit,
+                                Lorem ipsum dolor sit amet, consectetur adipiscing elit. Sed vel leo suscipit,
+                                Lorem ipsum dolor sit amet, consectetur adipiscing elit. Sed vel leo suscipit,
+                                </p>
+                              </div>
+                      </div>
+
+                      <div className="challanges-listing">
+                              <div className="amount-main">
+                                <h5>Fund</h5>
+                                <h1 className="highlight-amount"> $100</h1>
+                               </div> 
+                               <div className="chanlanges-titles">
+                                <h1>What is lorem ipsum ?</h1>
+                                <p> Lorem ipsum dolor sit amet, consectetur adipiscing elit. Sed vel leo suscipit,
+                                Lorem ipsum dolor sit amet, consectetur adipiscing elit. Sed vel leo suscipit,
+                                Lorem ipsum dolor sit amet, consectetur adipiscing elit. Sed vel leo suscipit,
+                                </p>
+                              </div>
+                      </div>
+
                   </Tab>
                   <Tab title="3. Submissions" className="tabs-contant">
                     <div className="submission-item-list">
+                      
+                      <div className="submission-listing">
+
+                        <div className="left-image-submission">
+                        <img 
+                          src={topbannerImg}
+                          alt="project image"
+                        />
+                        </div>
+                                <div className="right-contant-submission">
+                                <h1>Submission Example</h1>
+                                <h3>What is the Idea about: </h3>
+                                <p> Lorem ipsum dolor sit amet, consectetur adipiscing elit. Sed vel leo suscipit, elementum metus vel, tempus massa. Curabitur ac felis eu lorem congue pharetra.......</p>
+                      
+                                <ul>
+                                  <li>Milestones Achieved: <span> 3/5 </span> </li>
+                                    <li>Fund: <span>2000 Euros </span></li> 
+                                    <li>Total Votes: <span> 200 Votes </span></li>
+                                </ul>
+
+                                <div className="sponsors-challenge">
+                                      <div className="sponsors-main">
+                                        <h4>Sponsors : </h4>
+                                        <img src={topbannerImg} alt="project image" />
+                                      </div>
+                                      <div className="challengers-main">
+                                        <h4>Challenge : </h4>
+                                        <img src={topbannerImg} alt="project image"/>
+                                      </div>
+                                </div>
+                                </div>
+                      </div>  
+
+
+                      <div className="submission-listing">
+
+                        <div className="left-image-submission">
+                        <img 
+                          src={topbannerImg}
+                          alt="project image"
+                        />
+                        </div>
+                                <div className="right-contant-submission">
+                                <h1>Submission Example</h1>
+                                <h3>What is the Idea about: </h3>
+                                <p> Lorem ipsum dolor sit amet, consectetur adipiscing elit. Sed vel leo suscipit, elementum metus vel, tempus massa. Curabitur ac felis eu lorem congue pharetra.......</p>
+                      
+                                <ul>
+                                  <li>Milestones Achieved: <span> 3/5 </span> </li>
+                                    <li>Fund: <span>2000 Euros </span></li> 
+                                    <li>Total Votes: <span> 200 Votes </span></li>
+                                </ul>
+
+                                <div className="sponsors-challenge">
+                                      <div className="sponsors-main">
+                                        <h4>Sponsors : </h4>
+                                        <img src={topbannerImg} alt="project image" />
+                                      </div>
+                                      <div className="challengers-main">
+                                        <h4>Challenge : </h4>
+                                        <img src={topbannerImg} alt="project image"/>
+                                      </div>
+                                </div>
+                                </div>
+                      </div>  
+
+                      <div className="submission-listing">
+
+                        <div className="left-image-submission">
+                        <img 
+                          src={topbannerImg}
+                          alt="project image"
+                        />
+                        </div>
+                                <div className="right-contant-submission">
+                                <h1>Submission Example</h1>
+                                <h3>What is the Idea about: </h3>
+                                <p> Lorem ipsum dolor sit amet, consectetur adipiscing elit. Sed vel leo suscipit, elementum metus vel, tempus massa. Curabitur ac felis eu lorem congue pharetra.......</p>
+                      
+                                <ul>
+                                  <li>Milestones Achieved: <span> 3/5 </span> </li>
+                                    <li>Fund: <span>2000 Euros </span></li> 
+                                    <li>Total Votes: <span> 200 Votes </span></li>
+                                </ul>
+
+                                <div className="sponsors-challenge">
+                                      <div className="sponsors-main">
+                                        <h4>Sponsors : </h4>
+                                        <img src={topbannerImg} alt="project image" />
+                                      </div>
+                                      <div className="challengers-main">
+                                        <h4>Challenge : </h4>
+                                        <img src={topbannerImg} alt="project image"/>
+                                      </div>
+                                </div>
+                                </div>
+                      </div>          
+
                       {submissions.map((sc) => (
                         <IonCard
                           className="submission-card"
@@ -874,12 +1016,31 @@ const Project = (props: RouteComponentProps) => {
                     </div>
                   </Tab>
                   <Tab title="Judging criteria" className="tabs-contant">
-                    <IonNote>
+                    {/* <IonNote>
                       Judging criteria:{" "}
                       {getSelectedProject()
                         .payload.criteria.map((c: any) => c.name)
                         .join(", ")}
-                    </IonNote>
+                    </IonNote> */}
+
+                    <div className="list_inner judging_criteria">
+                      <h2>JUDGING CRITERIA</h2>
+                      <ul>
+                        <li>Presentation Quality</li>
+                        <li>Banking Revolution Relevance</li>
+                        <li>Quality of Application Execution</li>
+                        <li>Business Value</li>
+                        <li>Presentation Quality</li>
+                        <li>Banking Revolution Relevance</li>
+                        <li>Quality of Application Execution</li>
+                        <li>Business Value</li>
+                        <li>Presentation Quality</li>
+                        <li>Banking Revolution Relevance</li>
+                        <li>Quality of Application Execution</li>
+                        <li>Business Value</li>
+                      </ul>
+                    </div>
+
                   </Tab>
                 </Tabs>
               </div>
@@ -1043,24 +1204,70 @@ const Project = (props: RouteComponentProps) => {
                 <div className="iconlist_sidebar">
                   <ul>
                     <li>
-                      <a href="#">
-                        <i></i>Accenture - Melbourne
-                      </a>
+                        <div className="left-days details-page-leftdays">20Days left</div>
                     </li>
+
                     <li>
-                      <i></i>Public
+                        <div className="Challanges-list"> 
+                          <IonIcon icon={add}></IonIcon>
+                          <span>5</span> Challanges 
+                        </div>  
                     </li>
+
                     <li>
-                      <i></i>
-                      <b>$10,000</b> in prizes
+                      <p className="participants-numbers">
+                      <IonIcon icon={add}></IonIcon>
+                       <span>2</span> participants</p>
                     </li>
+
                     <li>
-                      <i></i>
-                      <b>128</b> participants
+                        <p>
+                         <div className="online-point"> <IonIcon icon={add}></IonIcon> Online</div>
+                       </p>
                     </li>
+
+                    <li>
+                        <div className="right-sidebar">
+                          <IonIcon icon={add}></IonIcon> Start Date : 
+                          <span>02-02-2021</span>
+                        </div>
+                    </li>
+
+                    <li>
+                        <div className="right-sidebar">
+                                  <IonIcon icon={add}></IonIcon> End Date : 
+                                  <span>10-03-2021</span>
+                                </div>
+                    </li>
+
+                    <li>
+                    <div className="right-sidebar details-Criteria">
+                                  <IonIcon icon={add}></IonIcon> Criteria
+                                  :{" "}
+                                  <span className="Criteria-lisitng">
+                                    {" "}
+                                    Productivity{" "}
+                                  </span>{" "}
+                                </div>
+                    </li>
+
+
                   </ul>
                 </div>
               </div>
+
+                <div className="edtion_child">
+                  <div className="details-social-icon">
+                    <h2>Invite others to compete</h2>
+                  <ul>
+                    <li><a href="#"> <IonIcon icon={add}></IonIcon></a></li>
+                    <li><a href="#"> <IonIcon icon={add}></IonIcon></a></li>
+                    <li><a href="#"> <IonIcon icon={add}></IonIcon></a></li>
+                  </ul>
+                  </div>
+                  
+                </div>
+
             </div>
           </div>
         </div>
@@ -1222,6 +1429,7 @@ const Project = (props: RouteComponentProps) => {
           <SubmissionFormComponent></SubmissionFormComponent>
         </IonModal>
       </IonContent>
+      
     </IonPage>
   );
 };
