@@ -179,7 +179,7 @@ ion-card-content.left-contant-details h3 {
     font-weight: bold;
     font-size: 32px;
     line-height: 32px;
-    color: #646464;
+    color: #143b6c;
     margin-top: 0px;
     margin-bottom: 20px;
 }
@@ -227,7 +227,7 @@ font-size: 14px;
     font-weight: bold;
     font-size: 22px;
     line-height: 52px;
-    color: #000000;
+    color: #143b6c;
     position: relative;
     margin: 30px 0px;
     background-color: #fff;
@@ -260,6 +260,7 @@ font-size: 14px;
 .prize_list div h3 {
     font-size: 16px;
     font-weight: 500;
+    color: #143b6c;
 }
 .prize_list div h3 span {
     color: #ffd333;
@@ -565,18 +566,14 @@ ion-button.go-back {
     align-items: center;
     justify-content: center;
     padding-right: 20px;
-    border-radius: 0px 10px 10px 0px;
+    border-radius: 10px;
     margin-top: 35px;
+    padding: 20px 30px;
 }
 
 .amount-main {
     display: inline-block;
-    width: 150px;
-    height: 100%;
-    vertical-align: top;
-    position: relative;
-    margin-top: 0px;
-    padding-left: 10px;
+    margin-top: 10px;
 }
 
 .chanlanges-titles {
@@ -601,16 +598,16 @@ ion-button.go-back {
     margin: 0px;
 }
 
-.challanges-listing:before {
-    content: "";
-    width: 0;
-    height: 0;
-    border-top: 90px solid transparent;
-    border-left: 140px solid #143b6c;
-    border-bottom: 90px solid transparent;
-    position: absolute;
-    left: -1px;
-}
+// .challanges-listing:before {
+//     content: "";
+//     width: 0;
+//     height: 0;
+//     border-top: 90px solid transparent;
+//     border-left: 140px solid #143b6c;
+//     border-bottom: 90px solid transparent;
+//     position: absolute;
+//     left: -1px;
+// }
 
 .amount-main h1 {
     font-size: 40px;
@@ -632,3 +629,29 @@ ion-button.go-back {
 .chanlanges-titles p {
     color: #143b6c96;
 }
+
+a.btn.view-details-btn {
+    font-size: 12px;
+    margin: 0 0;
+    text-decoration: none;
+    color: #ffffff;
+    background: #265eac;
+    font-weight: bold;
+    padding: 8px 30px;
+    border-radius: 3px;
+}
+
+.card-for-btn ion-button ion-label.sc-ion-label-md-h.sc-ion-label-md-s.md.hydrated {
+    color: #fff;
+}
+
+.logo-challanges {
+    width: 170px;
+    margin-right: 20px;
+    margin-left: 0px;
+}
+
+.chanlanges-titles h1 span {
+    font-size: 14px;
+}
+

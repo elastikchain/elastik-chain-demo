@@ -62,6 +62,7 @@ import {
   flag,
   man,
   pricetags,
+  hammer
 } from "ionicons/icons";
 
 import Tabs from "../../components/Tabs";
@@ -127,7 +128,7 @@ const Profile = (props: RouteComponentProps) => {
   console.log("clientProjectAssets", clientProjectAssets);
 
   const projectAssets = useStreamQueries(ClientRole).contracts;
-
+  const profileData = useStreamQueries(ClientRole).contracts;
   const participantAssets = useStreamQueries(ParticipantRole).contracts;
   const participantRoleAssets = useStreamQueries(ParticipantRole).contracts;
 
@@ -158,7 +159,7 @@ const Profile = (props: RouteComponentProps) => {
     return "";
   };
 
-  console.log("getUserType", getUserType());
+
 
   const SubmissionToAcceptComponent = (props: any) => {
     const participantSubmissionProposalAssets = useStreamQueries(
@@ -353,6 +354,7 @@ const Profile = (props: RouteComponentProps) => {
         ) : null}
         <SubHeader {...props} />
         <IonContent>
+        <div className="content-container"> 
           <IonSplitPane className="menu-container" contentId="main">
             {/*-- Delete Project confirmation setShowTrashProjectModal --*/}
             <IonModal
@@ -718,10 +720,19 @@ const Profile = (props: RouteComponentProps) => {
               <div className="wrapper">
                 <div className="profile-info-container">
                   <div className="profile-img-container">
+                    {projectAssets.length > 0 && projectAssets[0].payload.clientProfile.pictureUrl != "" ? 
+                    
                     <img
-                      src="https://via.placeholder.com/214x198.png"
+                      src={projectAssets[0].payload.clientProfile.pictureUrl}
                       alt="profile image"
                     />
+                  :
+
+                    <img
+                    src="https://via.placeholder.com/214x198.png"
+                    alt="profile image"
+                  />
+                  }
                     <input
                       className="profile-picture-input"
                       type="file"
@@ -730,13 +741,17 @@ const Profile = (props: RouteComponentProps) => {
                   </div>
                   <div className="profile-info">
                     <div className="profile-header">
+                    <h1>{user.party}</h1>
                       <IonButton size="large" className="edit-button">
                         {" "}
                         Edit{" "}
                       </IonButton>
                     </div>
+               
                     <div className="profile-about">
-                      <h1>About me</h1>
+                      {console.log("userData",projectAssets.length > 0 && projectAssets[0].payload.clientProfile.pictureUrl)}
+                      
+                      <h2>About</h2>
                       <p>
                         Lorem ipsum dolor sit amet consectetur adipisicing elit.
                         Nihil, neque. Nulla quae pariatur voluptas, tenetur
@@ -756,19 +771,9 @@ const Profile = (props: RouteComponentProps) => {
                             onClick={() => setShowCreateProjectModal(true)}
                             className="create-project-button extra-create-newproject-btn"
                           >
-                            Create New Project
+                            Create New Hackathon
                           </IonButton>
-                          <p className="scoress-btns-main">
-                            <IonButton
-                              onClick={(e) =>
-                                props.history.push("/main/scores")
-                              }
-                              size="small"
-                            >
-                              {" "}
-                              Scores{" "}
-                            </IonButton>
-                          </p>
+                          
                         </div>
                       ) : null}
                     </div>
@@ -795,7 +800,11 @@ const Profile = (props: RouteComponentProps) => {
                                   );
                                 }}
                               >
+                                { p.payload.pictureUrl != "" ?
+                                  <img src={p.payload.pictureUrl} alt="peoject image" />
+                                :
                                 <img src={mediumImage} alt="peoject image" />
+                                }
                               </div>
                               <div
                                 className="center-project-contant"
@@ -865,9 +874,22 @@ const Profile = (props: RouteComponentProps) => {
                                     Productivity{" "}
                                   </span>{" "}
                                 </div>
-
+                                {console.log("Prize Data",p.payload)}
                                 <div className="edit-delete-list">
                                   <IonItem className="project-controls-listing">
+                                  <IonIcon
+                                      icon={hammer}
+                                      onClick={(e) => {
+                                        e.stopPropagation();
+                                        console.log("the selected::", p);
+
+                                        setSelectedProject(p);
+                                        props.history.push(
+                                          "/main/scores/" +
+                                            p.payload.projectId 
+                                        );
+                                      }}
+                                    ></IonIcon>
                                     <IonIcon
                                       icon={pencil}
                                       onClick={(e) => {
@@ -1034,7 +1056,12 @@ const Profile = (props: RouteComponentProps) => {
                                     <span>{p.payload.generalPublic.length}</span> participants
                                   </p>
                                 </div>
+                                <SubmissionToAcceptComponent
+                                contractId={p.contractId}
+                                projectId={p.payload.projectId}
+                              ></SubmissionToAcceptComponent>
                               </div>
+                             
                             </div>
                             <div className="left-project-details">
                               <div className="right-sidebar">
@@ -1092,6 +1119,8 @@ const Profile = (props: RouteComponentProps) => {
               </div>
             </IonPage>
           </IonSplitPane>
+         
+        </div>
         </IonContent>
       </IonPage>
     );

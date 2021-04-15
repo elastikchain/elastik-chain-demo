@@ -13,6 +13,9 @@ import {
   IonItem,
   IonLabel,
 } from "@ionic/react";
+import SubHeader from "../../components/Header/subheader";
+import Footer from "../../components/Footer/footer";
+import "./Scores.scss" ;
 import {
   signOut,
   useUserDispatch,
@@ -22,7 +25,7 @@ import { useLedger, useStreamQueries } from "@daml/react";
 import { arrowBack } from "ionicons/icons";
 import logo from "../../assets/img/logo-combination.png";
 import { Scorecard } from "@daml.js/cosmart-0.0.1/lib/Main";
-import Footer from "../../components/Footer/footer";
+
 
 const Scores = (props: RouteComponentProps) => {
   const user = useUserState();
@@ -36,31 +39,9 @@ const Scores = (props: RouteComponentProps) => {
 
   return (
     <IonPage>
-      <IonHeader>
-        <IonToolbar className="toolbar">
-          <div className="d-flex">
-            <img className="app-logo" src={logo} alt="logo" />
-            <IonSearchbar
-              placeholder="Explore amazing ideas"
-              value={searchText}
-              onIonChange={(e) => setSearchText(e.detail.value!)}
-            ></IonSearchbar>
-          </div>
-          <IonButtons slot="end" className="toolbar-buttons-container">
-            <div className="toolbar-buttons">
-              <IonButton>Explore</IonButton>
-              <IonButton
-                onClick={(evt: any) => {
-                  signOut(userDispatch, props.history, false);
-                }}
-              >
-                Logout
-              </IonButton>
-            </div>
-          </IonButtons>
-        </IonToolbar>
-      </IonHeader>
+     <SubHeader {...props} />
       <IonContent>
+      <div className="content-container"> 
         <div className="proj-wrapper">
           <IonButton fill="clear" onClick={(e) => props.history.goBack()}>
             <IonIcon slot="start" icon={arrowBack}></IonIcon>
@@ -68,14 +49,17 @@ const Scores = (props: RouteComponentProps) => {
           </IonButton>
 
           <IonList>
-            <IonItem>
+            <IonItem className="table-header">
+              <IonLabel>Submission Name</IonLabel>
               <IonLabel>Submission Id</IonLabel>
               <IonLabel>Judge</IonLabel>
               <IonLabel>Scores</IonLabel>
             </IonItem>
+           
             {scorecard.length > 0 ? (
               scorecard.map((c) => (
                 <IonItem>
+                  <IonLabel>{c.payload.submissionId}</IonLabel>
                   <IonLabel>{c.payload.submissionId}</IonLabel>
                   <IonLabel>{c.payload.judge}</IonLabel>
                   {(c.payload.scoretable || []).length > 0 ? (
@@ -88,18 +72,21 @@ const Scores = (props: RouteComponentProps) => {
                     </IonLabel>
                   ) : null}
                 </IonItem>
+                
               ))
             ) : (
               <IonItem lines="none">
                 <IonLabel>
-                  <p>No scores found</p>
+                  <p className="no-scores">No scores found</p>
                 </IonLabel>
               </IonItem>
             )}
           </IonList>
         </div>
+        <Footer />
+        </div>
       </IonContent>
-      <Footer />
+      
     </IonPage>
   );
 };

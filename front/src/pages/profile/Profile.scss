@@ -254,7 +254,7 @@ ion-button.create-project-button.extra-create-newproject-btn {
 .listing-projects-name .list-proj {}
 
 .listing-projects-name ion-item.project-controls-listing.item {
-    width: 120px !important;
+    width: auto;
     --border-width: 0 0 0px 0;
     --border-color: #fff;
     // position: absolute;
@@ -279,6 +279,13 @@ ion-button.create-project-button.extra-create-newproject-btn {
     margin: 0px 4px;
     border: 1px solid #ccc;
     padding: 6px;
+    min-width: 18px;
+    height: 18px;
+}
+
+.wrapper .profile-info-container .profile-info .profile-header h1 {
+    margin-top: 0px;
+    color: #143b6c;
 }
 
 .profile-info-container {

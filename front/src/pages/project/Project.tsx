@@ -50,6 +50,9 @@ import {
   open,
   trash,
   pencil,
+  logoFacebook,
+  logoInstagram,
+  logoTwitter
 } from "ionicons/icons";
 import "./Project.scss";
 import { useLedger, useQuery, useStreamQueries } from "@daml/react";
@@ -339,10 +342,10 @@ const Project = (props: RouteComponentProps) => {
       });
     console.log(event.target.elements.challengeName.value);*/
   };
-
+ 
   const SubmissionFormComponent = (props: any) => {
     const defaultSubmissionDetail: ProposeSubmission = {
-      generalPublicParticipant: "",
+      generalPublicParticipant: (user as any).party,
       subName: "",
       subDesc: "",
       submission: "",
@@ -357,8 +360,7 @@ const Project = (props: RouteComponentProps) => {
     };
     const handleCreateSubmission = async (evt: any) => {
       evt.preventDefault();
-      /* const dataToExercise = submissionDetail;
-      dataToExercise.challengeId = String(selectedChallengeId || 0);
+      const dataToExercise = submissionDetail;
       ledger
         .exercise(
           ClientProject.ProposeSubmission,
@@ -376,7 +378,7 @@ const Project = (props: RouteComponentProps) => {
         .catch((err: any) => {
           setShowCreateSubmissionModal({ show: false });
           alert("Error: " + JSON.stringify(err));
-        });*/
+        });
     };
     return (
       <>
@@ -396,10 +398,7 @@ const Project = (props: RouteComponentProps) => {
                 }
               ></IonInput>
             </IonItem>
-            <IonItem>
-              <IonLabel position="floating">Participant*</IonLabel>
-              <IonInput required={true}></IonInput>
-            </IonItem>
+            
             <IonItem>
               <IonLabel position="floating">Submission Description*</IonLabel>
               <IonInput
@@ -413,61 +412,7 @@ const Project = (props: RouteComponentProps) => {
                 }
               ></IonInput>
             </IonItem>
-            <IonItem>
-              <IonLabel position="floating">Submission*</IonLabel>
-              <IonInput
-                required={true}
-                value={submissionDetail.submission}
-                onIonChange={(e) =>
-                  setSubmissionDetail({
-                    ...submissionDetail,
-                    submission: e.detail.value!,
-                  })
-                }
-              ></IonInput>
-            </IonItem>
-            <IonItem>
-              <IonLabel position="floating">Presentation*</IonLabel>
-              <IonInput
-                required={true}
-                value={submissionDetail.presentation}
-                onIonChange={(e) =>
-                  setSubmissionDetail({
-                    ...submissionDetail,
-                    presentation: e.detail.value!,
-                  })
-                }
-              ></IonInput>
-            </IonItem>
-            <IonItem>
-              <IonLabel position="floating">Video Link</IonLabel>
-              <IonInput
-                value={submissionDetail.videoLink}
-                onIonChange={(e) =>
-                  setSubmissionDetail({
-                    ...submissionDetail,
-                    videoLink: e.detail.value!,
-                  })
-                }
-              ></IonInput>
-            </IonItem>
-            <IonItem>
-              <IonLabel position="floating">Challenge Id</IonLabel>
-              {/*} <IonInput
-                required={true}
-                disabled={true}
-                value={
-                  submissionDetail.challengeId ||
-                  showCreateSubmissionModal.challengeId
-                }
-                onIonChange={(e) =>
-                  setSubmissionDetail({
-                    ...submissionDetail,
-                    challengeId: e.detail.value!,
-                  })
-                }
-              ></IonInput> */}
-            </IonItem>
+            
             <IonButton className="submit-button" type="submit">
               Create
             </IonButton>
@@ -484,6 +429,7 @@ const Project = (props: RouteComponentProps) => {
         >
           <IonIcon icon={close}></IonIcon>
         </IonButton>
+        <p className="subm-message">Lorem ipsum, or lipsum as it is sometimes known, is dummy text used in laying out print, graphic or web designs. </p>
       </>
     );
   };
@@ -492,15 +438,23 @@ const Project = (props: RouteComponentProps) => {
     <IonPage>
       <SubHeader {...props} />
       <IonContent>
+      <div className="content-container"> 
         <div className="image-heading-and-contant">
           <IonCard className="top-banner-details">
             
-
+            {getSelectedProject() && getSelectedProject().payload.pictureUrl != "" ? 
+            <img
+              className="project-picture"
+              src={getSelectedProject().payload.pictureUrl}
+              alt="project image"
+            />
+            :
             <img
               className="project-picture"
               src={topbannerImg}
               alt="project image"
             />
+          }
 
             <IonCardContent className="left-contant-details">
             <IonButton
@@ -805,13 +759,12 @@ const Project = (props: RouteComponentProps) => {
                       </div>
                     </div>
                   </Tab>
-                  <Tab title="2. Challanges" className="tabs-contant">
+                  <Tab title="2. Challanges (6)" className="tabs-contant">
                    
                       
                       <div className="challanges-listing">
-                              <div className="amount-main">
-                                <h5>Fund</h5>
-                                <h1 className="highlight-amount"> $20</h1>
+                              <div className="logo-challanges">
+                                  <img src={getSelectedProject().payload.pictureUrl} />
                                </div> 
                                <div className="chanlanges-titles">
                                 <h1>What is lorem ipsum ?</h1>
@@ -819,13 +772,15 @@ const Project = (props: RouteComponentProps) => {
                                 Lorem ipsum dolor sit amet, consectetur adipiscing elit. Sed vel leo suscipit,
                                 Lorem ipsum dolor sit amet, consectetur adipiscing elit. Sed vel leo suscipit,
                                 </p>
+                                <div className="amount-main">
+                                <h1 className="highlight-amount"> <span>Fund</span> $30</h1>
+                               </div> 
                               </div>
                       </div>
 
                       <div className="challanges-listing">
-                              <div className="amount-main">
-                                <h5>Fund</h5>
-                                <h1 className="highlight-amount"> $30</h1>
+                              <div className="logo-challanges">
+                                  <img src={getSelectedProject().payload.pictureUrl} />
                                </div> 
                                <div className="chanlanges-titles">
                                 <h1>What is lorem ipsum ?</h1>
@@ -833,13 +788,15 @@ const Project = (props: RouteComponentProps) => {
                                 Lorem ipsum dolor sit amet, consectetur adipiscing elit. Sed vel leo suscipit,
                                 Lorem ipsum dolor sit amet, consectetur adipiscing elit. Sed vel leo suscipit,
                                 </p>
+                                <div className="amount-main">
+                                <h1 className="highlight-amount"> <span>Fund</span> $30</h1>
+                               </div> 
                               </div>
                       </div>
 
                       <div className="challanges-listing">
-                              <div className="amount-main">
-                                <h5>Fund</h5>
-                                <h1 className="highlight-amount"> $100</h1>
+                              <div className="logo-challanges">
+                                  <img src={getSelectedProject().payload.pictureUrl} />
                                </div> 
                                <div className="chanlanges-titles">
                                 <h1>What is lorem ipsum ?</h1>
@@ -847,11 +804,14 @@ const Project = (props: RouteComponentProps) => {
                                 Lorem ipsum dolor sit amet, consectetur adipiscing elit. Sed vel leo suscipit,
                                 Lorem ipsum dolor sit amet, consectetur adipiscing elit. Sed vel leo suscipit,
                                 </p>
+                                <div className="amount-main">
+                                <h1 className="highlight-amount"> <span>Fund</span> $30</h1>
+                               </div> 
                               </div>
                       </div>
 
                   </Tab>
-                  <Tab title="3. Submissions" className="tabs-contant">
+                  <Tab title="3. Submissions (5)" className="tabs-contant">
                     <div className="submission-item-list">
                       
                       <div className="submission-listing">
@@ -874,14 +834,20 @@ const Project = (props: RouteComponentProps) => {
                                 </ul>
 
                                 <div className="sponsors-challenge">
-                                      <div className="sponsors-main">
+                                  <a href="javascript:void 0" className="btn view-details-btn" onClick={(e) => {
+                                        props.history.push(
+                                        "/main/submission/" +
+                                        getSelectedProject().payload.projectId
+                                      );
+                                    }}>View details</a>
+                                      {/* <div className="sponsors-main">
                                         <h4>Sponsors : </h4>
                                         <img src={topbannerImg} alt="project image" />
                                       </div>
                                       <div className="challengers-main">
                                         <h4>Challenge : </h4>
                                         <img src={topbannerImg} alt="project image"/>
-                                      </div>
+                                      </div> */}
                                 </div>
                                 </div>
                       </div>  
@@ -1260,9 +1226,9 @@ const Project = (props: RouteComponentProps) => {
                   <div className="details-social-icon">
                     <h2>Invite others to compete</h2>
                   <ul>
-                    <li><a href="#"> <IonIcon icon={add}></IonIcon></a></li>
-                    <li><a href="#"> <IonIcon icon={add}></IonIcon></a></li>
-                    <li><a href="#"> <IonIcon icon={add}></IonIcon></a></li>
+                    <li><a href="#"> <IonIcon icon={logoFacebook}></IonIcon></a></li>
+                    <li><a href="#"> <IonIcon icon={logoTwitter}></IonIcon></a></li>
+                    <li><a href="#"> <IonIcon icon={logoInstagram}></IonIcon></a></li>
                   </ul>
                   </div>
                   
@@ -1428,6 +1394,8 @@ const Project = (props: RouteComponentProps) => {
         >
           <SubmissionFormComponent></SubmissionFormComponent>
         </IonModal>
+                <Footer />
+        </div>
       </IonContent>
       
     </IonPage>

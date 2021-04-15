@@ -64,7 +64,25 @@ const Submission = (props : RouteComponentProps) => {
             <IonContent className="submission-content">
             <div className="content-container"> 
             <div className="submission-wrapper">
-            <div className="page-breadcrumb">
+                
+            <IonButton
+              className="go-back"
+              fill="clear"
+              onClick={(e) => props.history.goBack()}
+            >
+              <IonIcon slot="start" icon={arrowBack}></IonIcon>
+              Back
+            </IonButton>
+            
+                <div className="breadcrumb-submission">
+                    <ul>
+                        <li><a href="#">Projects</a></li>
+                        <li><a href="#">Fintech</a></li>
+                        <li><a href="#">THIS IS MY SECOND SUBMISSION</a></li>
+                    </ul>
+                </div>
+
+                {/* <div className="page-breadcrumb">
                     <IonList className="breadcrumbs">
                     <IonItem>
                             <IonLabel>Projects {'>'}</IonLabel>
@@ -76,8 +94,8 @@ const Submission = (props : RouteComponentProps) => {
                         <IonLabel>{selectedSubmission.payload.name}</IonLabel>
                     </IonItem>
                     </IonList>
-                </div>
-                    <div className="nav-info-header">
+                </div> */}
+                    {/* <div className="nav-info-header">
                         <div className="nav-info">
                         <IonButton fill="clear" onClick={e => props.history.goBack() }>
                             <IonIcon slot="start" icon={arrowBack}></IonIcon>
@@ -93,7 +111,7 @@ const Submission = (props : RouteComponentProps) => {
                                 </IonButton>
                             )
                         }
-                    </div>
+                    </div> */}
                     <div className="submission-info-container">
                         <div className="submission-img">
                             <img src={submissionPlaceHolder} alt="submission image"/>
@@ -104,11 +122,19 @@ const Submission = (props : RouteComponentProps) => {
                             {selectedSubmission.payload.desc}
                             </p>
                             <h1>Other Details:</h1>
-                            <IonList>
-                          <IonItem>
+
+                            <div className="lisitng-submission-details">
+                                <p>Submission : <span>This is first</span></p>
+                                <p>Challenge Name : <span>Test</span></p>
+                                <p>Presentation : <span>No</span></p>
+                                
+                            </div>
+
+                            {/* <IonList>
+                           <IonItem>
                               <IonLabel>Challenge ID :- </IonLabel>
                               {selectedSubmission.payload.challengeId}
-                          </IonItem>
+                          </IonItem> 
                           <IonItem>
                               <IonLabel>Submission :- </IonLabel>
                               {selectedSubmission.payload.submission}
@@ -121,7 +147,7 @@ const Submission = (props : RouteComponentProps) => {
                               <IonLabel>Video Link :-  </IonLabel>
                               {selectedSubmission.payload.videoLink}
                           </IonItem>
-                        </IonList>
+                        </IonList> */}
                         </div>
                     </div>
                     <div className="idea-teammate-steps">
@@ -131,6 +157,16 @@ const Submission = (props : RouteComponentProps) => {
                                 <p>What is the Idea about: Lorem ipsum dolor sit amet, consectetur adipiscing elit. Sed vel leo suscipit, elementum metus vel, tempus massa. Curabitur ac felis eu lorem congue pharetra. In ut felis lobortis, ultricies erat et, scelerisque ligula. Suspendisse lectus nulla, venenatis quis vulputate ac, 
 
         fringilla a ex. Nullam gravida nunc sed purus malesuada malesuada. Aliquam erat volutpat. Cras leo sapien, tempor in accumsan vestibulum, laoreet eget arcu. Praesent egestas suscipit lectus, sit amet dictum augue.</p>
+                            
+        <div className="video-list">
+                        <iframe
+                          width="560"
+                          height="315"
+                          src="https://www.youtube.com/embed/63qyVXWE9Kw"
+                          title="YouTube video player"
+                        ></iframe>
+                      </div>
+                            
                             </div>
                             <div className="teammate">
                                 <div className="d-flex align-items-center teammate-head">

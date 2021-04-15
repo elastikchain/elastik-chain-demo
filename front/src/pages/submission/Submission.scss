@@ -117,3 +117,142 @@
     width: auto;
 }   
 .page-breadcrumb .item-inner{border: 0px;}
+
+
+
+// new css
+
+.submission-wrapper .submission-info-container .short-info-container {
+    padding-top: 0px;
+}
+
+.short-info-container h1 {
+    font-family: Nixie One;
+    font-style: normal;
+    font-weight: normal;
+    font-size: 24px;
+    font-weight: bold;
+    line-height: 28px;
+    display: flex;
+    align-items: center;
+    color: #143b6c;
+}
+
+.short-info-container p {
+    font-family: ABeeZee;
+    font-style: normal;
+    font-weight: normal;
+    font-size: 14px;
+    line-height: 24px;
+    color: #646464;
+    margin-top: 0px;
+    margin-bottom: 20px;
+}
+
+ion-item.item.md.in-list.ion-focusable.hydrated.item-label {
+    color: #646464;
+}
+
+.breadcrumbs .item {
+    text-transform: uppercase;
+    font-size: 14px;
+}
+
+.item-native {
+    border-width: var(--border-width);
+    --inner-border-width: 0 0 1px 0;
+    border-width: 0;
+    border-width: 0;
+}
+
+.item-native {
+    --inner-border-width: 0 0 0px 0;
+}
+
+.item-native {
+    --inner-border-width: 0 0 0px 0;
+}
+
+ion-label.sc-ion-label-md-h.sc-ion-label-md-s.md.hydrated {
+    color: #143b6c;
+}
+
+.breadcrumb-submission {}
+
+.breadcrumb-submission ul {
+    display: inline-block;
+    list-style: none;
+    padding: 0px;
+}
+
+.breadcrumb-submission ul li {
+    display: inline-block;
+    margin: 0px 30px 0px 0px;
+    position: relative;
+}
+
+.breadcrumb-submission ul li a {
+    text-decoration: none;
+    color: #143b6c;
+    text-transform: uppercase;
+}
+
+.breadcrumb-submission ul li:after {content: ">";position: absolute;right: -19px;color: #868686;}
+
+.lisitng-submission-details p {
+    margin-bottom: 0px;
+    font-weight: bold;
+    color: #313131;
+}
+
+.lisitng-submission-details p span {
+    font-weight: 500;
+}
+
+.the-idea h1 {
+    font-family: Nixie One;
+    font-style: normal;
+    font-weight: normal;
+    font-size: 24px;
+    font-weight: bold;
+    line-height: 28px;
+    display: flex;
+    align-items: center;
+    color: #143b6c;
+}
+
+.the-idea {
+    margin-top: 50px;
+}
+
+.submission-wrapper .idea-teammate-steps .the-idea p {
+    font-family: ABeeZee;
+    font-style: normal;
+    font-weight: normal;
+    font-size: 14px;
+    line-height: 24px;
+    color: #646464;
+    margin-top: 0px;
+    margin-bottom: 20px;
+}
+
+.breadcrumb-submission ul li:last-child:after {
+    opacity: 0;
+}
+
+.breadcrumb-submission {
+    margin-bottom: 30px;
+}
+
+.submission-wrapper .idea-teammate-steps .steps .step .circle {
+    background-color: #143b6c;
+    color: #fff;
+}
+
+.submission-wrapper .idea-teammate-steps .steps {
+    margin-top: 50px;
+}
+
+.submission-wrapper {
+    padding-top: 50px;
+}

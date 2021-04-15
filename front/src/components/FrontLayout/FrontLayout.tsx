@@ -50,7 +50,7 @@ const FrontLayout = (props: any) => {
           <Route path="/main/project/:id" component={Project} />
           <Route path="/main/profile" component={Profile} />
           <Route path="/main/submission/:id" component={Submission} />
-          <Route path="/main/scores" component={Scores} />
+          <Route path="/main/scores/:id" component={Scores} />
         </Switch>
         {/*  </PublicProvider>
             </WellKnownPartiesProvider> */}
