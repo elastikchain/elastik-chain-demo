@@ -60,8 +60,11 @@ import {
   ClientRole,
   ParticipantSubmission,
   ProposeSubmission,
+  ParticipantRole,
   ParticipantSubmissionProposal,
   AcceptSubmission,
+  RequestToJoinProject,
+  ParticipantRequestToJoin
 } from "@daml.js/cosmart-0.0.1/lib/Main";
 
 import submissionPlaceHolder from "../../assets/img/img-proj-placeholder.png";
@@ -128,7 +131,7 @@ const Project = (props: RouteComponentProps) => {
       .exercise(
         ParticipantSubmissionProposal.AcceptSubmission,
         contractId,
-        {submissionId: ""}
+        {submissionId: (new Date().getTime()).toString()}
       ).then(data=> console.log("accepted"))
   };
 
@@ -318,6 +321,24 @@ const Project = (props: RouteComponentProps) => {
         : { payload: {} }
       ).payload.challenges || []
     );
+  };
+  const partycipantRequestToJoinProject = async (evt: any) => {
+    evt.preventDefault();
+    const formData = {
+      participant: user,
+      client: getSelectedProject().payload.client,
+      operator: getSelectedProject().payload.client.operator,
+      projectId: getSelectedProject().payload.client.projectId,
+    }; 
+    
+    /*ledger
+      .exercise(
+        ParticipantRequestToJoin.RequestToJoinProject,
+        getSelectedProject().contractId,
+        formData
+      )
+      .then((data) => { alert("Submitted Your Request");})
+      .catch((err) => console.log(err)); */
   };
   const deleteChallegeFromStorage = (challengeID: any, contractID: any) => {
     /*console.log(contractID);
@@ -592,7 +613,7 @@ const Project = (props: RouteComponentProps) => {
                             {selectedProj[0] && selectedProj[0].payload.prizes.map(k=>(
                               <div className="">
                               <h3>
-                                <span>*</span> {k.value}{k.currency} {k.name}
+                                <span>*</span> {k.currency}{k.value} {k.name}
                               </h3>
                               <p>
                                 {k.description}
@@ -602,7 +623,7 @@ const Project = (props: RouteComponentProps) => {
                             ))}
                           </div>
                         </div>
-
+                         {console.log("selectedProj",selectedProj[0])}         
                         <div className="list_inner">
                           <h2>ELIGIBILITY</h2>
                           <p>
@@ -693,73 +714,42 @@ const Project = (props: RouteComponentProps) => {
                         </div>
                       </div>
                     </Tab>
-                    <Tab title="2. Challanges (6)" className="tabs-contant">
+                    <Tab title="2. Challanges (0)" className="tabs-contant">
                     {selectedProj[0] ? selectedProj[0].payload.challenges.map(key => 
                       (
                         <div className="challanges-listing">
-                          <div className="chanlanges-titles">
-                            <div>
-                                <h1>{key.nameOf}</h1>
-                                <p>{key.description}</p>
-                              </div>
+                        <div className="logo-challanges">
+                           <img src={getSelectedProject().payload.pictureUrl} /> 
+                        </div>
+                        <div className="chanlanges-titles">
+                          <h1>{key.nameOf}</h1>
+                          <p>
+                          {key.description}
+                          </p>
+                          <div className="amount-main">
+                            <h1 className="highlight-amount">
+                              {" "}
+                              <span>Fund</span> ${key.prize}
+                            </h1>
                           </div>
                         </div>
+                      </div>
                       )
-                    ) : null}
-                      <div className="challanges-listing">
-                        <div className="logo-challanges">
-                          {/* <img src={getSelectedProject().p.pictureUrl} /> */}
-                        </div>
-                        <div className="chanlanges-titles">
-                          <h1>What is lorem ipsum ?</h1>
-                          <p>
-                            {" "}
-                            Lorem ipsum dolor sit amet, consectetur adipiscing
-                            elit. Sed vel leo suscipit, Lorem ipsum dolor sit
-                            amet, consectetur adipiscing elit. Sed vel leo
-                            suscipit, Lorem ipsum dolor sit amet, consectetur
-                            adipiscing elit. Sed vel leo suscipit,
-                          </p>
-                          <div className="amount-main">
-                            <h1 className="highlight-amount">
-                              {" "}
-                              <span>Fund</span> $30
-                            </h1>
-                          </div>
-                        </div>
-                      </div>
-
-                      <div className="challanges-listing">
-                        <div className="logo-challanges">
-                          <img src={getSelectedProject().payload.pictureUrl} />
-                        </div>
-                        <div className="chanlanges-titles">
-                          <h1>What is lorem ipsum ?</h1>
-                          <p>
-                            {" "}
-                            Lorem ipsum dolor sit amet, consectetur adipiscing
-                            elit. Sed vel leo suscipit, Lorem ipsum dolor sit
-                            amet, consectetur adipiscing elit. Sed vel leo
-                            suscipit, Lorem ipsum dolor sit amet, consectetur
-                            adipiscing elit. Sed vel leo suscipit,
-                          </p>
-                          <div className="amount-main">
-                            <h1 className="highlight-amount">
-                              {" "}
-                              <span>Fund</span> $30
-                            </h1>
-                          </div>
-                        </div>
-                      </div>
+                    ) : <IonItem lines="none">
+                    <IonLabel>
+                      <p className="no-scores">No scores found</p>
+                    </IonLabel>
+                     </IonItem>}
+                      
                     </Tab>
-                    <Tab title="3. Submissions (5)" className="tabs-contant">
+                    <Tab title="3. Submissions (0)" className="tabs-contant">
                       <div className="submission-item-list">
                         {console.log(
                           "participantSubmissionProposalAssets",
                           participantSubmissionProposalAssets
                         )}
-                        {participantSubmissionProposalAssets.map((sbmt) => (
-                          <div className="submission-listing">
+                        {getUserType() === "client" &&  participantSubmissionProposalAssets.map((sbmt) => (
+                          <div className="submission-listing request-to-join">
                             <div className="left-image-submission">
                               <img src={topbannerImg} alt="project image" />
                             </div>
@@ -768,7 +758,7 @@ const Project = (props: RouteComponentProps) => {
                               <p>
                                 {sbmt.payload.subDesc}
                               </p>
-                          {console.log("data here", sbmt)}
+                         
                               {/* <ul>
                                 <li>
                                   Milestones Achieved: <span> 3/5 </span>{" "}
@@ -802,7 +792,7 @@ const Project = (props: RouteComponentProps) => {
                                   onClick={(e) => {
                                     props.history.push(
                                       "/main/submission/" +
-                                        getSelectedProject().payload.projectId
+                                        sbmt.payload.subName
                                     );
                                   }}
                                 >
@@ -810,11 +800,15 @@ const Project = (props: RouteComponentProps) => {
                                 </a>{" "}
                                 &nbsp;
                                 {getUserType() === "client" && (
-                                  <IonButton onClick={(e)=>{acceptSubmission(sbmt.contractId)}}
-                                    className="btn view-details-btn"
-                                  >
-                                    Accept Submission
-                                  </IonButton>
+                                  
+                                  <a
+                                  href="javascript:void 0"
+                                  className="btn view-details-btn"
+                                  onClick={(e)=>{acceptSubmission(sbmt.contractId)}}
+                                >
+                                 Accept Request
+                                </a>
+                                  
                                 )}
                                 {/* <div className="sponsors-main">
                                         <h4>Sponsors : </h4>
@@ -829,11 +823,8 @@ const Project = (props: RouteComponentProps) => {
                           </div>
                         ))}
 
-                        {console.log(
-                          "submissions",
-                          participantSubmissionProposalAssets
-                        )}
-                        {submissions.map((sc) => (
+                        {console.log("submissions",submissions)}
+                        { (submissions.length > 0) ? submissions.map((sc) => (
                           <IonCard
                             className="submission-card"
                             onClick={(e) => {
@@ -842,60 +833,63 @@ const Project = (props: RouteComponentProps) => {
                               selectedSub.payload.projectId = getSelectedProject().payload.projectId;
                               setSelectedSubmission(selectedSub);
                               props.history.push(
-                                "/main/submission/" + sc.payload.name
+                                "/main/submission/" + sc.payload.submissionId
                               );
                             }}
                           >
-                            <div className="d-flex">
-                              <div className="submission-img">
-                                <img
-                                  src={submissionPlaceHolder}
-                                  alt="submission image"
-                                />
-                              </div>
-                              <IonCardContent>
-                                <h1 className="proj-chall-name">
-                                  {sc.payload.name}
-                                </h1>
-                                <h2 className="proj-chall-example">
-                                  {" "}
-                                  {sc.payload.submissionId}
-                                </h2>
-                                <p className="proj-chall-description">
-                                  {sc.payload.desc}
-                                </p>
-
-                                {/* <IonList>
-                                  <IonItem>
-                                    <div className="labels-submission">
-                                      Challenge ID :{" "}
-                                    </div>
-                                    <span></span>ID
-                                  </IonItem>
-                                  <IonItem>
-                                    <div className="labels-submission">
-                                      Submission :{" "}
-                                    </div>
-                                    {sc.payload.submission}
-                                  </IonItem>
-                                  <IonItem>
-                                    <div className="labels-submission">
-                                      Presentation :{" "}
-                                    </div>
-                                    {sc.payload.presentation}
-                                  </IonItem>
-                                  <IonItem>
-                                    <div className="labels-submission">
-                                      Video Link :{" "}
-                                    </div>
-                                    {sc.payload.videoLink}
-                                  </IonItem>
-                                </IonList>
-                                */}
-                              </IonCardContent> 
+                            <div className="submission-listing">
+                            <div className="left-image-submission">
+                              <img src={topbannerImg} alt="project image" />
                             </div>
-                          </IonCard>
-                        ))}
+                            <div className="right-contant-submission">
+                              <h1>{sc.payload.name}</h1>
+                              <p>
+                                {sc.payload.desc}
+                              </p>
+                         
+                              
+
+                              <div className="sponsors-challenge">
+                                {getUserType() === "judge" && (
+                                  <div className="submit-your-score">
+                                    <input
+                                      type="number"
+                                      name="submissionscore"
+                                    />
+                                    <a
+                                      href="javascript:void 0"
+                                      className="btn view-details-btn"
+                                    >
+                                      Submit Score
+                                    </a>
+                                  </div>
+                                )}
+                                <a
+                                  href="javascript:void 0"
+                                  className="btn view-details-btn"
+                                  onClick={(e) => {
+                                    props.history.push(
+                                      "/main/submission/" +
+                                        getSelectedProject().payload.projectId
+                                    );
+                                  }}
+                                >
+                                  View details
+                                </a>
+                             
+                                
+                              </div>
+                            </div>
+                          </div>
+                         </IonCard>
+                        ))
+                      :
+                      <IonItem lines="none">
+                      <IonLabel>
+                        <p className="no-scores">No scores found</p>
+                      </IonLabel>
+                       </IonItem>
+                      }
                       </div>
                     </Tab>
                     <Tab title="Judging criteria" className="tabs-contant">
@@ -1066,12 +1060,12 @@ const Project = (props: RouteComponentProps) => {
                       </IonButton>
                     </div>
 
-                    <div className="card-for-btn join-participant">
-                      <IonButton onClick={(e) => {}}>
+                   {/* <div className="card-for-btn join-participant">
+                      <IonButton onClick={(e) => { partycipantRequestToJoinProject(e)}}>
                         <IonIcon icon={add}></IonIcon>
                         <IonLabel>Join as a Participant</IonLabel>
                       </IonButton>
-                    </div>
+                    </div> */}
                   </div>
                 )}
                 {getUserType() === "client" && (

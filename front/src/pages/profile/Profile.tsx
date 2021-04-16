@@ -404,7 +404,11 @@ const Profile = (props: RouteComponentProps) => {
                                 }}
                               >
                                 {console.log("payload", p.payload)}
+                                { p.payload.pictureUrl != "" ?
+                                         <img src={p.payload.pictureUrl} alt="peoject image" />
+                                :
                                 <img src={mediumImage} alt="peoject image" />
+                              }
                               </div>
                               <div
                                 className="center-project-contant"
@@ -421,13 +425,16 @@ const Profile = (props: RouteComponentProps) => {
                                 </h2>
                                 <div className="online-and-days">
                                   <div className="left-days">
-                                    {Math.ceil(
+                                    { (new Date(p.payload.endDate).getTime() >  new Date().getTime()) ?  Math.ceil(
                                       Math.abs(
                                         new Date(p.payload.endDate).getTime() -
                                           new Date().getTime()
                                       ) /
                                         (1000 * 60 * 60 * 24)
-                                    )}
+                                    )
+                                  :
+                                        0
+                                  }
                                     {" "} Days left
                                   </div>
                                   <div className="online-point">
@@ -442,7 +449,7 @@ const Profile = (props: RouteComponentProps) => {
                                       p.payload.prizes.map((prize: any) => (
                                         <p className="price-listing">
                                           <IonIcon icon={trophy}></IonIcon>{" "}
-                                          <b>{prize.value} {prize.currency}</b> {prize.description}
+                                          <b>{prize.currency} {prize.value} </b> {prize.description}
                                         </p>
                                       ))
                                     }
@@ -459,7 +466,7 @@ const Profile = (props: RouteComponentProps) => {
                                       {" "}
                                       <IonIcon icon={man}></IonIcon>{" "}
                                       <span>
-                                        {p.payload.generalPublic.length}
+                                        {p.payload.participants.length}
                                       </span>{" "}
                                       participants
                                     </p>
