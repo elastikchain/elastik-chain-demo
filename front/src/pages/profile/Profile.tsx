@@ -788,7 +788,8 @@ const Profile = (props: RouteComponentProps) => {
                           }
                         ></IonTextarea>
                       </IonItem>
-                      <IonItem>
+                      
+                      {/*<IonItem>
                         <IonLabel position="floating">
                           Video URL
                         </IonLabel>
@@ -846,7 +847,7 @@ const Profile = (props: RouteComponentProps) => {
                             });
                           }}
                         ></AddMore>
-                      </div>
+                        </div> */}
                       <IonItem>
                         <IonLabel position="stacked">Project Image</IonLabel>
                         <input
