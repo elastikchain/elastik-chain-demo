@@ -79,9 +79,7 @@ const Project = (props: RouteComponentProps) => {
   const selectedProj = useStreamQueries(ClientProject, () => [
     { projectId: getSelectedProject().payload.projectId },
   ]).contracts;
-  const approvedSubmissions = useStreamQueries(ParticipantSubmission, () => [
-    { client: getSelectedProject().payload.client },
-  ]).contracts;
+
    const getUserType = (): "" | "client" | "participant" | "judge" => {
     if (
       selectedProj.filter(
@@ -99,7 +97,7 @@ const Project = (props: RouteComponentProps) => {
 
     return "";
   };
-console.log("approvedSubmissionsapprovedSubmissions",approvedSubmissions);
+
   const [showChallengeModal, setShowChallengeModal] = useState(false);
 
   const [
@@ -172,7 +170,9 @@ console.log("approvedSubmissionsapprovedSubmissions",approvedSubmissions);
     };
     return new Date(dateStr).toLocaleDateString("en-US", dateTimeFormatOptions);
   };
-
+  const approvedSubmissions = useStreamQueries(ParticipantSubmission, () => [
+    { client: getSelectedProject().payload.client },
+  ]).contracts;
   const [selectedChallengeId, setSelectedChallengeId] = useState(0);
   const [showCreateSubmissionModal, setShowCreateSubmissionModal] = useState({
     show: false,
@@ -921,127 +921,7 @@ console.log("approvedSubmissionsapprovedSubmissions",approvedSubmissions);
                   </Tabs>
                 </div>
 
-                {
-                  <div className="text-align-start">
-                    <div className="pos-relative">
-                      <IonSegment
-                        className="justify-content-start"
-                        color="secondary"
-                        onIonChange={(e) =>
-                          setSelectedSegement(e.detail.value!)
-                        }
-                        value={selectedSegement}
-                      >
-                        <IonSegmentButton value="submissions">
-                          <IonLabel>
-                            Submissions ({approvedSubmissions.length})
-                          </IonLabel>
-                        </IonSegmentButton>
-                        <IonSegmentButton
-                          value="challenges"
-                          disabled={getChallengesIds().length < 1}
-                        >
-                          <IonLabel>
-                            Challenges ({getChallengesIds().length})
-                          </IonLabel>
-                        </IonSegmentButton>
-                      </IonSegment>
-
-                      {getUserType() === "client" ? (
-                        <div className="icon-menu">
-                          {/* <IonFab
-                          vertical="top"
-                          horizontal="end"
-                          title="Add new Challenge"
-                        >
-                          <IonFabButton
-                            title="Add new Challenge"
-                            onClick={(e) => setShowChallengeModal(true)}
-                          >
-                            <IonIcon icon={add} />
-                          </IonFabButton>
-                        </IonFab> */}
-                          {/*<IonFab className="submittionadd-btn" title="Add new Submission" vertical="top" horizontal="end">
-                  <IonFabButton title="Add new Submission" onClick={(e) => setShowCreateSubmissionModal({show:true})}>
-                    <IonIcon icon={add}/> 
-                  </IonFabButton>
-                </IonFab>*/}
-                        </div>
-                      ) : null}
-                    </div>
-
-                    {selectedSegement === "challenges"
-                      ? getChallengesIds().map((c) => (
-                          <div>
-                            {/* <ChallengeCompoenent challengeId={c}></ChallengeCompoenent> */}
-                            {selectedProj[0] && (
-                            <div>{selectedProj[0].payload.challenges}</div>)}
-                          </div>
-                        ))
-                      : approvedSubmissions.map((sc) => (
-                          <IonCard
-                            className="submission-card"
-                            onClick={(e) => {
-                              e.preventDefault();
-                              const selectedSub = sc as any;
-                              selectedSub.payload.projectId = getSelectedProject().payload.projectId;
-                              setSelectedSubmission(selectedSub);
-                              props.history.push(
-                                "/main/submission/" + sc.payload.submissionId
-                              );
-                            }}
-                          >
-                            <div className="d-flex">
-                              <div className="submission-img">
-                                <img
-                                  src={submissionPlaceHolder}
-                                  alt="submission image"
-                                />
-                              </div>
-                              <IonCardContent>
-                                <h1 className="proj-chall-name">
-                                  {sc.payload.name}
-                                </h1>
-                                <h2 className="proj-chall-example">
-                                  {" "}
-                                  {sc.payload.submissionId}
-                                </h2>
-                                <p className="proj-chall-description">
-                                  {sc.payload.desc}
-                                </p>
-
-                                <IonList>
-                                  <IonItem>
-                                    <div className="labels-submission">
-                                      Challenge ID :{" "}
-                                    </div>
-                                    <span></span>ID
-                                  </IonItem>
-                                  <IonItem>
-                                    <div className="labels-submission">
-                                      Submission :{" "}
-                                    </div>
-                                    {sc.payload.submission}
-                                  </IonItem>
-                                  <IonItem>
-                                    <div className="labels-submission">
-                                      Presentation :{" "}
-                                    </div>
-                                    {sc.payload.presentation}
-                                  </IonItem>
-                                  <IonItem>
-                                    <div className="labels-submission">
-                                      Video Link :{" "}
-                                    </div>
-                                    {sc.payload.videoLink}
-                                  </IonItem>
-                                </IonList>
-                              </IonCardContent>
-                            </div>
-                          </IonCard>
-                        ))}
-                  </div>
-                }
+                
               </div>
               <div className="edtion_sidebar">
                 {(getUserType() === "" || getUserType() === "participant") && (
