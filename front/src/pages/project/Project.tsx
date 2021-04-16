@@ -79,10 +79,10 @@ const Project = (props: RouteComponentProps) => {
   const selectedProj = useStreamQueries(ClientProject, () => [
     { projectId: getSelectedProject().payload.projectId },
   ]).contracts;
-  const submissions = useStreamQueries(ParticipantSubmission, () => [
+  const approvedSubmissions = useStreamQueries(ParticipantSubmission, () => [
     { client: getSelectedProject().payload.client },
   ]).contracts;
-  const getUserType = (): "" | "client" | "participant" | "judge" => {
+   const getUserType = (): "" | "client" | "participant" | "judge" => {
     if (
       selectedProj.filter(
         (c) => c.payload.participants.indexOf((user as any).party) > -1
@@ -99,7 +99,7 @@ const Project = (props: RouteComponentProps) => {
 
     return "";
   };
-
+console.log("approvedSubmissionsapprovedSubmissions",approvedSubmissions);
   const [showChallengeModal, setShowChallengeModal] = useState(false);
 
   const [
@@ -823,8 +823,8 @@ const Project = (props: RouteComponentProps) => {
                           </div>
                         ))}
 
-                        {console.log("submissions",submissions)}
-                        { (submissions.length > 0) ? submissions.map((sc) => (
+                        {console.log("approvedSubmissions",approvedSubmissions)}
+                        { (approvedSubmissions.length > 0) ? approvedSubmissions.map((sc) => (
                           <IonCard
                             className="submission-card"
                             onClick={(e) => {
@@ -934,7 +934,7 @@ const Project = (props: RouteComponentProps) => {
                       >
                         <IonSegmentButton value="submissions">
                           <IonLabel>
-                            Submissions ({submissions.length})
+                            Submissions ({approvedSubmissions.length})
                           </IonLabel>
                         </IonSegmentButton>
                         <IonSegmentButton
@@ -978,7 +978,7 @@ const Project = (props: RouteComponentProps) => {
                             <div>{selectedProj[0].payload.challenges}</div>)}
                           </div>
                         ))
-                      : submissions.map((sc) => (
+                      : approvedSubmissions.map((sc) => (
                           <IonCard
                             className="submission-card"
                             onClick={(e) => {

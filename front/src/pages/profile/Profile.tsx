@@ -979,6 +979,10 @@ const Profile = (props: RouteComponentProps) => {
                         {userProfileData().about}
                         </p>
                         <p>Email: <a href={"mailto:"+userProfileData().email}>{userProfileData().email}</a></p>
+                        
+                        <p>
+                          Company: <a href="#">{userProfileData().company}</a>
+                        </p>
                         <p>
                           Linkedin: <a href="#">Information here</a>
                         </p>
