@@ -74,7 +74,7 @@ const Project = (props: RouteComponentProps) => {
   const user = useUserState();
   var userDispatch = useUserDispatch();
   const ledger = useLedger();
-  console.log("getSelectedProject", getSelectedProject());
+
 
   const selectedProj = useStreamQueries(ClientProject, () => [
     { projectId: getSelectedProject().payload.projectId },
@@ -623,7 +623,7 @@ const Project = (props: RouteComponentProps) => {
                             ))}
                           </div>
                         </div>
-                         {console.log("selectedProj",selectedProj[0])}         
+                              
                         <div className="list_inner">
                           <h2>ELIGIBILITY</h2>
                           <p>
@@ -631,27 +631,7 @@ const Project = (props: RouteComponentProps) => {
                             you must meet the following requirements:
                           </p>
                           <ul>
-                            <li>You must be a current university student.</li>
-                            <li>Teams must consist of 2–4 members.</li>
-                            <li>
-                              By participating in the hackathon, you consent to
-                              your image being used in any promotional or media
-                              material for Accenture.
-                            </li>
-                            <li>
-                              You cannot be a current employee of Accenture
-                            </li>
-                            <li>
-                              You must be an Australian or New Zealand Citizen,
-                              or an Australian Permanent Resident.
-                            </li>
-                            <li>
-                              You must sign up&nbsp;
-                              <a href="https://forms.gle/HRYzsNQVBW3zBRxa7">
-                                here
-                              </a>{" "}
-                              before the 18th of November.
-                            </li>
+                          {selectedProj[0] && selectedProj[0].payload.eligibility.map(k=>(<li>{k}</li>))}
                           </ul>
                         </div>
 
@@ -662,28 +642,10 @@ const Project = (props: RouteComponentProps) => {
                             hackathon.
                           </p>
                           <ul>
-                            <li>
-                              At the end of the time period, a working demo and
-                              presentation must be ready for the judges.
-                            </li>
-                            <li>
-                              All code must be uploaded by the end of the time
-                              period to some code repository (such as GitHub).
-                              Any submission or adjustment after this time will
-                              not be considered.
-                            </li>
-                            <li>
-                              Presentations will be 7 minutes long, with an
-                              additional 3 minutes for questions from the
-                              judges.
-                            </li>
-                            <li>
-                              Links for submissions will be provided as we
-                              arrive closer to the date.
-                            </li>
+                          {selectedProj[0] && selectedProj[0].payload.requirements.map(k=>(<li>{k}</li>))}
+                           
                           </ul>
                         </div>
-
                         <div className="judges">
                           <h2>JUDGES ({selectedProj[0] && selectedProj[0].payload.judges ? selectedProj[0].payload.judges.length : "0"})</h2>
                           <ul>
@@ -706,10 +668,7 @@ const Project = (props: RouteComponentProps) => {
                         <div className="list_inner judging_criteria">
                           <h2>JUDGING CRITERIA</h2>
                           <ul>
-                            <li>Presentation Quality</li>
-                            <li>Banking Revolution Relevance</li>
-                            <li>Quality of Application Execution</li>
-                            <li>Business Value</li>
+                           {selectedProj[0] && selectedProj[0].payload.criteria.map(k=>(<li>{k.name}</li>))}
                           </ul>
                         </div>
                       </div>
@@ -744,11 +703,7 @@ const Project = (props: RouteComponentProps) => {
                     </Tab>
                     <Tab title="3. Submissions (0)" className="tabs-contant">
                       <div className="submission-item-list">
-                        {console.log(
-                          "participantSubmissionProposalAssets",
-                          participantSubmissionProposalAssets
-                        )}
-                        {getUserType() === "client" &&  participantSubmissionProposalAssets.map((sbmt) => (
+                         {getUserType() === "client" &&  participantSubmissionProposalAssets.map((sbmt) => (
                           <div className="submission-listing request-to-join">
                             <div className="left-image-submission">
                               <img src={topbannerImg} alt="project image" />
@@ -823,7 +778,7 @@ const Project = (props: RouteComponentProps) => {
                           </div>
                         ))}
 
-                        {console.log("approvedSubmissions",approvedSubmissions)}
+                        
                         { (approvedSubmissions.length > 0) ? approvedSubmissions.map((sc) => (
                           <IonCard
                             className="submission-card"
@@ -903,18 +858,7 @@ const Project = (props: RouteComponentProps) => {
                       <div className="list_inner judging_criteria">
                         <h2>JUDGING CRITERIA</h2>
                         <ul>
-                          <li>Presentation Quality</li>
-                          <li>Banking Revolution Relevance</li>
-                          <li>Quality of Application Execution</li>
-                          <li>Business Value</li>
-                          <li>Presentation Quality</li>
-                          <li>Banking Revolution Relevance</li>
-                          <li>Quality of Application Execution</li>
-                          <li>Business Value</li>
-                          <li>Presentation Quality</li>
-                          <li>Banking Revolution Relevance</li>
-                          <li>Quality of Application Execution</li>
-                          <li>Business Value</li>
+                         {selectedProj[0] && selectedProj[0].payload.criteria.map(k=>(<li>{k.name}</li>))}
                         </ul>
                       </div>
                     </Tab>

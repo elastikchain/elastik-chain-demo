@@ -29,7 +29,7 @@ import { setSelectedProject } from "../../context/SharedContext";
 import SubHeader from "../../components/Header/subheader";
 import Footer from "../../components/Footer/footer";
 import CriteriaTagsInput from "../../components/CriteriaTagsInput/CriteriaTagsInput";
-
+import AddMore from "../../components/AddMore/AddMore";
 import {
   IonPage,
   IonHeader,
@@ -101,6 +101,8 @@ const Profile = (props: RouteComponentProps) => {
     prizes: Array<PrizeData>(),
     projectvideoLink: "",
     loading: false,
+    eligibility:[],
+    requirements:[],
   };
 
   const [projectDetail, setProjectDetail] = useState(defaultProjectDetail);
@@ -214,7 +216,7 @@ const Profile = (props: RouteComponentProps) => {
     evt.preventDefault();
     const exercise = (cb: () => void) => {
       const { loading, projectImageFile, ...dataToExercise } = projectDetail;
-      // console.log("dataToExercise", dataToExercise);
+      //console.log("dataToExercise", dataToExercise);
       ledger
         .exercise(
           ClientRole.CreateProject,
@@ -769,6 +771,7 @@ const Profile = (props: RouteComponentProps) => {
                             }
                           ></IonDatetime>
                         </IonItem>
+                        
                       </div>
                       <IonItem>
                         <IonLabel position="floating">
@@ -785,6 +788,65 @@ const Profile = (props: RouteComponentProps) => {
                           }
                         ></IonTextarea>
                       </IonItem>
+                      <IonItem>
+                        <IonLabel position="floating">
+                          Video URL
+                        </IonLabel>
+                        <IonInput
+                          value={projectDetail.projectvideoLink}
+                          onIonChange={(e) =>
+                            setProjectDetail({
+                              ...projectDetail,
+                              projectvideoLink: e.detail.value!,
+                            })
+                          }
+                        ></IonInput>
+                      </IonItem>
+                      <div className="criteria-tags-container">
+                        <IonLabel>Rules</IonLabel>
+                        <AddMore
+                          onChange={(tags) => {
+                            const arrCriteriaPoint = tags.map(
+                              (t) =>
+                                ( t.name )
+                            );
+                            setProjectDetail({
+                              ...projectDetail,
+                              rules: arrCriteriaPoint,
+                            });
+                          }}
+                        ></AddMore>
+                      </div> 
+                        <div className="criteria-tags-container">
+                        <IonLabel>Eligibility</IonLabel>
+                        <AddMore
+                          onChange={(tags) => {
+                            const arrCriteriaPoint = tags.map(
+                              (t) =>
+                                ( t.name )
+                            );
+                            setProjectDetail({
+                              ...projectDetail,
+                              eligibility: arrCriteriaPoint,
+                            });
+                          }}
+                        ></AddMore>
+                      </div>
+                      <div className="criteria-tags-container">
+                        <IonLabel>Requirements</IonLabel>
+                        <AddMore
+                          onChange={(tags) => {
+                            const arrCriteriaPoint = tags.map(
+                              (t) =>
+                                ( t.name )
+                            );
+                            setProjectDetail({
+                              ...projectDetail,
+                              requirements: arrCriteriaPoint,
+                            });
+                          }}
+                        ></AddMore>
+                      </div>
                       <IonItem>
                         <IonLabel position="stacked">Project Image</IonLabel>
                         <input
