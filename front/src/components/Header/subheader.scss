@@ -28,3 +28,7 @@ p.no-scores {
     color: #000;
     text-align: center;
 }
+.item-has-focus {
+    border: none;
+    --highlight-background: none;
+}
