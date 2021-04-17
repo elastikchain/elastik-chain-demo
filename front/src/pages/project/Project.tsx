@@ -40,6 +40,7 @@ import userImg from "../../assets/img/user.png";
 import logo from "../../assets/img/logo-combination.png";
 import {
   add,
+  man,
   close,
   arrowBack,
   time,
@@ -64,7 +65,12 @@ import {
   ParticipantSubmissionProposal,
   AcceptSubmission,
   RequestToJoinProject,
-  ParticipantRequestToJoin
+  ParticipantRequestToJoin,
+  AddJudge,
+  JudgeRole,
+  SubmitScorecard,
+  CriteriaPoint,
+  Scorecard
 } from "@daml.js/cosmart-0.0.1/lib/Main";
 
 import submissionPlaceHolder from "../../assets/img/img-proj-placeholder.png";
@@ -75,7 +81,7 @@ const Project = (props: RouteComponentProps) => {
   var userDispatch = useUserDispatch();
   const ledger = useLedger();
 
-
+  const judgeAssets = useStreamQueries(JudgeRole).contracts;
   const selectedProj = useStreamQueries(ClientProject, () => [
     { projectId: getSelectedProject().payload.projectId },
   ]).contracts;
@@ -88,18 +94,26 @@ const Project = (props: RouteComponentProps) => {
     ) {
       return "participant";
     }
+    
     if (
       selectedProj.filter((c) => (user as any).party === c.payload.client)
         .length > 0
     ) {
       return "client";
     }
+    if (
+      judgeAssets.filter(c => (user as any).party === c.payload.judge)
+        .length > 0
+    ) {
+      return "judge";
+    }
 
     return "";
   };
 
-  const [showChallengeModal, setShowChallengeModal] = useState(false);
 
+  const [showChallengeModal, setShowChallengeModal] = useState(false);
+  const [showJudgeModal, setShowJudgeModal] = useState(false);
   const [
     showDltChallenderConfirmation,
     deleteChallenderConfirmation,
@@ -111,10 +125,24 @@ const Project = (props: RouteComponentProps) => {
     description: "",
     prize: "",
   };
+  const defaultSubmitScoreDetail: SubmitScorecard = {
+    judge:(user as any).party,
+    scores:Array<CriteriaPoint>()
+  };
+  const [submitScoreDetailetail, setSubmitScoreDetailetail] = useState(
+    defaultSubmitScoreDetail
+  );
+  const defaultJudgeDetail: AddJudge = {
+    judge : ""
+  };
   const participantSubmissionProposalAssets = useStreamQueries(
     ParticipantSubmissionProposal,
     () => [{ projectId: getSelectedProject().payload.projectId }]
   ).contracts;
+  
+  const [cJudgeDetail, setJudgeDetail] = useState(
+    defaultJudgeDetail
+  );
   const [challengeDetail, setChallengeDetail] = useState(
     defaultChallengeDetail
   );
@@ -122,6 +150,28 @@ const Project = (props: RouteComponentProps) => {
   const resetCreateChallenge = () => {
     setChallengeDetail(defaultChallengeDetail);
     setChallengeIdTouched(false);
+  };
+  const handleSubmitJudgeScore = async (evt:any)=>{
+    evt.preventDefault();
+    defaultSubmitScoreDetail.scores = Array<CriteriaPoint>();
+    defaultSubmitScoreDetail.scores.push({name:evt.target.elements.name.value,point:evt.target.elements.point.value});
+    ledger
+      .exercise(
+        ParticipantSubmission.SubmitScorecard,
+        evt.target.elements.contactid.value,
+        defaultSubmitScoreDetail,
+        
+      )
+      .then(() => {
+        setShowJudgeModal(false);
+        alert("Successfully Submitted Your Score");
+        
+      })
+      .catch((err: any) => {
+        setShowJudgeModal(false);
+        alert("Error: " + JSON.stringify(err));
+      });
+
   };
 
   const acceptSubmission = (contractId: any) => {
@@ -132,8 +182,25 @@ const Project = (props: RouteComponentProps) => {
         {submissionId: (new Date().getTime()).toString()}
       ).then(data=> console.log("accepted"))
   };
-
-
+  
+  const handleJudgeSubmit = async (evt: any) => {
+     evt.preventDefault();
+     ledger
+      .exercise(
+        ClientProject.AddJudge,
+        selectedProj[0]!.contractId,
+        cJudgeDetail
+      )
+      .then(() => {
+        setShowJudgeModal(false);
+        alert("Judge Added Successfully!");
+        
+      })
+      .catch((err: any) => {
+        setShowJudgeModal(false);
+        alert("Error: " + JSON.stringify(err));
+      });
+  }
   const handleChallengeSubmit = async (evt: any) => {
     evt.preventDefault();
     ledger
@@ -701,7 +768,7 @@ const Project = (props: RouteComponentProps) => {
                       )
                     ) : <IonItem lines="none">
                     <IonLabel>
-                      <p className="no-scores">No scores found</p>
+                      <p className="no-scores">No Challenges found</p>
                     </IonLabel>
                      </IonItem>}
                       
@@ -732,20 +799,7 @@ const Project = (props: RouteComponentProps) => {
                               </ul> */}
 
                               <div className="sponsors-challenge">
-                                {getUserType() === "judge" && (
-                                  <div className="submit-your-score">
-                                    <input
-                                      type="number"
-                                      name="submissionscore"
-                                    />
-                                    <a
-                                      href="javascript:void 0"
-                                      className="btn view-details-btn"
-                                    >
-                                      Submit Score
-                                    </a>
-                                  </div>
-                                )}
+                               
                                 <a
                                   href="javascript:void 0"
                                   className="btn view-details-btn"
@@ -783,19 +837,11 @@ const Project = (props: RouteComponentProps) => {
                           </div>
                         ))}
 
-                        
+                        {console.log("approvedSubmissions",approvedSubmissions)}
                         { (approvedSubmissions.length > 0) ? approvedSubmissions.map((sc) => (
                           <IonCard
                             className="submission-card"
-                            onClick={(e) => {
-                              e.preventDefault();
-                              const selectedSub = sc as any;
-                              selectedSub.payload.projectId = getSelectedProject().payload.projectId;
-                              setSelectedSubmission(selectedSub);
-                              props.history.push(
-                                "/main/submission/" + sc.payload.submissionId
-                              );
-                            }}
+                            
                           >
                             <div className="submission-listing">
                             <div className="left-image-submission">
@@ -808,20 +854,34 @@ const Project = (props: RouteComponentProps) => {
                               </p>
                          
                               
-
+                              
                               <div className="sponsors-challenge">
                                 {getUserType() === "judge" && (
                                   <div className="submit-your-score">
+                                    <form method="post" onSubmit={handleSubmitJudgeScore}>
                                     <input
-                                      type="number"
-                                      name="submissionscore"
+                                      type="text"
+                                      name="name"
+                                      placeholder="name"
                                     />
-                                    <a
-                                      href="javascript:void 0"
-                                      className="btn view-details-btn"
+                                     <input
+                                      type="number"
+                                      name="point"
+                                      placeholder="Score "
+                                    />
+                                    <input
+                                      type="hidden"
+                                      name="contactid"
+                                      placeholder=""
+                                      value={sc.contractId}
+                                    />
+                                    <button
+                                     className="btn view-details-btn"
+                                      type="submit"
                                     >
                                       Submit Score
-                                    </a>
+                                    </button>
+                                    </form>
                                   </div>
                                 )}
                                 <a
@@ -829,8 +889,7 @@ const Project = (props: RouteComponentProps) => {
                                   className="btn view-details-btn"
                                   onClick={(e) => {
                                     props.history.push(
-                                      "/main/submission/" +
-                                        getSelectedProject().payload.projectId
+                                      "/main/submission/" + sc.payload.submissionId
                                     );
                                   }}
                                 >
@@ -846,7 +905,7 @@ const Project = (props: RouteComponentProps) => {
                       :
                       <IonItem lines="none">
                       <IonLabel>
-                        <p className="no-scores">No scores found</p>
+                        <p className="no-scores">No Approved Submission found</p>
                       </IonLabel>
                        </IonItem>
                       }
@@ -903,6 +962,12 @@ const Project = (props: RouteComponentProps) => {
                       <IonIcon icon={add}></IonIcon>
                       <IonLabel>Create new Challenge</IonLabel>
                     </IonButton>
+
+                    <IonButton className = "add-judges" onClick={(e) => setShowJudgeModal(true)}>
+                      <IonIcon icon={man}></IonIcon>
+                      <IonLabel>Add new Judge</IonLabel>
+                    </IonButton>
+
                   </div>
                 )}
                 <div className="edtion_child">
@@ -1061,7 +1126,49 @@ const Project = (props: RouteComponentProps) => {
               <IonIcon icon={close}></IonIcon>
             </IonButton>
           </IonModal>
-          {/*-- Challenge Model */}
+          {/*-- Add Judge Model */}
+          <IonModal
+            isOpen={showJudgeModal}
+            onDidDismiss={() => setShowJudgeModal(false)}
+            cssClass="my-custom-class"
+          >
+            <div className="content challenge-modal-content">
+              <h1>Add New Judge</h1>
+              <form onSubmit={handleJudgeSubmit}>
+                <div className="flex-equal-childs-width">
+                  <IonItem>
+                    <IonLabel position="floating">Judge Name </IonLabel>
+                    <IonInput
+                      required={true}
+                      value={cJudgeDetail.judge}
+                      onIonChange={(e) => {
+                        setJudgeDetail({
+                          ...cJudgeDetail,
+                          judge: e.detail.value!,
+                        });
+                      }}
+                    ></IonInput>
+                  </IonItem>
+                </div>
+               
+                <IonButton className="submit-button" type="submit">
+                  Add Judge
+                </IonButton>
+              </form>
+              <IonButton
+                className="modal-default-close-btn"
+                fill="clear"
+                color="danger"
+                onClick={() => {
+                  setShowJudgeModal(false);
+                }}
+              >
+                <IonIcon icon={close}></IonIcon>
+              </IonButton>
+            </div>
+          </IonModal>
+          {/* Challenge Modal */}
+
           <IonModal
             isOpen={showChallengeModal}
             onDidDismiss={() => setShowChallengeModal(false)}
