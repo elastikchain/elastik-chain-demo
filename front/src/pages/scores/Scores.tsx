@@ -2,10 +2,6 @@ import React, { useState } from "react";
 import { RouteComponentProps } from "react-router-dom";
 import {
   IonPage,
-  IonHeader,
-  IonToolbar,
-  IonSearchbar,
-  IonButtons,
   IonButton,
   IonContent,
   IonIcon,
@@ -17,26 +13,21 @@ import SubHeader from "../../components/Header/subheader";
 import Footer from "../../components/Footer/footer";
 import "./Scores.scss" ;
 import {
-  signOut,
   useUserDispatch,
   useUserState,
 } from "../../context/UserContext";
 import { useLedger, useStreamQueries } from "@daml/react";
 import { arrowBack } from "ionicons/icons";
-import logo from "../../assets/img/logo-combination.png";
 import { Scorecard } from "@daml.js/cosmart-0.0.1/lib/Main";
-
 
 const Scores = (props: RouteComponentProps) => {
   const user = useUserState();
-  var userDispatch = useUserDispatch();
   const ledger = useLedger();
   const [searchText, setSearchText] = useState("");
-
+  
   const scorecard = useStreamQueries(Scorecard, () => {
     return [{ client: (user as any).party }];
   }).contracts;
-
   return (
     <IonPage>
      <SubHeader {...props} />

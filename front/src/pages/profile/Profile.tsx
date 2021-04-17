@@ -551,6 +551,31 @@ const Profile = (props: RouteComponentProps) => {
                                   </div>
                                       )
                                 }
+
+                                {
+                                      getUserType() != 'client' && (
+                                        <div className="edit-delete-list">
+                                        <IonItem className="project-controls-listing">
+                                      
+                                          <IonIcon
+                                            icon={hammer}
+                                            onClick={(e) => {
+                                              e.stopPropagation();
+                                              console.log("the selected::", p);
+
+                                              setSelectedProject(p);
+                                              props.history.push(
+                                                "/main/scores/" +
+                                                  p.payload.projectId
+                                              );
+                                            }}
+                                          ></IonIcon>
+                                      
+                                      
+                                    </IonItem>
+                                  </div>
+                                      )
+                                }
                               </div>
                             </div>
                           </div>

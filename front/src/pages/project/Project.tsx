@@ -66,7 +66,10 @@ import {
   AcceptSubmission,
   RequestToJoinProject,
   ParticipantRequestToJoin,
-  AddJudge
+  AddJudge,
+  JudgeRole,
+  SubmitScorecard,
+  CriteriaPoint
 } from "@daml.js/cosmart-0.0.1/lib/Main";
 
 import submissionPlaceHolder from "../../assets/img/img-proj-placeholder.png";
@@ -77,7 +80,7 @@ const Project = (props: RouteComponentProps) => {
   var userDispatch = useUserDispatch();
   const ledger = useLedger();
 
-
+  const judgeAssets = useStreamQueries(JudgeRole).contracts;
   const selectedProj = useStreamQueries(ClientProject, () => [
     { projectId: getSelectedProject().payload.projectId },
   ]).contracts;
@@ -90,15 +93,23 @@ const Project = (props: RouteComponentProps) => {
     ) {
       return "participant";
     }
+    
     if (
       selectedProj.filter((c) => (user as any).party === c.payload.client)
         .length > 0
     ) {
       return "client";
     }
+    if (
+      judgeAssets.filter(c => (user as any).party === c.payload.judge)
+        .length > 0
+    ) {
+      return "judge";
+    }
 
     return "";
   };
+
 
   const [showChallengeModal, setShowChallengeModal] = useState(false);
   const [showJudgeModal, setShowJudgeModal] = useState(false);
@@ -113,6 +124,13 @@ const Project = (props: RouteComponentProps) => {
     description: "",
     prize: "",
   };
+  const defaultSubmitScoreDetail: SubmitScorecard = {
+    judge:(user as any).party,
+    scores:Array<CriteriaPoint>()
+  };
+  const [submitScoreDetailetail, setSubmitScoreDetailetail] = useState(
+    defaultSubmitScoreDetail
+  );
   const defaultJudgeDetail: AddJudge = {
     judge : ""
   };
@@ -131,6 +149,11 @@ const Project = (props: RouteComponentProps) => {
   const resetCreateChallenge = () => {
     setChallengeDetail(defaultChallengeDetail);
     setChallengeIdTouched(false);
+  };
+  const handleSubmitJudgeScore = async (evt:any)=>{
+    evt.defaultPrevent();
+    console.log(evt.element.target);
+
   };
 
   const acceptSubmission = (contractId: any) => {
@@ -753,20 +776,7 @@ const Project = (props: RouteComponentProps) => {
                               </ul> */}
 
                               <div className="sponsors-challenge">
-                                {getUserType() === "judge" && (
-                                  <div className="submit-your-score">
-                                    <input
-                                      type="number"
-                                      name="submissionscore"
-                                    />
-                                    <a
-                                      href="javascript:void 0"
-                                      className="btn view-details-btn"
-                                    >
-                                      Submit Score
-                                    </a>
-                                  </div>
-                                )}
+                               
                                 <a
                                   href="javascript:void 0"
                                   className="btn view-details-btn"
@@ -808,15 +818,7 @@ const Project = (props: RouteComponentProps) => {
                         { (approvedSubmissions.length > 0) ? approvedSubmissions.map((sc) => (
                           <IonCard
                             className="submission-card"
-                            onClick={(e) => {
-                              e.preventDefault();
-                              const selectedSub = sc as any;
-                              selectedSub.payload.projectId = getSelectedProject().payload.projectId;
-                              setSelectedSubmission(selectedSub);
-                              props.history.push(
-                                "/main/submission/" + sc.payload.submissionId
-                              );
-                            }}
+                            
                           >
                             <div className="submission-listing">
                             <div className="left-image-submission">
@@ -829,20 +831,34 @@ const Project = (props: RouteComponentProps) => {
                               </p>
                          
                               
-
+                              
                               <div className="sponsors-challenge">
                                 {getUserType() === "judge" && (
                                   <div className="submit-your-score">
+                                    <form method="post" onSubmit={handleSubmitJudgeScore}>
                                     <input
                                       type="number"
-                                      name="submissionscore"
+                                      name="name"
+                                      placeholder="name"
                                     />
-                                    <a
-                                      href="javascript:void 0"
-                                      className="btn view-details-btn"
+                                     <input
+                                      type="number"
+                                      name="point"
+                                      placeholder="Score "
+                                    />
+                                    <input
+                                      type="hidden"
+                                      name="contactid"
+                                      placeholder=""
+                                      value={sc.contractId}
+                                    />
+                                    <button
+                                     className="btn view-details-btn"
+                                      type="submit"
                                     >
                                       Submit Score
-                                    </a>
+                                    </button>
+                                    </form>
                                   </div>
                                 )}
                                 <a
@@ -850,8 +866,7 @@ const Project = (props: RouteComponentProps) => {
                                   className="btn view-details-btn"
                                   onClick={(e) => {
                                     props.history.push(
-                                      "/main/submission/" +
-                                        getSelectedProject().payload.projectId
+                                      "/main/submission/" + sc.payload.submissionId
                                     );
                                   }}
                                 >
