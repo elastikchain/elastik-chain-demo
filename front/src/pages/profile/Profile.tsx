@@ -122,10 +122,12 @@ const Profile = (props: RouteComponentProps) => {
 
   const [participantId, setParicipantId] = useState("");
   const [showParticipantModal, setShowParticipantModal] = useState(false);
-  const [prizes, setPrizes] = useState(null);
 
   const onPrizeChange = (val: any) => {
-    setPrizes(val);
+    setProjectDetail({
+      ...projectDetail,
+      prizes: val,
+    });
   };
 
   const resetCreateProject = () => {
