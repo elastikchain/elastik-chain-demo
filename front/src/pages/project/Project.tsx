@@ -237,9 +237,14 @@ const Project = (props: RouteComponentProps) => {
     };
     return new Date(dateStr).toLocaleDateString("en-US", dateTimeFormatOptions);
   };
+
   const approvedSubmissions = useStreamQueries(ParticipantSubmission, () => [
-    { client: getSelectedProject().payload.client },
+    {
+      client: getSelectedProject().payload.client,
+      projectId: getSelectedProject().payload.projectId,
+    },
   ]).contracts;
+
   const [selectedChallengeId, setSelectedChallengeId] = useState(0);
   const [showCreateSubmissionModal, setShowCreateSubmissionModal] = useState({
     show: false,
@@ -740,7 +745,7 @@ const Project = (props: RouteComponentProps) => {
                         </div>
                       </div>
                     </Tab>
-                    <Tab title="2. Challanges (0)" className="tabs-contant">
+                    <Tab title={`2. Challanges (${selectedProj[0].payload.challenges.length})`} className="tabs-contant">
                     {selectedProj[0] ? selectedProj[0].payload.challenges.map(key => 
                       (
                         <div className="challanges-listing">

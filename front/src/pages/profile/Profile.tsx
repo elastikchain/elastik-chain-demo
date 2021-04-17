@@ -1,5 +1,6 @@
-import React, { useEffect, useState } from "react";
+import React, { useState } from "react";
 import { RouteComponentProps } from "react-router-dom";
+
 import firebase from "firebase/app";
 import { useLedger, useStreamQueries } from "@daml/react";
 import * as damlTypes from "@daml/types";
@@ -28,6 +29,7 @@ import {
 import { setSelectedProject } from "../../context/SharedContext";
 import SubHeader from "../../components/Header/subheader";
 import Footer from "../../components/Footer/footer";
+import PrizesComponent from "../../components/PrizesComponent/PrizesComponent";
 import CriteriaTagsInput from "../../components/CriteriaTagsInput/CriteriaTagsInput";
 import AddMore from "../../components/AddMore/AddMore";
 import {
@@ -51,6 +53,7 @@ import {
   IonSpinner,
   IonIcon,
 } from "@ionic/react";
+
 import {
   open,
   close,
@@ -101,8 +104,8 @@ const Profile = (props: RouteComponentProps) => {
     prizes: Array<PrizeData>(),
     projectvideoLink: "",
     loading: false,
-    eligibility:[],
-    requirements:[],
+    eligibility: [],
+    requirements: [],
   };
 
   const [projectDetail, setProjectDetail] = useState(defaultProjectDetail);
@@ -119,6 +122,11 @@ const Profile = (props: RouteComponentProps) => {
 
   const [participantId, setParicipantId] = useState("");
   const [showParticipantModal, setShowParticipantModal] = useState(false);
+  const [prizes, setPrizes] = useState(null);
+
+  const onPrizeChange = (val: any) => {
+    setPrizes(val);
+  };
 
   const resetCreateProject = () => {
     setProjectDetail(defaultProjectDetail);
@@ -133,7 +141,6 @@ const Profile = (props: RouteComponentProps) => {
   const projectAssets = useStreamQueries(ClientRole).contracts;
   const participantAssets = useStreamQueries(ParticipantRole).contracts;
   const judgeAssets = useStreamQueries(JudgeRole).contracts;
-  
 
   console.log("participantAssets", participantAssets);
   const getUserType = (): "" | "client" | "participant" | "judge" => {
@@ -161,7 +168,7 @@ const Profile = (props: RouteComponentProps) => {
     }
 
     if (
-      judgeAssets.filter(c => (user as any).party === c.payload.judge)
+      judgeAssets.filter((c) => (user as any).party === c.payload.judge)
         .length > 0
     ) {
       return "judge";
@@ -348,11 +355,21 @@ const Profile = (props: RouteComponentProps) => {
 
   const userProfileData = () => {
     console.log("judgeAssets", judgeAssets);
-    const d = {firstName: "", lastName: "", email: "", job: "", about: "", company: "", pictureUrl: ""}
+    const d = {
+      firstName: "",
+      lastName: "",
+      email: "",
+      job: "",
+      about: "",
+      company: "",
+      pictureUrl: "",
+    };
     switch (getUserType()) {
       case "judge":
-        const ja = judgeAssets.filter(j => j.payload.judge === (user as any).party);
-        if(ja.length > 0){
+        const ja = judgeAssets.filter(
+          (j) => j.payload.judge === (user as any).party
+        );
+        if (ja.length > 0) {
           d.firstName = ja[0].payload.judgeProfile.firstName;
           d.lastName = ja[0].payload.judgeProfile.lastName;
           d.email = ja[0].payload.judgeProfile.email;
@@ -363,8 +380,10 @@ const Profile = (props: RouteComponentProps) => {
         }
         break;
       case "participant":
-        const pa = participantAssets.filter(p => p.payload.participant === (user as any).party);
-        if(pa.length > 0){
+        const pa = participantAssets.filter(
+          (p) => p.payload.participant === (user as any).party
+        );
+        if (pa.length > 0) {
           d.firstName = pa[0].payload.participantProfile.firstName;
           d.lastName = pa[0].payload.participantProfile.lastName;
           d.email = pa[0].payload.participantProfile.email;
@@ -375,8 +394,10 @@ const Profile = (props: RouteComponentProps) => {
         }
         break;
       case "client":
-        const ca = projectAssets.filter(c => c.payload.client === (user as any).party);
-        if(ca.length > 0){
+        const ca = projectAssets.filter(
+          (c) => c.payload.client === (user as any).party
+        );
+        if (ca.length > 0) {
           d.firstName = ca[0].payload.clientProfile.firstName;
           d.lastName = ca[0].payload.clientProfile.lastName;
           d.email = ca[0].payload.clientProfile.email;
@@ -388,199 +409,148 @@ const Profile = (props: RouteComponentProps) => {
         break;
     }
     return d;
-  }
+  };
 
   const HackathonComponenent = (hackathonProps: any) => {
     const p = hackathonProps.project;
     return (
       <div className="listing-projects-name">
-                            <div className="created-projects-listing">
-                              <div
-                                className="left--project-image"
-                                onClick={(e) => {
-                                  e.preventDefault();
-                                  setSelectedProject(p);
-                                  props.history.push(
-                                    "/main/project/" + p.payload.projectId
-                                  );
-                                }}
-                              >
-                                {console.log("payload", p.payload)}
-                                { p.payload.pictureUrl != "" ?
-                                         <img src={p.payload.pictureUrl} alt="peoject image" />
-                                :
-                                <img src={mediumImage} alt="peoject image" />
-                              }
-                              </div>
-                              <div
-                                className="center-project-contant"
-                                onClick={(e) => {
-                                  e.preventDefault();
-                                  setSelectedProject(p);
-                                  props.history.push(
-                                    "/main/project/" + p.payload.projectId
-                                  );
-                                }}
-                              >
-                                <h2 className="title-project">
-                                  {p.payload.name}
-                                </h2>
-                                <div className="online-and-days">
-                                  <div className="left-days">
-                                    { (new Date(p.payload.endDate).getTime() >  new Date().getTime()) ?  Math.ceil(
-                                      Math.abs(
-                                        new Date(p.payload.endDate).getTime() -
-                                          new Date().getTime()
-                                      ) /
-                                        (1000 * 60 * 60 * 24)
-                                    )
-                                  :
-                                        0
-                                  }
-                                    {" "} Days left
-                                  </div>
-                                  <div className="online-point">
-                                    {" "}
-                                    <IonIcon icon={globe}></IonIcon> {p.payload.location}
-                                  </div>
-                                </div>
-                                <div className="price-chanllanges-parti">
-                                  <div className="project-price-lsiitng">
-                                    <h3 className="price-heading">Prizes</h3>
-                                    {
-                                      p.payload.prizes.map((prize: any) => (
-                                        <p className="price-listing">
-                                          <IonIcon icon={trophy}></IonIcon>{" "}
-                                          <b>{prize.currency} {prize.value} </b> {prize.description}
-                                        </p>
-                                      ))
-                                    }
-                                  </div>
-                                  <div className="Challanges-list">
-                                    {" "}
-                                    <IonIcon icon={flag}></IonIcon>{" "}
-                                    <span>{p.payload.challenges.length}</span>{" "}
-                                    Challange
-                                    {p.payload.challenges.length > 1 && "s"}
-                                  </div>
-                                  <div className="participants">
-                                    <p className="participants-numbers">
-                                      {" "}
-                                      <IonIcon icon={man}></IonIcon>{" "}
-                                      <span>
-                                        {p.payload.participants.length}
-                                      </span>{" "}
-                                      participants
-                                    </p>
-                                  </div>
-                                </div>
-                              </div>
-                              <div className="left-project-details">
-                                <div className="right-sidebar">
-                                  <IonIcon icon={calendar}></IonIcon> Start Date{" "}
-                                  <span>
-                                    {new Date(
-                                      p.payload.startDate
-                                    ).toDateString()}
-                                  </span>
-                                </div>
-                                <div className="right-sidebar">
-                                  <IonIcon icon={calendar}></IonIcon> End Date{" "}
-                                  <span>
-                                    {new Date(p.payload.endDate).toDateString()}
-                                  </span>
-                                </div>
-                                <div className="right-sidebar">
-                                  <IonIcon icon={pricetags}></IonIcon> Criteria :
-                                  <div>
-                                    <span className="Criteria-lisitng">
-                                      {p.payload.criteria &&
-                                        p.payload.criteria.map((k: any) => (
-                                          <li>{k.name}</li>
-                                        ))}
-                                    </span>
-                                  </div>
-                                </div>
+        <div className="created-projects-listing">
+          <div
+            className="left--project-image"
+            onClick={(e) => {
+              e.preventDefault();
+              setSelectedProject(p);
+              props.history.push("/main/project/" + p.payload.projectId);
+            }}
+          >
+            {console.log("payload", p.payload)}
+            {p.payload.pictureUrl != "" ? (
+              <img src={p.payload.pictureUrl} alt="peoject image" />
+            ) : (
+              <img src={mediumImage} alt="peoject image" />
+            )}
+          </div>
+          <div
+            className="center-project-contant"
+            onClick={(e) => {
+              e.preventDefault();
+              setSelectedProject(p);
+              props.history.push("/main/project/" + p.payload.projectId);
+            }}
+          >
+            <h2 className="title-project">{p.payload.name}</h2>
+            <div className="online-and-days">
+              <div className="left-days">
+                {new Date(p.payload.endDate).getTime() > new Date().getTime()
+                  ? Math.ceil(
+                      Math.abs(
+                        new Date(p.payload.endDate).getTime() -
+                          new Date().getTime()
+                      ) /
+                        (1000 * 60 * 60 * 24)
+                    )
+                  : 0}{" "}
+                Days left
+              </div>
+              <div className="online-point">
+                {" "}
+                <IonIcon icon={globe}></IonIcon> {p.payload.location}
+              </div>
+            </div>
+            <div className="price-chanllanges-parti">
+              <div className="project-price-lsiitng">
+                <h3 className="price-heading">Prizes</h3>
+                {p.payload.prizes.map((prize: any) => (
+                  <p className="price-listing">
+                    <IonIcon icon={trophy}></IonIcon>{" "}
+                    <b>
+                      {prize.currency} {prize.value}{" "}
+                    </b>{" "}
+                    {prize.description}
+                  </p>
+                ))}
+              </div>
+              <div className="Challanges-list">
+                {" "}
+                <IonIcon icon={flag}></IonIcon>{" "}
+                <span>{p.payload.challenges.length}</span> Challange
+                {p.payload.challenges.length > 1 && "s"}
+              </div>
+              <div className="participants">
+                <p className="participants-numbers">
+                  {" "}
+                  <IonIcon icon={man}></IonIcon>{" "}
+                  <span>{p.payload.participants.length}</span> participants
+                </p>
+              </div>
+            </div>
+          </div>
+          <div className="left-project-details">
+            <div className="right-sidebar">
+              <IonIcon icon={calendar}></IonIcon> Start Date{" "}
+              <span>{new Date(p.payload.startDate).toDateString()}</span>
+            </div>
+            <div className="right-sidebar">
+              <IonIcon icon={calendar}></IonIcon> End Date{" "}
+              <span>{new Date(p.payload.endDate).toDateString()}</span>
+            </div>
+            <div className="right-sidebar">
+              <IonIcon icon={pricetags}></IonIcon> Criteria :
+              <div>
+                <span className="Criteria-lisitng">
+                  {p.payload.criteria &&
+                    p.payload.criteria.map((k: any) => <li>{k.name}</li>)}
+                </span>
+              </div>
+            </div>
 
-                                {
-                                      getUserType() === 'client' && (
-                                        <div className="edit-delete-list">
-                                        <IonItem className="project-controls-listing">
-                                      
-                                          <IonIcon
-                                            icon={hammer}
-                                            onClick={(e) => {
-                                              e.stopPropagation();
-                                              console.log("the selected::", p);
+            {getUserType() === "client" && (
+              <div className="edit-delete-list">
+                <IonItem className="project-controls-listing">
+                  <IonIcon
+                    icon={hammer}
+                    onClick={(e) => {
+                      e.stopPropagation();
+                      console.log("the selected::", p);
 
-                                              setSelectedProject(p);
-                                              props.history.push(
-                                                "/main/scores/" +
-                                                  p.payload.projectId
-                                              );
-                                            }}
-                                          ></IonIcon>
-                                      
-                                      <IonIcon
-                                        icon={pencil}
-                                        onClick={(e) => {
-                                          e.stopPropagation();
-                                          console.log("the selected::", p);
+                      setSelectedProject(p);
+                      props.history.push("/main/scores/" + p.payload.projectId);
+                    }}
+                  ></IonIcon>
 
-                                          setSelectedProject(p);
-                                          props.history.push(
-                                            "/main/projects/" +
-                                              p.payload.projectId +
-                                              "/edit"
-                                          );
-                                        }}
-                                      ></IonIcon>
-                                      <IonIcon
-                                        icon={trash}
-                                        onClick={(e) => {
-                                          e.stopPropagation();
-                                          setShowTrashProjectModal({
-                                            status: true,
-                                            projectID: p.payload.projectId,
-                                            contractID: p.contractId,
-                                          });
-                                        }}
-                                        className="trash-project-button"
-                                      ></IonIcon>
-                                    </IonItem>
-                                  </div>
-                                      )
-                                }
+                  <IonIcon
+                    icon={pencil}
+                    onClick={(e) => {
+                      e.stopPropagation();
+                      console.log("the selected::", p);
 
-                                {
-                                      getUserType() != 'client' && (
-                                        <div className="edit-delete-list">
-                                        <IonItem className="project-controls-listing">
-                                      
-                                          <IonIcon
-                                            icon={hammer}
-                                            onClick={(e) => {
-                                              e.stopPropagation();
-                                              console.log("the selected::", p);
-
-                                              setSelectedProject(p);
-                                              props.history.push(
-                                                "/main/scores/" +
-                                                  p.payload.projectId
-                                              );
-                                            }}
-                                          ></IonIcon>
-                                      
-                                      
-                                    </IonItem>
-                                  </div>
-                                      )
-                                }
-                              </div>
-                            </div>
-                          </div>
-    )
-  }
+                      setSelectedProject(p);
+                      props.history.push(
+                        "/main/projects/" + p.payload.projectId + "/edit"
+                      );
+                    }}
+                  ></IonIcon>
+                  <IonIcon
+                    icon={trash}
+                    onClick={(e) => {
+                      e.stopPropagation();
+                      setShowTrashProjectModal({
+                        status: true,
+                        projectID: p.payload.projectId,
+                        contractID: p.contractId,
+                      });
+                    }}
+                    className="trash-project-button"
+                  ></IonIcon>
+                </IonItem>
+              </div>
+            )}
+          </div>
+        </div>
+      </div>
+    );
+  };
 
   if (!user.isAuthenticated) {
     return null;
@@ -796,7 +766,12 @@ const Profile = (props: RouteComponentProps) => {
                             }
                           ></IonDatetime>
                         </IonItem>
-                        
+                      </div>
+                      <div>
+                        <IonItem>
+                          <IonLabel>Prizes</IonLabel>
+                        </IonItem>
+                        <PrizesComponent onPrizeChange={onPrizeChange} />
                       </div>
                       <IonItem>
                         <IonLabel position="floating">
@@ -813,66 +788,6 @@ const Profile = (props: RouteComponentProps) => {
                           }
                         ></IonTextarea>
                       </IonItem>
-                      
-                      {/*<IonItem>
-                        <IonLabel position="floating">
-                          Video URL
-                        </IonLabel>
-                        <IonInput
-                          value={projectDetail.projectvideoLink}
-                          onIonChange={(e) =>
-                            setProjectDetail({
-                              ...projectDetail,
-                              projectvideoLink: e.detail.value!,
-                            })
-                          }
-                        ></IonInput>
-                      </IonItem>
-                      <div className="criteria-tags-container">
-                        <IonLabel>Rules</IonLabel>
-                        <AddMore
-                          onChange={(tags) => {
-                            const arrCriteriaPoint = tags.map(
-                              (t) =>
-                                ( t.name )
-                            );
-                            setProjectDetail({
-                              ...projectDetail,
-                              rules: arrCriteriaPoint,
-                            });
-                          }}
-                        ></AddMore>
-                      </div> 
-                        <div className="criteria-tags-container">
-                        <IonLabel>Eligibility</IonLabel>
-                        <AddMore
-                          onChange={(tags) => {
-                            const arrCriteriaPoint = tags.map(
-                              (t) =>
-                                ( t.name )
-                            );
-                            setProjectDetail({
-                              ...projectDetail,
-                              eligibility: arrCriteriaPoint,
-                            });
-                          }}
-                        ></AddMore>
-                      </div>
-                      <div className="criteria-tags-container">
-                        <IonLabel>Requirements</IonLabel>
-                        <AddMore
-                          onChange={(tags) => {
-                            const arrCriteriaPoint = tags.map(
-                              (t) =>
-                                ( t.name )
-                            );
-                            setProjectDetail({
-                              ...projectDetail,
-                              requirements: arrCriteriaPoint,
-                            });
-                          }}
-                        ></AddMore>
-                        </div> */}
                       <IonItem>
                         <IonLabel position="stacked">Project Image</IonLabel>
                         <input
@@ -1054,7 +969,10 @@ const Profile = (props: RouteComponentProps) => {
                     </div>
                     <div className="profile-info">
                       <div className="profile-header">
-                        <h1>{user.party} ({userProfileData().firstName} {userProfileData().lastName})</h1>
+                        <h1>
+                          {user.party} ({userProfileData().firstName}{" "}
+                          {userProfileData().lastName})
+                        </h1>
                         <IonButton size="large" className="edit-button">
                           {" "}
                           Edit{" "}
@@ -1063,11 +981,14 @@ const Profile = (props: RouteComponentProps) => {
 
                       <div className="profile-about">
                         <h2>About</h2>
+                        <p>{userProfileData().about}</p>
                         <p>
-                        {userProfileData().about}
+                          Email:{" "}
+                          <a href={"mailto:" + userProfileData().email}>
+                            {userProfileData().email}
+                          </a>
                         </p>
-                        <p>Email: <a href={"mailto:"+userProfileData().email}>{userProfileData().email}</a></p>
-                        
+
                         <p>
                           Company: <a href="#">{userProfileData().company}</a>
                         </p>
@@ -1101,7 +1022,9 @@ const Profile = (props: RouteComponentProps) => {
                             (c) => (user as any).party === c.payload.client
                           )
                           .map((p) => (
-                            <HackathonComponenent project={p}></HackathonComponenent>
+                            <HackathonComponenent
+                              project={p}
+                            ></HackathonComponenent>
                           ))}
                       </IonList>
                     ) : null
@@ -1109,7 +1032,9 @@ const Profile = (props: RouteComponentProps) => {
                     <IonList>
                       <IonListHeader>Hackathons:</IonListHeader>
                       {clientProjectAssets.map((p) => (
-                        <HackathonComponenent project={p}></HackathonComponenent>
+                        <HackathonComponenent
+                          project={p}
+                        ></HackathonComponenent>
                       ))}
                     </IonList>
                   )}
