@@ -26,7 +26,7 @@ import {
   useUserDispatch,
   useUserState,
 } from "../../context/UserContext";
-import SubHeader from '../../components/Header/subheader';
+import SubHeader from "../../components/Header/subheader";
 import Footer from "../../components/Footer/footer";
 import { getSelectedProject } from "../../context/SharedContext";
 
@@ -196,7 +196,7 @@ const EditProject = (props: RouteComponentProps) => {
 
   return (
     <IonPage>
-      <SubHeader  {...props}/>
+      <SubHeader {...props} />
       <IonContent>
         <div className="proj-wrapper">
           <IonButton fill="clear" onClick={(e) => props.history.goBack()}>
@@ -284,7 +284,14 @@ const EditProject = (props: RouteComponentProps) => {
                 value={getSelectedProject().payload.pictureUrl}
               ></IonInput>
             </IonItem>
-            <IonButton className="submit-button" type="button">
+            <IonButton
+              className="submit-button"
+              type="button"
+              onClick={(e) => {
+                e.stopPropagation();
+                // ledger.
+              }}
+            >
               Update Project
             </IonButton>
           </div>
