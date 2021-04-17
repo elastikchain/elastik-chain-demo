@@ -40,6 +40,7 @@ import userImg from "../../assets/img/user.png";
 import logo from "../../assets/img/logo-combination.png";
 import {
   add,
+  man,
   close,
   arrowBack,
   time,
@@ -64,7 +65,8 @@ import {
   ParticipantSubmissionProposal,
   AcceptSubmission,
   RequestToJoinProject,
-  ParticipantRequestToJoin
+  ParticipantRequestToJoin,
+  AddJudge
 } from "@daml.js/cosmart-0.0.1/lib/Main";
 
 import submissionPlaceHolder from "../../assets/img/img-proj-placeholder.png";
@@ -99,7 +101,7 @@ const Project = (props: RouteComponentProps) => {
   };
 
   const [showChallengeModal, setShowChallengeModal] = useState(false);
-
+  const [showJudgeModal, setShowJudgeModal] = useState(false);
   const [
     showDltChallenderConfirmation,
     deleteChallenderConfirmation,
@@ -111,10 +113,17 @@ const Project = (props: RouteComponentProps) => {
     description: "",
     prize: "",
   };
+  const defaultJudgeDetail: AddJudge = {
+    judge : ""
+  };
   const participantSubmissionProposalAssets = useStreamQueries(
     ParticipantSubmissionProposal,
     () => [{ projectId: getSelectedProject().payload.projectId }]
   ).contracts;
+  
+  const [cJudgeDetail, setJudgeDetail] = useState(
+    defaultJudgeDetail
+  );
   const [challengeDetail, setChallengeDetail] = useState(
     defaultChallengeDetail
   );
@@ -132,8 +141,25 @@ const Project = (props: RouteComponentProps) => {
         {submissionId: (new Date().getTime()).toString()}
       ).then(data=> console.log("accepted"))
   };
-
-
+  
+  const handleJudgeSubmit = async (evt: any) => {
+     evt.preventDefault();
+     ledger
+      .exercise(
+        ClientProject.AddJudge,
+        selectedProj[0]!.contractId,
+        cJudgeDetail
+      )
+      .then(() => {
+        setShowJudgeModal(false);
+        alert("Judge Added Successfully!");
+        
+      })
+      .catch((err: any) => {
+        setShowJudgeModal(false);
+        alert("Error: " + JSON.stringify(err));
+      });
+  }
   const handleChallengeSubmit = async (evt: any) => {
     evt.preventDefault();
     ledger
@@ -898,6 +924,12 @@ const Project = (props: RouteComponentProps) => {
                       <IonIcon icon={add}></IonIcon>
                       <IonLabel>Create new Challenge</IonLabel>
                     </IonButton>
+
+                    <IonButton className = "add-judges" onClick={(e) => setShowJudgeModal(true)}>
+                      <IonIcon icon={man}></IonIcon>
+                      <IonLabel>Add new Judge</IonLabel>
+                    </IonButton>
+
                   </div>
                 )}
                 <div className="edtion_child">
@@ -1056,7 +1088,49 @@ const Project = (props: RouteComponentProps) => {
               <IonIcon icon={close}></IonIcon>
             </IonButton>
           </IonModal>
-          {/*-- Challenge Model */}
+          {/*-- Add Judge Model */}
+          <IonModal
+            isOpen={showJudgeModal}
+            onDidDismiss={() => setShowJudgeModal(false)}
+            cssClass="my-custom-class"
+          >
+            <div className="content challenge-modal-content">
+              <h1>Add New Judge</h1>
+              <form onSubmit={handleJudgeSubmit}>
+                <div className="flex-equal-childs-width">
+                  <IonItem>
+                    <IonLabel position="floating">Judge Name </IonLabel>
+                    <IonInput
+                      required={true}
+                      value={cJudgeDetail.judge}
+                      onIonChange={(e) => {
+                        setJudgeDetail({
+                          ...cJudgeDetail,
+                          judge: e.detail.value!,
+                        });
+                      }}
+                    ></IonInput>
+                  </IonItem>
+                </div>
+               
+                <IonButton className="submit-button" type="submit">
+                  Add Judge
+                </IonButton>
+              </form>
+              <IonButton
+                className="modal-default-close-btn"
+                fill="clear"
+                color="danger"
+                onClick={() => {
+                  setShowJudgeModal(false);
+                }}
+              >
+                <IonIcon icon={close}></IonIcon>
+              </IonButton>
+            </div>
+          </IonModal>
+          {/* Challenge Modal */}
+
           <IonModal
             isOpen={showChallengeModal}
             onDidDismiss={() => setShowChallengeModal(false)}
