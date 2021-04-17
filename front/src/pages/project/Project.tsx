@@ -69,7 +69,8 @@ import {
   AddJudge,
   JudgeRole,
   SubmitScorecard,
-  CriteriaPoint
+  CriteriaPoint,
+  Scorecard
 } from "@daml.js/cosmart-0.0.1/lib/Main";
 
 import submissionPlaceHolder from "../../assets/img/img-proj-placeholder.png";
@@ -151,8 +152,25 @@ const Project = (props: RouteComponentProps) => {
     setChallengeIdTouched(false);
   };
   const handleSubmitJudgeScore = async (evt:any)=>{
-    evt.defaultPrevent();
-    console.log(evt.element.target);
+    evt.preventDefault();
+    defaultSubmitScoreDetail.scores = Array<CriteriaPoint>();
+    defaultSubmitScoreDetail.scores.push({name:evt.target.elements.name.value,point:evt.target.elements.point.value});
+    ledger
+      .exercise(
+        ParticipantSubmission.SubmitScorecard,
+        evt.target.elements.contactid.value,
+        defaultSubmitScoreDetail,
+        
+      )
+      .then(() => {
+        setShowJudgeModal(false);
+        alert("Successfully Submitted Your Score");
+        
+      })
+      .catch((err: any) => {
+        setShowJudgeModal(false);
+        alert("Error: " + JSON.stringify(err));
+      });
 
   };
 
@@ -814,7 +832,7 @@ const Project = (props: RouteComponentProps) => {
                           </div>
                         ))}
 
-                        
+                        {console.log("approvedSubmissions",approvedSubmissions)}
                         { (approvedSubmissions.length > 0) ? approvedSubmissions.map((sc) => (
                           <IonCard
                             className="submission-card"
@@ -837,7 +855,7 @@ const Project = (props: RouteComponentProps) => {
                                   <div className="submit-your-score">
                                     <form method="post" onSubmit={handleSubmitJudgeScore}>
                                     <input
-                                      type="number"
+                                      type="text"
                                       name="name"
                                       placeholder="name"
                                     />
