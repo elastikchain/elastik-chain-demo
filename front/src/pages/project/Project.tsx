@@ -154,7 +154,9 @@ const Project = (props: RouteComponentProps) => {
   const handleSubmitJudgeScore = async (evt:any)=>{
     evt.preventDefault();
     defaultSubmitScoreDetail.scores = Array<CriteriaPoint>();
-    defaultSubmitScoreDetail.scores.push({name:evt.target.elements.name.value,point:evt.target.elements.point.value});
+    for(let i=0;i<evt.target.elements.name.length;i++){
+      defaultSubmitScoreDetail.scores.push({name:evt.target.elements.name[i].value,point:evt.target.elements.point[i].value});
+    }
     ledger
       .exercise(
         ParticipantSubmission.SubmitScorecard,
@@ -745,7 +747,7 @@ const Project = (props: RouteComponentProps) => {
                         </div>
                       </div>
                     </Tab>
-                    <Tab title={`2. Challanges (${selectedProj[0].payload.challenges.length})`} className="tabs-contant">
+                    <Tab title={`2. Challanges (${selectedProj[0] && selectedProj[0].payload.challenges.length})`} className="tabs-contant">
                     {selectedProj[0] ? selectedProj[0].payload.challenges.map(key => 
                       (
                         <div className="challanges-listing">
@@ -773,7 +775,7 @@ const Project = (props: RouteComponentProps) => {
                      </IonItem>}
                       
                     </Tab>
-                    <Tab title="3. Submissions (0)" className="tabs-contant">
+                    <Tab title={`3. Challanges (${approvedSubmissions && approvedSubmissions.length})`} className="tabs-contant">
                       <div className="submission-item-list">
                          {(getUserType() != "judge" ) &&  participantSubmissionProposalAssets.map((sbmt) => (
                           <div className="submission-listing request-to-join">
@@ -866,17 +868,34 @@ const Project = (props: RouteComponentProps) => {
                               <div className="sponsors-challenge">
                                 {getUserType() === "judge" && (
                                   <div className="submit-your-score">
-                                    <form method="post" onSubmit={handleSubmitJudgeScore}>
                                     <input
-                                      type="text"
-                                      name="name"
-                                      placeholder="name"
+                                      type="hidden"
+                                      name="point"
+                                      placeholder="Score"
+                                      value=""
                                     />
+                                    <input
+                                      type="hidden"
+                                      name="name"
+                                      value=""
+                                    />
+                                    <form method="post" onSubmit={handleSubmitJudgeScore}>
+                                    { (sc.payload.criteria.length > 0) && sc.payload.criteria.map((crt) => (
+                                     <div className="judging">
+                                     <label>{crt.name}</label>
                                      <input
                                       type="number"
                                       name="point"
-                                      placeholder="Score "
+                                      placeholder="Score"
+                                     
                                     />
+                                    <input
+                                      type="hidden"
+                                      name="name"
+                                      value={crt.name}
+                                    />
+                                    </div>
+                                    ))}
                                     <input
                                       type="hidden"
                                       name="contactid"
