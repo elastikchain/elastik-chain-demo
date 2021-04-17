@@ -770,7 +770,7 @@ const Project = (props: RouteComponentProps) => {
                     </Tab>
                     <Tab title="3. Submissions (0)" className="tabs-contant">
                       <div className="submission-item-list">
-                         {getUserType() === "client" &&  participantSubmissionProposalAssets.map((sbmt) => (
+                         {(getUserType() != "judge" ) &&  participantSubmissionProposalAssets.map((sbmt) => (
                           <div className="submission-listing request-to-join">
                             <div className="left-image-submission">
                               <img src={topbannerImg} alt="project image" />
@@ -808,7 +808,7 @@ const Project = (props: RouteComponentProps) => {
                                   View details
                                 </a>{" "}
                                 &nbsp;
-                                {getUserType() === "client" && (
+                                {getUserType() === "client" ? (
                                   
                                   <a
                                   href="javascript:void 0"
@@ -818,7 +818,15 @@ const Project = (props: RouteComponentProps) => {
                                  Accept Request
                                 </a>
                                   
-                                )}
+                                ):
+                                <a
+                                href="javascript:void 0"
+                                className="btn view-details-btn"
+                                
+                              >
+                               Pending For Approval
+                              </a>
+                                }
                                 {/* <div className="sponsors-main">
                                         <h4>Sponsors : </h4>
                                         <img src={topbannerImg} alt="project image" />
