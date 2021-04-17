@@ -17,6 +17,7 @@ import {
 import React, { useState } from "react";
 import { Link, RouteComponentProps } from "react-router-dom";
 import logo from "../../assets/img/logo-combination.png";
+import userImg from "../../assets/img/user.png";
 import {
   getSelectedSubmission,
   setSelectedSubmission,
@@ -122,7 +123,7 @@ const Submission = (props: RouteComponentProps) => {
                   <a href="#">Fintech</a>
                 </li>
                 <li>
-                  <a href="#">THIS IS MY SECOND SUBMISSION</a>
+                  <a href="#">{selectedSubmission.payload.name}</a>
                 </li>
               </ul>
             </div>
@@ -168,10 +169,11 @@ const Submission = (props: RouteComponentProps) => {
 
                 <div className="lisitng-submission-details">
                   <p>
-                    Submission : <span>This is first</span>
+                    Presentation : <span>{selectedSubmission.payload.presentation}</span>
                   </p>
                   <p>
-                    Challenge Name : <span>Test</span>
+                  
+                  operator: <span>{selectedSubmission.payload.operator}</span>
                   </p>
                   <p>
                     Presentation : <span>No</span>
@@ -215,12 +217,14 @@ const Submission = (props: RouteComponentProps) => {
                   </p>
 
                   <div className="video-list">
+                  {selectedSubmission.payload.videoLink != "" && 
                     <iframe
                       width="560"
                       height="315"
-                      src="https://www.youtube.com/embed/63qyVXWE9Kw"
+                      src={selectedSubmission.payload.videoLink}
                       title="YouTube video player"
                     ></iframe>
+                      }
                   </div>
                 </div>
                 <div className="teammate">
@@ -302,6 +306,25 @@ const Submission = (props: RouteComponentProps) => {
                     <p>STEP 3: Lorem ipsum dolor sit amet, consectetur </p>
                   </div>
                 </div>
+                <div className="judges">
+                          <h2>JUDGES ({selectedSubmission && selectedSubmission.payload.judges ? selectedSubmission.payload.judges.length : "0"})</h2>
+                          <ul>
+                            {
+                              selectedSubmission && selectedSubmission.payload.judges.map((j:any)=> (
+                                <li>
+                                  <img src={userImg} />
+                                  <span>
+                                    <b>{j}</b>
+                                    <i>
+                                      Recruiting Senior Analyst / Accenture
+                                      Technology
+                                    </i>
+                                  </span>
+                                </li>
+                              ))
+                            }
+                          </ul>
+                        </div>
               </div>
             </div>
           </div>

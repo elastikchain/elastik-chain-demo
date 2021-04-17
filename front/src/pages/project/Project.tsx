@@ -722,7 +722,7 @@ const Project = (props: RouteComponentProps) => {
                       )
                     ) : <IonItem lines="none">
                     <IonLabel>
-                      <p className="no-scores">No scores found</p>
+                      <p className="no-scores">No Challenges found</p>
                     </IonLabel>
                      </IonItem>}
                       
@@ -867,7 +867,7 @@ const Project = (props: RouteComponentProps) => {
                       :
                       <IonItem lines="none">
                       <IonLabel>
-                        <p className="no-scores">No scores found</p>
+                        <p className="no-scores">No Approved Submission found</p>
                       </IonLabel>
                        </IonItem>
                       }
