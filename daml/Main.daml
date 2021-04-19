@@ -529,7 +529,7 @@ template ParticipantSubmissionProposal
 
           exerciseByKey @ClientProject (client, projectId) AddSubmissionToList with submissionId
 
-          create ParticipantSubmission with name=subName,participant,desc=subDesc,submission,client,participants=[],submissionId,judges=co.judges,operator,criteria,videoLink,presentation,projectId
+          create ParticipantSubmission with name=subName,participant,desc=subDesc,submission,client,participants=[],submissionId,judges=co.judges,operator,criteria,videoLink,presentation,projectId,steps=[]
           
 
 
@@ -583,6 +583,7 @@ template ParticipantSubmission
     operator: Party
     criteria: [CriteriaPoint] -- should be invisble to the participant
     projectId: Text
+    steps:[Text]
   where
     signatory participant,client
     observer participants,judges,client,operator
@@ -606,7 +607,8 @@ template ParticipantSubmission
           newsubmission: Text
           newvideoLink: Text
           newpresentation: Text
-        do create this with  name=newName, desc=newDesc,submission=newsubmission,videoLink=newvideoLink,presentation=newpresentation
+          newSteps:[Text]
+        do create this with  name=newName, desc=newDesc,submission=newsubmission,videoLink=newvideoLink,presentation=newpresentation,steps=newSteps
        
     choice RemoveSubmission: ContractId ClosedParticipantSubmission
         with
