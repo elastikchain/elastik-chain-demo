@@ -85,8 +85,19 @@ const EditProject = (props: RouteComponentProps) => {
     eligibility: getSelectedProject().payload.eligibility,
     requirements: getSelectedProject().payload.requirements,
   };
-  
-  
+  const requirements:any = [];
+  getSelectedProject().payload.requirements.map((data:any)=>{
+    requirements.push({name:data,id:''});
+  })
+  const eligibility:any = [];
+  getSelectedProject().payload.eligibility.map((data:any)=>{
+    eligibility.push({name:data,id:''});
+  })
+  const rules:any = [];
+  getSelectedProject().payload.rules.map((data:any)=>{
+    rules.push({name:data,id:''});
+  })
+ 
   const [projectDetail, setProjectDetail] = useState(defaultProjectDetail);
   const onPrizeChange = (val: any) => {
     setProjectDetail({
@@ -101,16 +112,35 @@ const EditProject = (props: RouteComponentProps) => {
     loading: boolean;
   }
 
- 
-
-
-  
-
-
+ const handleEditProjectSubmit  = (evt:any)=>{
+       evt.preventDefault();
+      const UpdatedefaultProjectDetail = {
+          newDesc: projectDetail.desc,
+          newstartDate: projectDetail.startDate,
+          newendDate:projectDetail.endDate,
+          newlocation: projectDetail.location,
+          newCriteria: {name:'',point:'0.0'},
+          newrules: projectDetail.rules,
+          newtermsLink: projectDetail.termsLink,
+          newprivacyLink: projectDetail.privacyLink,
+          newprizes: projectDetail.prizes,
+          newProjectvideoLink:projectDetail.projectvideoLink,
+          neweligibility:projectDetail.eligibility,
+          newrequirements:projectDetail.requirements,
+        };
+      
+        ledger.exercise(ClientProject.AddUpdateClientProject,getSelectedProject().contractId,UpdatedefaultProjectDetail)
+        .then((data:any)=>{
+          alert("Successfully updated project");
+          props.history.push("/main/profile");
+        })
+        .catch((err:any)=>{
+          alert("Seems error!");
+        });
+ }
   const ledger = useLedger();
-
   const clientProjectAssets = useStreamQueries(ClientProject).contracts;
-  console.log("clientProjectAssets", clientProjectAssets);
+  console.log("getSelectedProject()", getSelectedProject());
 
   const projectAssets = useStreamQueries(ClientRole).contracts;
   const participantAssets = useStreamQueries(ParticipantRole).contracts;
@@ -318,32 +348,9 @@ const EditProject = (props: RouteComponentProps) => {
 
                   {/*--Edit Project-- */}
                   <div className="edi-project">
-            <IonItem>
-              <IonLabel position="floating">Project Name</IonLabel>
-              <IonInput
-                required={true}
-                value={projectDetail.name}
-                onIonChange={(e) => {
-                  setProjectDetail({
-                    ...projectDetail,
-                    name: e.detail.value!,
-                  });
-                }}
-              ></IonInput>
-            </IonItem>
-            <IonItem>
-              <IonLabel position="floating">Project ID</IonLabel>
-              <IonInput
-                required={true}
-                value={getSelectedProject().payload.projectId}
-                onIonChange={(e) => {
-                  setProjectDetail({
-                    ...projectDetail,
-                    projectId: e.detail.value!,
-                  });
-                }}
-              ></IonInput>
-            </IonItem>
+                    <h2>Edit Project : {projectDetail.name}</h2>
+           
+         
             <IonItem>
               <IonLabel position="floating">Description</IonLabel>
               <IonInput
@@ -437,6 +444,7 @@ const EditProject = (props: RouteComponentProps) => {
             <div className="addmore-tags-container">
                         <IonLabel>Rules</IonLabel>
                         <AddMore
+                          defaultTags={rules}
                           onChange={(tags) => {
                             const arrRules = tags.map(
                               (t) =>
@@ -452,6 +460,7 @@ const EditProject = (props: RouteComponentProps) => {
                       <div className="addmore-tags-container">
                         <IonLabel>Eligibility</IonLabel>
                         <AddMore
+                          defaultTags={eligibility}
                           onChange={(tags) => {
                             const arrEligibility = tags.map(
                               (t) =>
@@ -466,7 +475,9 @@ const EditProject = (props: RouteComponentProps) => {
                       </div>
                       <div className="addmore-tags-container">
                         <IonLabel>Requirements</IonLabel>
+                        {console.log(projectDetail.requirements)}
                         <AddMore
+                          defaultTags={requirements}
                           onChange={(tags) => {
                             const arrrequirements = tags.map(
                               (t) =>
@@ -482,7 +493,7 @@ const EditProject = (props: RouteComponentProps) => {
 
             <IonItem>
               <IonLabel>Prizes</IonLabel>
-              <PrizesComponent onPrizeChange={onPrizeChange} />
+              <PrizesComponent onPrizeChange={onPrizeChange}  defaultPrice={projectDetail.prizes}/>
             </IonItem>
 
             <IonItem>
@@ -503,7 +514,7 @@ const EditProject = (props: RouteComponentProps) => {
               type="button"
               onClick={(e) => {
                 e.stopPropagation();
-                console.log("submit", projectDetail);
+                handleEditProjectSubmit(e)
                 
               }}
             >

@@ -3,16 +3,22 @@ import React, { useState } from "react";
 import "./PrizesComponent.scss";
 
 const PrizesComponent = (props: any) => {
-  const [fields, setFields] = useState([
+   const [fields, setFields] = useState([
     { name: "", description: "", currency: "", value:"" },
   ]);
-
+  if('defaultPrice' in props){
+    props.defaultPrice.map((data:any,index:any)=>{
+      fields[index] = data;
+    });
+    
+  }
+  console.log("fields",fields);
   function handleChange(i: number, event: any) {
     const { name, value } = event.target;
     const list: any = [...fields];
     list[i][name] = value;
-
-    setFields(list);
+    console.log("list",list);
+    
     props.onPrizeChange(list);
   }
 

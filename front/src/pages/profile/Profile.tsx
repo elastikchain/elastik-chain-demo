@@ -235,6 +235,7 @@ const Profile = (props: RouteComponentProps) => {
         .then(() => {
           setShowCreateProjectModal(false);
           alert("Project Created Successfully!");
+          props.history.push("/main/profile");
           // reset project detail info
           setTimeout(() => {
             resetCreateProject();
