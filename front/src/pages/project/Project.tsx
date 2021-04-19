@@ -387,7 +387,11 @@ const Project = (props: RouteComponentProps) => {
   };
 
   const [selectedSegement, setSelectedSegement] = useState("submissions");
+  
+  
 
+ 
+  
   const getChallengesIds = () => {
     return (
       (selectedProj && selectedProj.length > 0
@@ -775,7 +779,7 @@ const Project = (props: RouteComponentProps) => {
                      </IonItem>}
                       
                     </Tab>
-                    <Tab title={`3. Challanges (${approvedSubmissions && approvedSubmissions.length})`} className="tabs-contant">
+                    <Tab title={`3. Submissions (${approvedSubmissions && approvedSubmissions.length})`} className="tabs-contant">
                       <div className="submission-item-list">
                          {(getUserType() != "judge" ) &&  participantSubmissionProposalAssets.map((sbmt) => (
                           <div className="submission-listing request-to-join">
@@ -862,7 +866,7 @@ const Project = (props: RouteComponentProps) => {
                               <p>
                                 {sc.payload.desc}
                               </p>
-                         
+                            
                               
                               
                               <div className="sponsors-challenge">
