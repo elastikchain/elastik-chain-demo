@@ -282,7 +282,10 @@ ion-button.create-project-button.extra-create-newproject-btn {
     min-width: 18px;
     height: 18px;
 }
-
+.wrapper .profile-info-container .profile-info {
+    display: block;
+    width: 90%;
+}
 .wrapper .profile-info-container .profile-info .profile-header h1 {
     margin-top: 0px;
     color: #143b6c;

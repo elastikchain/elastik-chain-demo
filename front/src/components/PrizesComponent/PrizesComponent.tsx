@@ -36,19 +36,21 @@ const PrizesComponent = (props: any) => {
   }
 
   return (
-    <div className="App">
-      <button type="button" onClick={() => handleAdd()}>
+    <div className="price-box">
+      <button className="add-btn" type="button" onClick={() => handleAdd()}>
         + Add Prize
       </button>
       {fields.map((field, idx) => {
         return (
-          <div key={`${field}-${idx}`}>
+          <div key={`${field}-${idx}`} className="repeator-box">
+            <div className="price-box-field">
             <input
               type="text"
               name="name"
               placeholder="Enter Name"
               value={field.name || ""}
               onChange={(e) => handleChange(idx, e)}
+              className="price-input"
             />
             <input
               type="text"
@@ -56,13 +58,17 @@ const PrizesComponent = (props: any) => {
               placeholder="Enter Value"
               value={field.value || ""}
               onChange={(e) => handleChange(idx, e)}
+              className="price-input"
             />
+            </div>
+             <div className="price-box-field">
             <input
               type="text"
               name="currency"
               placeholder="Enter Currency"
               value={field.currency || ""}
               onChange={(e) => handleChange(idx, e)}
+              className="price-input"
             />
             <input
               type="text"
@@ -70,10 +76,14 @@ const PrizesComponent = (props: any) => {
               placeholder="Enter Description"
               value={field.description || ""}
               onChange={(e) => handleChange(idx, e)}
+              className="price-input"
             />
-            <button type="button" onClick={() => handleRemove(idx)}>
+            </div>
+            { idx != 0 &&
+            <button className="remove-btn" type="button" onClick={() => handleRemove(idx)}>
               X Remove Prize
             </button>
+            }
           </div>
         );
       })}

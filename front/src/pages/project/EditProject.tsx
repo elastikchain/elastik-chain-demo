@@ -119,7 +119,7 @@ const EditProject = (props: RouteComponentProps) => {
           newstartDate: projectDetail.startDate,
           newendDate:projectDetail.endDate,
           newlocation: projectDetail.location,
-          newCriteria: {name:'',point:'0.0'},
+          newCriteria: projectDetail.criteria,
           newrules: projectDetail.rules,
           newtermsLink: projectDetail.termsLink,
           newprivacyLink: projectDetail.privacyLink,
@@ -281,7 +281,7 @@ const EditProject = (props: RouteComponentProps) => {
               </IonMenu>
               {/*-- the main content --*/}
               <IonPage className="full-width-container" id="main">
-              <IonButton fill="clear" onClick={(e) => props.history.goBack()}>
+              <IonButton className="go-back2" fill="clear" onClick={(e) => props.history.goBack()}>
             <IonIcon slot="start" icon={arrowBack}></IonIcon>
             Back
           </IonButton>
@@ -347,13 +347,13 @@ const EditProject = (props: RouteComponentProps) => {
                   </div>
 
                   {/*--Edit Project-- */}
-                  <div className="edi-project">
+                  <div className="edit-project">
                     <h2>Edit Project : {projectDetail.name}</h2>
            
          
             <IonItem>
               <IonLabel position="floating">Description</IonLabel>
-              <IonInput
+              <IonTextarea
                 required={true}
                 value={projectDetail.desc}
                 onIonChange={(e) => {
@@ -362,7 +362,7 @@ const EditProject = (props: RouteComponentProps) => {
                     desc: e.detail.value!,
                   });
                 }}
-              ></IonInput>
+              ></IonTextarea>
             </IonItem>
             <IonItem>
               <IonLabel position="floating">Start Date</IonLabel>
@@ -491,24 +491,14 @@ const EditProject = (props: RouteComponentProps) => {
                         ></AddMore>
                       </div>       
 
-            <IonItem>
-              <IonLabel>Prizes</IonLabel>
+            <div className="price-label-box">
+              <IonLabel className="price-label">Prizes</IonLabel>
+             
               <PrizesComponent onPrizeChange={onPrizeChange}  defaultPrice={projectDetail.prizes}/>
-            </IonItem>
+             
+            </div>
 
-            <IonItem>
-              <IonLabel position="floating">Picture URL</IonLabel>
-              <IonInput
-                required={true}
-                value={projectDetail.pictureUrl}
-                onIonChange={(e) => {
-                  setProjectDetail({
-                    ...projectDetail,
-                    pictureUrl: e.detail.value!,
-                  });
-                }}
-              ></IonInput>
-            </IonItem>
+           
             <IonButton
               className="submit-button"
               type="button"
