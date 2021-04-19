@@ -34,7 +34,6 @@ const PrizesComponent = (props: any) => {
       <button type="button" onClick={() => handleAdd()}>
         + Add Prize
       </button>
-      {console.log("fie", fields)}
       {fields.map((field, idx) => {
         return (
           <div key={`${field}-${idx}`}>

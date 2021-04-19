@@ -4,194 +4,66 @@ import { useLedger, useQuery, useStreamQueries } from "@daml/react";
 
 import {
   IonButton,
-  IonButtons,
-  IonCard,
-  IonCardContent,
   IonContent,
   IonDatetime,
-  IonHeader,
   IonIcon,
   IonInput,
   IonItem,
   IonLabel,
   IonList,
-  IonNote,
   IonPage,
-  IonSearchbar,
-  IonToolbar,
 } from "@ionic/react";
 
-import {
-  signOut,
-  useUserDispatch,
-  useUserState,
-} from "../../context/UserContext";
+import { useUserDispatch, useUserState } from "../../context/UserContext";
+
 import SubHeader from "../../components/Header/subheader";
 import Footer from "../../components/Footer/footer";
+import PrizesComponent from "../../components/PrizesComponent/PrizesComponent";
+
 import { getSelectedProject } from "../../context/SharedContext";
 
 import { arrowBack } from "ionicons/icons";
 import "./Project.scss";
+
 import {
   AddChallenge,
   ClientProject,
   ClientRole,
   ParticipantSubmission,
   ProposeSubmission,
+  AddUpdateClientProject,
 } from "@daml.js/cosmart-0.0.1/lib/Main";
 
 const EditProject = (props: RouteComponentProps) => {
-  const user = useUserState();
-  var userDispatch = useUserDispatch();
   const ledger = useLedger();
+
   console.log("getSelectedProject", getSelectedProject());
 
-  const selectedProj = useStreamQueries(ClientProject, () => [
-    { projectId: getSelectedProject().payload.projectId },
-  ]).contracts;
-  const submissions = useStreamQueries(ParticipantSubmission, () => [
-    { client: getSelectedProject().payload.client },
-  ]).contracts;
-  const client = useStreamQueries(ClientRole).contracts;
-  const getUserType = (): "" | "client" | "participant" | "judge" => {
-    if (
-      selectedProj.filter(
-        (c) => c.payload.participants.indexOf((user as any).party) > -1
-      ).length > 0
-    ) {
-      return "participant";
-    }
-    if (
-      selectedProj.filter((c) => (user as any).party === c.payload.client)
-        .length > 0
-    ) {
-      return "client";
-    }
-
-    return "";
+  const defaultProjectDetail = {
+    name: getSelectedProject().payload.name,
+    desc: getSelectedProject().payload.desc,
+    projectId: getSelectedProject().payload.projectId,
+    startDate: getSelectedProject().payload.startDate,
+    endDate: getSelectedProject().payload.endDate,
+    location: getSelectedProject().payload.location,
+    criteria: getSelectedProject().payload.criteria,
+    pictureUrl: getSelectedProject().payload.pictureUrl,
+    rules: getSelectedProject().payload.rules,
+    termsLink: getSelectedProject().payload.termsLink,
+    privacyLink: getSelectedProject().payload.privacyLink,
+    prizes: getSelectedProject().payload.prizes,
+    projectvideoLink: getSelectedProject().payload.projectvideoLink,
+    eligibility: getSelectedProject().payload.eligibility,
+    requirements: getSelectedProject().payload.requirements,
   };
 
-  const [searchText, setSearchText] = useState("");
-  const [showChallengeModal, setShowChallengeModal] = useState(false);
+  const [projectDetail, setProjectDetail] = useState(defaultProjectDetail);
 
-  const [challengeIdTouched, setChallengeIdTouched] = useState(false);
-  const defaultChallengeDetail: AddChallenge = {
-    challengeId: "",
-    nameOf: "",
-    description: "",
-    prize: "",
-  };
-  const [challengeDetail, setChallengeDetail] = useState(
-    defaultChallengeDetail
-  );
-  const resetCreateChallenge = () => {
-    setChallengeDetail(defaultChallengeDetail);
-    setChallengeIdTouched(false);
-  };
-
-  const handleChallengeSubmit = async (evt: any) => {
-    evt.preventDefault();
-    ledger
-      .exercise(
-        ClientProject.AddChallenge,
-        selectedProj[0]!.contractId,
-        challengeDetail
-      )
-      .then(() => {
-        setShowChallengeModal(false);
-        alert("Challenge Created Successfully!");
-        // reset project detail info
-        setTimeout(() => {
-          resetCreateChallenge();
-          setTimeout(() => {
-            console.log("selectedProj>>", selectedProj);
-          }, 1000);
-        }, 250);
-      })
-      .catch((err: any) => {
-        setShowChallengeModal(false);
-        alert("Error: " + JSON.stringify(err));
-      });
-  };
-
-  const formattedDate = (dateStr: string) => {
-    const dateTimeFormatOptions: Intl.DateTimeFormatOptions = {
-      year: "numeric",
-      month: "numeric",
-      day: "numeric",
-      hour: "2-digit",
-      hour12: false,
-      minute: "2-digit",
-    };
-    return new Date(dateStr).toLocaleDateString("en-US", dateTimeFormatOptions);
-  };
-
-  const [selectedChallengeId, setSelectedChallengeId] = useState(0);
-  const [showCreateSubmissionModal, setShowCreateSubmissionModal] = useState({
-    show: false,
-    challengeId: "",
-  } as { show: boolean; challengeId?: string });
-  const ChallengeCompoenent = (props: any) => {
-    /*const stream = useQuery(
-      Challenge,
-      () => ({ challengeId: props.challengeId }),
-      [props.challengeId]
-    );
-    console.log(
-      "Challenge get",
-      stream,
-      "challengeId: props.challengeId=",
-      props.challengeId
-    );
-
-    if ((stream.contracts || []).length > 0) {
-      return (
-        <IonCard>
-          <div className="d-flex" id="view-project">
-            <IonCardContent>
-              <h1 className="proj-chall-name">
-                {stream.contracts[0].payload.nameOf}{" "}
-                <IonNote>Id: {props.challengeId}</IonNote>
-              </h1>
-              <h2 className="proj-chall-example">Dolor sit amet</h2>
-              <p className="proj-chall-description">
-                Lorem ipsum dolor sit amet consectetur adipisicing elit. Dolore,
-                quos perspiciatis officiis aliquid, corrupti nobis rem iure
-                explicabo dignissimos magni ducimus quo assumenda provident ad
-                possimus voluptatem saepe reprehenderit nam.
-              </p>
-              <p>Fund: ${stream.contracts[0].payload.prize}</p>
-              {getUserType() === "participant" ? (
-                <IonButton
-                  onClick={() => {
-                    setSelectedChallengeId(props.challengeId);
-                    setShowCreateSubmissionModal({
-                      show: true,
-                      challengeId: props.challengeId,
-                    });
-                  }}
-                  className="create-project-button"
-                >
-                  {" "}
-                  Create New Submission{" "}
-                </IonButton>
-              ) : null}
-            </IonCardContent>
-          </div>
-        </IonCard>
-      );
-    } else return null;*/
-  };
-  console.log(getSelectedProject().payload);
-  const [selectedSegement, setSelectedSegement] = useState("submissions");
-
-  const getChallengesIds = () => {
-    return (
-      (selectedProj && selectedProj.length > 0
-        ? selectedProj[0]
-        : { payload: {} }
-      ).payload.challenges || []
-    );
+  const onPrizeChange = (val: any) => {
+    setProjectDetail({
+      ...projectDetail,
+      prizes: val,
+    });
   };
 
   return (
@@ -203,12 +75,19 @@ const EditProject = (props: RouteComponentProps) => {
             <IonIcon slot="start" icon={arrowBack}></IonIcon>
             Back
           </IonButton>
+
           <div className="edi-project">
             <IonItem>
               <IonLabel position="floating">Project Name</IonLabel>
               <IonInput
                 required={true}
-                value={getSelectedProject().payload.name}
+                value={projectDetail.name}
+                onIonChange={(e) => {
+                  setProjectDetail({
+                    ...projectDetail,
+                    name: e.detail.value!,
+                  });
+                }}
               ></IonInput>
             </IonItem>
             <IonItem>
@@ -216,13 +95,25 @@ const EditProject = (props: RouteComponentProps) => {
               <IonInput
                 required={true}
                 value={getSelectedProject().payload.projectId}
+                onIonChange={(e) => {
+                  setProjectDetail({
+                    ...projectDetail,
+                    projectId: e.detail.value!,
+                  });
+                }}
               ></IonInput>
             </IonItem>
             <IonItem>
               <IonLabel position="floating">Description</IonLabel>
               <IonInput
                 required={true}
-                value={getSelectedProject().payload.desc}
+                value={projectDetail.desc}
+                onIonChange={(e) => {
+                  setProjectDetail({
+                    ...projectDetail,
+                    desc: e.detail.value!,
+                  });
+                }}
               ></IonInput>
             </IonItem>
             <IonItem>
@@ -230,7 +121,13 @@ const EditProject = (props: RouteComponentProps) => {
               <IonDatetime
                 displayFormat="MM DD YYYY, HH:mm"
                 display-timezone="utc"
-                value={getSelectedProject().payload.startDate}
+                value={projectDetail.startDate}
+                onIonChange={(e) => {
+                  setProjectDetail({
+                    ...projectDetail,
+                    startDate: new Date(e.detail.value!).toISOString(),
+                  });
+                }}
               ></IonDatetime>
             </IonItem>
             <IonItem>
@@ -238,19 +135,31 @@ const EditProject = (props: RouteComponentProps) => {
               <IonDatetime
                 displayFormat="MM DD YYYY, HH:mm"
                 display-timezone="utc"
-                value={getSelectedProject().payload.endDate}
+                value={projectDetail.endDate}
+                onIonChange={(e) => {
+                  setProjectDetail({
+                    ...projectDetail,
+                    endDate: new Date(e.detail.value!).toISOString(),
+                  });
+                }}
               ></IonDatetime>
             </IonItem>
             <IonItem>
               <IonLabel position="floating">Location</IonLabel>
               <IonInput
                 required={true}
-                value={getSelectedProject().payload.location}
+                value={projectDetail.location}
+                onIonChange={(e) => {
+                  setProjectDetail({
+                    ...projectDetail,
+                    location: e.detail.value!,
+                  });
+                }}
               ></IonInput>
             </IonItem>
             <IonItem>
               <IonLabel position="floating">Criteria</IonLabel>
-              {getSelectedProject().payload.criteria.map((row: any, i: any) => (
+              {projectDetail.criteria.map((row: any, i: any) => (
                 <IonList>
                   <IonItem>
                     <IonLabel position="floating">Name</IonLabel>
@@ -270,18 +179,23 @@ const EditProject = (props: RouteComponentProps) => {
                 </IonList>
               ))}
             </IonItem>
+
             <IonItem>
-              <IonLabel position="floating">Public</IonLabel>
-              <IonInput
-                required={true}
-                value={getSelectedProject().payload.public}
-              ></IonInput>
+              <IonLabel>Prizes</IonLabel>
+              <PrizesComponent onPrizeChange={onPrizeChange} />
             </IonItem>
+
             <IonItem>
               <IonLabel position="floating">Picture URL</IonLabel>
               <IonInput
                 required={true}
-                value={getSelectedProject().payload.pictureUrl}
+                value={projectDetail.pictureUrl}
+                onIonChange={(e) => {
+                  setProjectDetail({
+                    ...projectDetail,
+                    pictureUrl: e.detail.value!,
+                  });
+                }}
               ></IonInput>
             </IonItem>
             <IonButton
@@ -289,7 +203,25 @@ const EditProject = (props: RouteComponentProps) => {
               type="button"
               onClick={(e) => {
                 e.stopPropagation();
-                // ledger.
+                console.log("submit", projectDetail);
+                ledger.exercise(
+                  ClientProject.AddUpdateClientProject,
+                  getSelectedProject().contractId,
+                  {
+                    newDesc: projectDetail.desc,
+                    newCriteria: { name: "Design", point: "0.0" },
+                    newlocation: projectDetail.location,
+                    newstartDate: projectDetail.startDate,
+                    newendDate: projectDetail.endDate,
+                    newrules: projectDetail.rules,
+                    newtermsLink: projectDetail.termsLink,
+                    newprivacyLink: projectDetail.privacyLink,
+                    newprizes: projectDetail.prizes,
+                    newProjectvideoLink: projectDetail.projectvideoLink,
+                    neweligibility: projectDetail.eligibility,
+                    newrequirements: projectDetail.requirements,
+                  }
+                );
               }}
             >
               Update Project
