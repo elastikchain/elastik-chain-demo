@@ -388,7 +388,7 @@ template ClientProject
        AddUpdateClientProject: ContractId ClientProject 
         with 
           newDesc: Text 
-          newCriteria: CriteriaPoint 
+          newCriteria: [CriteriaPoint] 
           newlocation: Text
           newstartDate: Time
           newendDate: Time
@@ -399,7 +399,7 @@ template ClientProject
           newProjectvideoLink: Text
           neweligibility:[Text]
           newrequirements:[Text]
-        do create this with client, name, desc=newDesc, challenges,criteria=newCriteria::criteria,location=newlocation,startDate=newstartDate,endDate=newendDate,rules=newrules, termsLink=newtermsLink,privacyLink=newprivacyLink,prizes=newprizes,projectvideoLink=newProjectvideoLink,eligibility=neweligibility,requirements=newrequirements
+        do create this with client, name, desc=newDesc, challenges,criteria=newCriteria,location=newlocation,startDate=newstartDate,endDate=newendDate,rules=newrules, termsLink=newtermsLink,privacyLink=newprivacyLink,prizes=newprizes,projectvideoLink=newProjectvideoLink,eligibility=neweligibility,requirements=newrequirements
 
     controller client can 
        AddUpdateDescription: ContractId ClientProject 
