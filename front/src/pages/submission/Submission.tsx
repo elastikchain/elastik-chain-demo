@@ -306,25 +306,7 @@ const Submission = (props: RouteComponentProps) => {
                     <p>STEP 3: Lorem ipsum dolor sit amet, consectetur </p>
                   </div>
                 </div>
-                <div className="judges">
-                          <h2>JUDGES ({selectedSubmission && selectedSubmission.payload.judges ? selectedSubmission.payload.judges.length : "0"})</h2>
-                          <ul>
-                            {
-                              selectedSubmission && selectedSubmission.payload.judges.map((j:any)=> (
-                                <li>
-                                  <img src={userImg} />
-                                  <span>
-                                    <b>{j}</b>
-                                    <i>
-                                      Recruiting Senior Analyst / Accenture
-                                      Technology
-                                    </i>
-                                  </span>
-                                </li>
-                              ))
-                            }
-                          </ul>
-                        </div>
+              
               </div>
             </div>
           </div>
