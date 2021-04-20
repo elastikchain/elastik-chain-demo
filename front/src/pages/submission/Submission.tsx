@@ -13,7 +13,14 @@ import {
   IonPage,
   IonSearchbar,
   IonToolbar,
+  IonModal
 } from "@ionic/react";
+import {
+  open,
+  close,
+ 
+} from "ionicons/icons";
+
 import React, { useState } from "react";
 import { Link, RouteComponentProps } from "react-router-dom";
 import logo from "../../assets/img/logo-combination.png";
@@ -42,7 +49,7 @@ const Submission = (props: RouteComponentProps) => {
   const [searchText, setSearchText] = useState("");
   const selectedSubmission = getSelectedSubmission();
   console.log("selectedSubmission", selectedSubmission);
-
+  const [showModal, setShowModal] = useState(false);
   const user = useUserState();
   var userDispatch = useUserDispatch();
   const ledger = useLedger();
@@ -69,8 +76,36 @@ const Submission = (props: RouteComponentProps) => {
     }
     return "judge";
   };
+  const validateEmail = (email: string) =>{
+    const re = /^(([^<>()[\]\\.,;:\s@\"]+(\.[^<>()[\]\\.,;:\s@\"]+)*)|(\".+\"))@((\[[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\])|(([a-zA-Z\-0-9]+\.)+[a-zA-Z]{2,}))$/;
+    return re.test(email);
+  }
   console.log("submission", submission);
-
+  const [participantEmail,setParicipantEmail] = useState("");
+  const handleJoinTeam = (evnt:any) =>{
+    evnt.preventDefault();
+    if (participantEmail) {
+      if (validateEmail(participantEmail)) {
+        ledger.exercise(
+          ParticipantSubmission.ProposeTeammate,
+          selectedSubmission.contractId,
+          { email: participantEmail  }
+        ).then((data:any)=>{
+          alert(
+            "Teammate request has been sent successfully!"
+          );
+        }).catch((err:any)=>{
+          alert(
+            err
+          );
+        });
+        setShowModal(false);
+      } else {
+       
+        alert(  participantEmail  + " is not a valid email!");
+      }
+    }
+  }
   const JudgingComponent = (judgingProps: any) => {
     const [criterias, setCriterias] = useState(
       getSelectedSubmission().payload.criteria as Array<{
@@ -176,7 +211,7 @@ const Submission = (props: RouteComponentProps) => {
                   operator: <span>{selectedSubmission.payload.operator}</span>
                   </p>
                   <p>
-                    Presentation : <span>No</span>
+                    Submission : <span>{selectedSubmission.payload.submission}</span>
                   </p>
                 </div>
 
@@ -235,25 +270,7 @@ const Submission = (props: RouteComponentProps) => {
                       <IonFab>
                         <IonFabButton
                           onClick={async (e) => {
-                            function validateEmail(email: string) {
-                              const re = /^(([^<>()[\]\\.,;:\s@\"]+(\.[^<>()[\]\\.,;:\s@\"]+)*)|(\".+\"))@((\[[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\])|(([a-zA-Z\-0-9]+\.)+[a-zA-Z]{2,}))$/;
-                              return re.test(email);
-                            }
-                            const email = prompt("Enter the participant email");
-                            if (email) {
-                              if (validateEmail(email)) {
-                                await ledger.exercise(
-                                  ParticipantSubmission.ProposeTeammate,
-                                  submission[0].contractId,
-                                  { email }
-                                );
-                                alert(
-                                  "Teammate request has been sent successfully!"
-                                );
-                              } else {
-                                alert(email + " is not a valid email!");
-                              }
-                            }
+                            setShowModal(true)
                           }}
                         >
                           <IonIcon icon={add} />
@@ -261,6 +278,51 @@ const Submission = (props: RouteComponentProps) => {
                       </IonFab>
                     ) : null}
                   </div>
+                    {/*-- modal AddParticipantToProject --*/}
+                <IonModal
+                  isOpen={showModal}
+                  onDidDismiss={() => setShowModal(false)}
+                  cssClass="my-custom-class-team-mate"
+                >
+                  <div className="content create-project-modal-content">
+                    <form onSubmit={handleJoinTeam}>
+                      <h1>Add Team</h1>
+                      <div className="flex-equal-childs-width">
+                        <IonItem>
+                          <IonLabel position="floating">
+                            Participant Email
+                          </IonLabel>
+
+                          <IonInput
+                            required={true}
+                            value={participantEmail}
+                            onIonChange={(e) => {
+                              setParicipantEmail(
+                                (e.detail.value! as unknown) as string
+                              );
+                            }}
+                          ></IonInput>
+                        </IonItem>
+                      </div>
+                      <IonButton
+                        className="submit-button"
+                        type="submit"
+                        >
+                        Add
+                      </IonButton>
+                    </form>
+                  </div>
+                  <IonButton
+                    className="modal-default-close-btn"
+                    fill="clear"
+                    color="danger"
+                    onClick={() => {
+                      setShowModal(false);
+                    }}
+                  >
+                    <IonIcon icon={close}></IonIcon>
+                  </IonButton>
+                </IonModal>
                   <div className="teammate-container">
                     {submission.map((c) => (
                       <div className="team-member">

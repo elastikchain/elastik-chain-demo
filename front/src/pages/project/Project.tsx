@@ -919,14 +919,31 @@ const Project = (props: RouteComponentProps) => {
                                   href="javascript:void 0"
                                   className="btn view-details-btn"
                                   onClick={(e) => {
+                                    e.preventDefault();
+                                     const selectedSub = sc as any;  
+                                     selectedSub.payload.projectId = getSelectedProject().payload.projectId;
+                                     setSelectedSubmission(selectedSub);
                                     props.history.push(
                                       "/main/submission/" + sc.payload.submissionId
                                     );
                                   }}
                                 >
                                   View details
-                                </a>
-                             
+                                </a> &nbsp;
+                                {(getUserType() === "participant" || getUserType() === "" )&& (  <a
+                                  href="javascript:void 0"
+                                  className="btn view-details-btn"
+                                  onClick={(e) => {
+                                    const selectedSub = sc as any;  
+                                     selectedSub.payload.projectId = getSelectedProject().payload.projectId;
+                                     setSelectedSubmission(selectedSub);
+                                    props.history.push(
+                                      "/main/submission-edit/" + sc.payload.submissionId
+                                    );
+                                  }}
+                                >
+                                  Edit
+                                </a> )}
                                 
                               </div>
                             </div>

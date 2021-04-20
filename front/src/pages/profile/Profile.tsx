@@ -976,8 +976,10 @@ const Profile = (props: RouteComponentProps) => {
                           {user.party} ({userProfileData().firstName}{" "}
                           {userProfileData().lastName})
                         </h1>
-                        <IonButton size="large" className="edit-button">
-                          {" "}
+                        <IonButton size="large" onClick={(e)=>
+                            props.history.push("/main/profile/edit")
+                        } className="edit-button">
+                          
                           Edit{" "}
                         </IonButton>
                       </div>

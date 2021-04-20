@@ -33,6 +33,7 @@ export default function App() {
   return (
     <HashRouter>
       <Switch>
+     
         <Route
           exact
           path="/main"
@@ -40,6 +41,7 @@ export default function App() {
         />
         <FrontPrivateRoute path="/main" component={FrontLayout} />
         <PublicRoute path="/home" component={Home} />
+      
         <Route exact path="/" component={RootRoute} />
         <Route
           exact

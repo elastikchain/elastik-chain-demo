@@ -5,8 +5,10 @@ import { useUserState } from "../../context/UserContext";
 import { wsBaseUrl, httpBaseUrl, ledgerId } from "../../config";
 import Profile from "../../pages/profile/Profile";
 import Project from "../../pages/project/Project";
+import EditSubmission from "../../pages/submission/EditSubmission";
 import Submission from "../../pages/submission/Submission";
 import EditProject from "../../pages/project/EditProject";
+import EditProfile from "../../pages/profile/EditProfile";
 
 import {
   PublicLedger,
@@ -46,10 +48,12 @@ const FrontLayout = (props: any) => {
         {/* <WellKnownPartiesProvider>
                 <PublicProvider> */}
         <Switch>
-        <Route path="/main/projects/:id/edit" component={EditProject} />
+          <Route path="/main/profile/edit" component={EditProfile} />
+          <Route path="/main/projects/:id/edit" component={EditProject} />
           <Route path="/main/project/:id" component={Project} />
           <Route path="/main/profile" component={Profile} />
-          <Route path="/main/submission/:id" component={Submission} />
+          <Route path="/main/submission-edit/:submissionId" component={EditSubmission} />
+          <Route path="/main/submission/:submissionId" component={Submission} />
           <Route path="/main/scores/:id" component={Scores} />
         </Switch>
         {/*  </PublicProvider>

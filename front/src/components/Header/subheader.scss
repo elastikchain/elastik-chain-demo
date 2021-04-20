@@ -32,3 +32,6 @@ p.no-scores {
     border: none;
     --highlight-background: none;
 }
+.my-custom-class .modal-wrapper.sc-ion-modal-md {
+    max-width: 767px;
+}

@@ -256,3 +256,10 @@ ion-label.sc-ion-label-md-h.sc-ion-label-md-s.md.hydrated {
 .submission-wrapper {
     padding-top: 50px;
 }
+.my-custom-class-team-mate .modal-wrapper.sc-ion-modal-md {
+    -webkit-transform: translate3d(0, 40px, 0);
+    transform: translate3d(0, 40px, 0);
+    opacity: 0.01;
+    max-height: 283px;
+    max-width: 600px;
+}
