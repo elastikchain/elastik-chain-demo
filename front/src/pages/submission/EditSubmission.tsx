@@ -25,6 +25,7 @@ import {
   import { Link, RouteComponentProps } from "react-router-dom";
   import logo from "../../assets/img/logo-combination.png";
   import userImg from "../../assets/img/user.png";
+  import AddMore from "../../components/AddMore/AddMore";
   import {
     getSelectedSubmission,
     setSelectedSubmission,
@@ -86,8 +87,13 @@ import {
         newsubmission: selectedSubmission.payload.submission,
         newvideoLink: selectedSubmission.payload.videoLink,
         newpresentation: selectedSubmission.payload.presentation,
-        newSteps: [],
+        newSteps: selectedSubmission.payload.steps,
     };
+    
+    const defaultSteps:any = [];
+    selectedSubmission.payload.steps.map((data:any)=>{
+      defaultSteps.push({name:data,id:''});
+    })
     const [submissionDetails,setSubmissionDetail] = useState(defaultSubmission);
     const handleEditSubmissionSubmit = (evnt:any)=>{
             ledger.exercise(ParticipantSubmission.UpdateSubmission,selectedSubmission.contractId,submissionDetails)
@@ -248,7 +254,22 @@ import {
                 }}
               ></IonTextarea>
             </IonItem>
-          
+            <div className="addmore-tags-container">
+                        <IonLabel>Steps</IonLabel>
+                        <AddMore
+                          defaultTags={defaultSteps}
+                          onChange={(tags) => {
+                            const arrSteps = tags.map(
+                              (t) =>
+                                (t.name)
+                            );
+                            setSubmissionDetail({
+                              ...submissionDetails,
+                              newSteps: arrSteps,
+                            });
+                          }}
+                        ></AddMore>
+                      </div>
             
             <IonButton
               className="submit-button"
