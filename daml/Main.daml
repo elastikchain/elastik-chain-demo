@@ -138,7 +138,26 @@ template Platform
       nonconsuming CreateRegistry: ContractId Registry
         do create Registry with projectKeys = [], participants = [], operator     
 
+template UserRoleRequest
+  with 
+    user:Party
+    operator: Party -- 
+    userProfileData:ProfileData
+  where 
+    signatory user
+  
+    controller operator can 
+      AcceptUserRequest: ContractId UserRole
+        do create UserRole with ..
 
+template UserRole
+  with 
+    user:Party
+    operator: Party -- 
+    userProfileData:ProfileData
+  where 
+    signatory user,operator
+  
 
 -- Judge invitation / Request to join a hackathon
 template JudgeRequestTojoin -- checkbox to chose this contract
