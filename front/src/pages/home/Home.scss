@@ -389,4 +389,30 @@ ion-label#ion-input-6-lbl {
   height: 50px;
   border-radius: 0px;
 }
+.auth0-lock-social-button-text {
+  margin-bottom: 10px;
+  display: block;
+  width: 100%;
+}
+
+.auth0-lock-social-button-text span {
+  display: inline-block;
+  border: 1px solid #bfbebe;
+  padding: 4px 20px;
+  cursor: pointer;
+}
+
+.auth0-lock-social-button-text span label {
+  display: inline-block;
+  font-size: 16px;
+  font-weight: bold;
+  margin: 10px 0px 0px 4px;
+  cursor: pointer;
+
+}
+
+.auth0-lock-social-button-text span img {
+  display: inline-block;
+  float: left;
+}
 // end login form css

@@ -568,4 +568,12 @@ span.Criteria-lisitng {
 
     
   }
-  
+  .new-user-profile ion-input.sc-ion-input-md-h.sc-ion-input-md-s.md.hydrated {
+    max-width: 98%;
+    margin: 0px;
+}
+
+.new-user-profile input.native-input.sc-ion-input-md {
+    padding: 17px;
+    border: 1px solid #ddd;
+}

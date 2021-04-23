@@ -17,6 +17,8 @@ import {
   PrizeData,
   ChallengeData,
   JudgeRole,
+  UserRoleRequest
+  
 } from "@daml.js/cosmart-0.0.1/lib/Main";
 
 import "./Profile.scss";
@@ -107,7 +109,17 @@ const Profile = (props: RouteComponentProps) => {
     eligibility: [],
     requirements: [],
   };
-
+  let checkFirstTimeLogin = 0;
+  const defaultRegisterRequest = {
+      firstName:'',
+      lastName: '',
+      email:'',
+      company:'',
+      job:'',
+      about:'',
+      pictureUrl:'https://static.remove.bg/remove-bg-web/2a274ebbb5879d870a69caae33d94388a88e0e35/assets/start-0e837dcc57769db2306d8d659f53555feb500b3c5d456879b9c843d1872e7baa.jpg'
+  };
+  const [registerRequest, setRegisterRequest] = useState(defaultRegisterRequest);
   const [projectDetail, setProjectDetail] = useState(defaultProjectDetail);
   const [projectIdTouched, setProjectIdTouched] = useState(false);
   const [showCreateProjectModal, setShowCreateProjectModal] = useState(false);
@@ -136,11 +148,14 @@ const Profile = (props: RouteComponentProps) => {
   };
 
   const ledger = useLedger();
-
-  const clientProjectAssets = useStreamQueries(ClientProject).contracts;
-  console.log("clientProjectAssets", clientProjectAssets);
-
   const projectAssets = useStreamQueries(ClientRole).contracts;
+  const roleRequested = useStreamQueries(ClientRole).contracts;
+  
+  
+  const clientProjectAssets = useStreamQueries(ClientProject).contracts;
+  
+
+
   const participantAssets = useStreamQueries(ParticipantRole).contracts;
   const judgeAssets = useStreamQueries(JudgeRole).contracts;
 
@@ -355,7 +370,16 @@ const Profile = (props: RouteComponentProps) => {
       .getDownloadURL();
     console.log("downloadURL", downloadURL);
   };
+  const handleNewAccountRequest = async(evt:any)=>{
+    const accountRequestData = {user: (user as any).party,operator:'ledger-party-9dd291f2-ead1-4f57-801f-82d38928718b',userProfileData:registerRequest};
+    const newAcctRequest = await ledger.create(UserRoleRequest, accountRequestData)
+    .then((data:any)=>{
 
+    });
+    //const archiveEvent = await Ledger.archive(ContractTemplate, contractId);
+    //const [choiceReturnValue, events] = await ledger.exercise(ContractChoice, contractId, choiceArguments);
+    alert("Your account requested submitted");
+  }
   const userProfileData = () => {
     console.log("judgeAssets", judgeAssets);
     const d = {
@@ -413,10 +437,11 @@ const Profile = (props: RouteComponentProps) => {
     }
     return d;
   };
-
+  if(projectAssets && projectAssets.length != 0 && checkFirstTimeLogin == 0){ checkFirstTimeLogin = 1;  }
+   if(roleRequested && roleRequested.length != 0 && checkFirstTimeLogin == 0){checkFirstTimeLogin = 2;  }
   const HackathonComponenent = (hackathonProps: any) => {
     const p = hackathonProps.project;
-    return (
+     return (
       <div className="listing-projects-name">
         <div className="created-projects-listing">
           <div
@@ -1016,7 +1041,90 @@ const Profile = (props: RouteComponentProps) => {
                       </div>
                     </div>
                   </div>
-                  {getUserType() === "client" ? (
+                  {checkFirstTimeLogin == 0 &&
+                    <div className="new-user-profile">
+                        <IonItem>
+                         <IonLabel position="floating">First Name</IonLabel>
+                          <IonInput
+                            required={true}
+                            value={registerRequest.firstName}
+                            onIonChange={(e) =>
+                              setRegisterRequest({
+                                ...registerRequest,
+                                firstName: e.detail.value!,
+                              })
+                            }
+                          ></IonInput>
+                        </IonItem>
+                        <IonItem>
+                         <IonLabel position="floating">Last Name</IonLabel>
+                          <IonInput
+                            required={true}
+                            value={registerRequest.lastName}
+                            onIonChange={(e) =>
+                              setRegisterRequest({
+                                ...registerRequest,
+                                lastName: e.detail.value!,
+                              })
+                            }
+                          ></IonInput>
+                        </IonItem>
+                        <IonItem>
+                         <IonLabel position="floating">Email</IonLabel>
+                          <IonInput
+                            required={true}
+                            value={registerRequest.email}
+                            onIonChange={(e) =>
+                              setRegisterRequest({
+                                ...registerRequest,
+                                email: e.detail.value!,
+                              })
+                            }
+                          ></IonInput>
+                        </IonItem>
+                        <IonItem>
+                         <IonLabel position="floating">Job</IonLabel>
+                          <IonInput
+                            required={true}
+                            value={registerRequest.job}
+                            onIonChange={(e) =>
+                              setRegisterRequest({
+                                ...registerRequest,
+                                job: e.detail.value!,
+                              })
+                            }
+                          ></IonInput>
+                        </IonItem>
+                        <IonItem>
+                         <IonLabel position="floating">About</IonLabel>
+                          <IonTextarea
+                            required={true}
+                            value={registerRequest.about}
+                            onIonChange={(e) =>
+                              setRegisterRequest({
+                                ...registerRequest,
+                                about: e.detail.value!,
+                              })
+                            }
+                          ></IonTextarea>
+                        </IonItem>  
+                        <IonItem> 
+                        <IonButton
+                        className="profile-default-update-btn"
+                         onClick={(e) => {
+                          handleNewAccountRequest(e);
+                        }}
+                      >
+                       Request For new account
+                      </IonButton>
+                      </IonItem>    
+                    </div>
+                  }
+                  {(checkFirstTimeLogin == 2) &&
+                    <h1>You have already requested your account registration process. Please wait untill our admin will not approve your request.</h1>
+                  }
+                  {checkFirstTimeLogin == 1 &&
+                  (getUserType() === "client" ? (
                     clientProjectAssets.filter(
                       (c) => (user as any).party === c.payload.client
                     ).length > 0 ? (
@@ -1042,7 +1150,7 @@ const Profile = (props: RouteComponentProps) => {
                         ></HackathonComponenent>
                       ))}
                     </IonList>
-                  )}
+                  )) }
                 </div>
               </IonPage>
             </IonSplitPane>

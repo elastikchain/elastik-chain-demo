@@ -1,6 +1,7 @@
 import React, { useState } from "react";
 import styled from "styled-components";
-
+import ReactDOM from 'react-dom';
+import { GoogleLogin } from 'react-google-login';
 import {
   IonContent,
   IonHeader,
@@ -20,13 +21,13 @@ import {
 import logo from "../../assets/img/logo-combination.png";
 import logoBlue from "../../assets/img/asx_logo_blue.jpg";
 import timelineLine from "../../assets/img/img-how-it-work-timeline.png";
-
+import googleIcon from "../../assets/img/google.svg";
 import icWork1 from "../../assets/img/icon-idea.png";
 import icWork2 from "../../assets/img/icon-product.png";
 import icWork3 from "../../assets/img/icon-work.png";
 import icWork4 from "../../assets/img/ic-work4.png";
 import topBannerImage from "../../assets/img/img-top-section.png";
-
+import {ClientRole} from "@daml.js/cosmart-0.0.1/lib/Main";
 import "./Home.scss";
 import { useUserDispatch, loginUser } from "../../context/UserContext";
 import { RouteComponentProps } from "react-router-dom";
@@ -34,6 +35,7 @@ import { Fade, Typography } from "@material-ui/core";
 
 import { close } from "ionicons/icons";
 import loginImg from "../../assets/img/logo-slogan.jpg";
+import { registerTemplate } from "@daml/types";
 
 const StyledNewsletter = styled.div`
   margin: 4rem 0;
@@ -84,6 +86,8 @@ const renderWorkSteps = () => {
     </div>
   ));
 };
+
+
 const categories = [
   "Fintech",
   "Healthcare",
@@ -124,11 +128,29 @@ const Home = (props: RouteComponentProps) => {
   const [showLoginModal, setShowLoginModal] = useState(false);
   const [loginSegement, setLoginSegement] = useState("SIGN_IN");
   const [loginUserName, setLoginUserName] = useState("");
+  const defaultRegister = {name:"",email:''};
+  const [registerUser, setRegisterUser] = useState(defaultRegister);
   const [loginPassword, setLoginPassword] = useState("");
   var [isLoading, setIsLoading] = useState(false);
   var [error, setError] = useState(false);
   var userDispatch = useUserDispatch();
-
+  const handleRegisterSubmit = (evt:any)=>{
+    evt.preventDefault();
+    console.log(registerUser);
+  }
+  const responseGoogle = (response:any) => {
+    setShowLoginModal(false);
+    console.log("response From Google",response);
+    loginUser(
+      userDispatch,
+      response.googleId,
+      response.googleId,
+      props.history,
+      setIsLoading,
+      setError,
+      false
+    );
+  }
   const handleLoginSubmit = (evt: any) => {
     evt.preventDefault();
     // console.log('handleLoginSubmit', evt);
@@ -165,7 +187,9 @@ const Home = (props: RouteComponentProps) => {
                     <IonButton>Explore</IonButton>
                     <IonButton
                       className="activeButton"
-                      onClick={() => setShowLoginModal(true)}
+                      onClick={() =>{ 
+                        setLoginSegement("SIGN_IN");
+                        setShowLoginModal(true)}}
                     >
                       Log in
                     </IonButton>
@@ -211,6 +235,20 @@ const Home = (props: RouteComponentProps) => {
                   <IonButton className="submit-button" type="submit">
                     Login
                   </IonButton>
+                 
+                    <GoogleLogin
+                      clientId="299730981258-eqrdfglhc9govugb2sntmat221fp0ec1.apps.googleusercontent.com"
+                      render={renderProps => (
+                        <div className="auth0-lock-social-button-text"><span onClick={renderProps.onClick} ><img src={googleIcon}/> <label>Sign in with Google</label></span></div>
+                      )}
+                      buttonText="Login"
+                      onSuccess={responseGoogle}
+                      onFailure={responseGoogle}
+                      cookiePolicy={'single_host_origin'}
+                    />
+                   
+              
+                 
                 </form>
                 <div className="d-flex justify-content-center align-items-center">
                   <IonButton fill="clear" color="secondary">
@@ -229,17 +267,45 @@ const Home = (props: RouteComponentProps) => {
                 </div>
               </div>
             ) : (
-              <h1>
-                <IonButton
-                  color="secondary"
-                  fill="clear"
-                  onClick={(e) => {
-                    setLoginSegement("SIGN_IN");
-                  }}
-                >
-                  Sign in for Elastik-Chain
+              <div className="sign-in">
+              <form className="login-form" onSubmit={handleRegisterSubmit}>
+                <IonItem>
+                  <IonLabel position="floating">Name</IonLabel>
+                  <IonInput
+                    value={registerUser.name}
+                    required={true}
+                    onIonChange={(e) => setRegisterUser({
+                      ...registerUser,
+                      name: e.detail.value!,
+                    })}
+                  ></IonInput>
+                </IonItem>
+                <IonItem>
+                  <IonLabel position="floating">Email</IonLabel>
+                  <IonInput
+                    type="email"
+                    required={true}
+                    value={registerUser.email}
+                    onIonChange={(e) => setRegisterUser({
+                      ...registerUser,
+                      email: e.detail.value!,
+                    })}
+                  ></IonInput>
+                </IonItem>
+                <IonButton className="submit-button" type="submit">
+                  Register
                 </IonButton>
-              </h1>
+              </form>
+              <div className="d-flex justify-content-center align-items-center">
+                <IonButton fill="clear" color="secondary" onClick={(e) => {
+                    setLoginSegement("SIGN_IN");
+                  }}>
+                 Go Back on Login
+                </IonButton>
+                
+               
+              </div>
+            </div>
             )}
             <IonButton
               className="modal-default-close-btn"
@@ -259,7 +325,12 @@ const Home = (props: RouteComponentProps) => {
          </div>      
           <div className="content-container">
             <h1>Ideas change the world we live in</h1>
-            <IonButton color="primary" size="large">
+            <IonButton color="primary" size="large"
+            onClick={(e) => {
+              setLoginSegement("SIGN_UP");
+              setShowLoginModal(true);
+            }}
+            >
               Join Us
             </IonButton>
           </div>
