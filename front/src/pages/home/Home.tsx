@@ -2,6 +2,7 @@ import React, { useState } from "react";
 import styled from "styled-components";
 import ReactDOM from 'react-dom';
 import { GoogleLogin } from 'react-google-login';
+import { isLocalDev } from "../../config";
 import {
   IonContent,
   IonHeader,
@@ -29,7 +30,7 @@ import icWork4 from "../../assets/img/ic-work4.png";
 import topBannerImage from "../../assets/img/img-top-section.png";
 import {ClientRole} from "@daml.js/cosmart-0.0.1/lib/Main";
 import "./Home.scss";
-import { useUserDispatch, loginUser } from "../../context/UserContext";
+import { useUserDispatch, loginUser,loginDablUser } from "../../context/UserContext";
 import { RouteComponentProps } from "react-router-dom";
 import { Fade, Typography } from "@material-ui/core";
 
@@ -235,8 +236,14 @@ const Home = (props: RouteComponentProps) => {
                   <IonButton className="submit-button" type="submit">
                     Login
                   </IonButton>
-                 
-                    <GoogleLogin
+                  {!isLocalDev &&
+                <>
+                    <div className="auth0-lock-social-button-text"> <span className="dablLoginButton" onClick={loginDablUser}>
+                    Log in with DABL
+                  </span></div>
+                  
+                </>}
+                    {/*<GoogleLogin
                       clientId="299730981258-eqrdfglhc9govugb2sntmat221fp0ec1.apps.googleusercontent.com"
                       render={renderProps => (
                         <div className="auth0-lock-social-button-text"><span onClick={renderProps.onClick} ><img src={googleIcon}/> <label>Sign in with Google</label></span></div>
@@ -245,7 +252,7 @@ const Home = (props: RouteComponentProps) => {
                       onSuccess={responseGoogle}
                       onFailure={responseGoogle}
                       cookiePolicy={'single_host_origin'}
-                    />
+                    /> */}
                    
               
                  

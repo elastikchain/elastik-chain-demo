@@ -17,7 +17,8 @@ import {
   PrizeData,
   ChallengeData,
   JudgeRole,
-  UserRoleRequest
+  UserRoleRequest,
+  UserRole
   
 } from "@daml.js/cosmart-0.0.1/lib/Main";
 
@@ -149,9 +150,9 @@ const Profile = (props: RouteComponentProps) => {
 
   const ledger = useLedger();
   const projectAssets = useStreamQueries(ClientRole).contracts;
-  const roleRequested = useStreamQueries(ClientRole).contracts;
-  
-  
+  const roleRequested = useStreamQueries(UserRoleRequest).contracts;
+  console.log("clientRole",projectAssets);
+  console.log("roleRequested",roleRequested);
   const clientProjectAssets = useStreamQueries(ClientProject).contracts;
   
 
