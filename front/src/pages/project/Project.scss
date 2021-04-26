@@ -570,7 +570,7 @@ ion-button.go-back {
     margin-top: 35px;
     padding: 20px 30px;
 }
-
+.judging_criteria{display: none !important;}
 .amount-main {
     display: inline-block;
     margin-top: 10px;
@@ -578,7 +578,7 @@ ion-button.go-back {
 
 .chanlanges-titles {
     /* display: inline-block; */
-    width: calc(100% - 150px);
+    width: calc(100% - 30px);
 }
 
 .chanlanges-titles h1 {

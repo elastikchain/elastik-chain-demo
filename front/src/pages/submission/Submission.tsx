@@ -206,10 +206,7 @@ const Submission = (props: RouteComponentProps) => {
                   <p>
                     Presentation : <span>{selectedSubmission.payload.presentation}</span>
                   </p>
-                  <p>
-                  
-                  operator: <span>{selectedSubmission.payload.operator}</span>
-                  </p>
+                 
                   <p>
                     Submission : <span>{selectedSubmission.payload.submission}</span>
                   </p>

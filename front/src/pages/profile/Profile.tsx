@@ -693,7 +693,7 @@ const Profile = (props: RouteComponentProps) => {
                       <h1>Create Project</h1>
                       <div className="flex-equal-childs-width">
                         <IonItem>
-                          <IonLabel position="floating">Project Name</IonLabel>
+                          <IonLabel position="floating" className="form-label">Project Name</IonLabel>
                           <IonInput
                             required={true}
                             value={projectDetail.name}
@@ -797,7 +797,7 @@ const Profile = (props: RouteComponentProps) => {
                         </IonItem>
                       </div>
                       <div>
-                        <IonItem>
+                        <IonItem className="prize-data">
                           <IonLabel>Prizes</IonLabel>
                         </IonItem>
                         <PrizesComponent onPrizeChange={onPrizeChange} />

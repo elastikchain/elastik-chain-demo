@@ -755,9 +755,7 @@ const Project = (props: RouteComponentProps) => {
                     {selectedProj[0] ? selectedProj[0].payload.challenges.map(key => 
                       (
                         <div className="challanges-listing">
-                        <div className="logo-challanges">
-                           <img src={getSelectedProject().payload.pictureUrl} /> 
-                        </div>
+                        
                         <div className="chanlanges-titles">
                           <h1>{key.nameOf}</h1>
                           <p>
@@ -766,7 +764,7 @@ const Project = (props: RouteComponentProps) => {
                           <div className="amount-main">
                             <h1 className="highlight-amount">
                               {" "}
-                              <span>Fund</span> ${key.prize}
+                              <span>Prize</span> ${key.prize}
                             </h1>
                           </div>
                         </div>
@@ -1050,6 +1048,7 @@ const Project = (props: RouteComponentProps) => {
                       <li>
                         <p className="participants-numbers">
                           <IonIcon icon={add}></IonIcon>
+                         
                           <span> {selectedProj[0] ? selectedProj[0].payload.participants.length: 0} </span> participants
                         </p>
                       </li>

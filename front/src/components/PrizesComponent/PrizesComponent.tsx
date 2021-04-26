@@ -62,14 +62,18 @@ const PrizesComponent = (props: any) => {
             />
             </div>
              <div className="price-box-field">
-            <input
-              type="text"
+            <select
               name="currency"
               placeholder="Enter Currency"
               value={field.currency || ""}
               onChange={(e) => handleChange(idx, e)}
               className="price-input"
-            />
+             >
+               <option value="USD" >USD</option>
+               <option value="EUR" >EUR</option>
+               <option value="AUD">AUD</option>
+               <option value="INR">INR</option>
+            </select>
             <input
               type="text"
               name="description"
