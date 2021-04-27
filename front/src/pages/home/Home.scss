@@ -410,7 +410,14 @@ ion-label#ion-input-6-lbl {
   cursor: pointer;
 
 }
-
+.ion-page .login-form ion-label.sc-ion-label-md-h.sc-ion-label-md-s.md.hydrated{  font-size: 20px !important;
+  padding: 0px 0;
+  display: block;
+  color: #143b6c !important;
+  height: 28px;
+  transform: none !important;
+  float: none;
+}}
 .auth0-lock-social-button-text span img {
   display: inline-block;
   float: left;
