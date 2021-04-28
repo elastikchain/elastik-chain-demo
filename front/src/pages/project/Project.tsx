@@ -875,9 +875,9 @@ const Project = (props: RouteComponentProps) => {
                             
                               
                               {/* check if judge is in judges */}
-                           
+                            {console.log("select", selectedProj[0])}
                               <div className="sponsors-challenge">
-                                {(selectedProj[0] &&  ((user as any).party in selectedProj[0].payload.judges)) &&(
+                                {(selectedProj[0] &&  (selectedProj[0].payload.judges.includes((user as any).party))) &&(
                                   <div className="submit-your-score">
                                     <input
                                       type="hidden"
