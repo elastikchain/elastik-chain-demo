@@ -28,6 +28,10 @@ import icWork1 from "../../assets/img/icon-idea.png";
 import icWork2 from "../../assets/img/icon-product.png";
 import icWork3 from "../../assets/img/icon-work.png";
 import icWork4 from "../../assets/img/ic-work4.png";
+import image1 from "../../assets/img/financial-2.png";
+import image2 from "../../assets/img/financial.png";
+import image3 from "../../assets/img/badbanny1.png";
+import image4 from "../../assets/img/badbanny.png";
 import topBannerImage from "../../assets/img/img-top-section.png";
 import {ClientRole} from "@daml.js/cosmart-0.0.1/lib/Main";
 import "./Home.scss";
@@ -361,7 +365,7 @@ const Home = (props: RouteComponentProps) => {
           </div>
         </section>
         {/* Apps Section*/}
-        <div id="showcases" className="apps mb-5">
+        <div id="showcases" className="apps mb-5 wrapper1">
                     {/* <p className="mb-4 show-case"><b>SHOW CASES</b></p> */}
                     <h4 className="mb-4 blue">Here is some Dapps</h4>
                     {/* <p className="description mb-4">
@@ -371,7 +375,7 @@ const Home = (props: RouteComponentProps) => {
                         <Col md={3} sm={12}>
                             <div className="box">
                                 <div className="box-img">
-                                    <img src="/images/home/financial-2.png" alt="" />
+                                    <img src={image1} alt="" />
                                 </div>
                                 <div className="box-body">
                                     <h4 className="blue">SALT</h4>
@@ -382,7 +386,7 @@ const Home = (props: RouteComponentProps) => {
                         <Col md={3} sm={12}>
                             <div className="box">
                                 <div className="box-img">
-                                    <img src="/images/home/financial.png" alt="" />
+                                    <img src={image2} alt="" />
                                 </div>
                                 <div className="box-body">
                                     <h4 className="blue">Stellar</h4>
@@ -393,7 +397,7 @@ const Home = (props: RouteComponentProps) => {
                         <Col md={3} sm={12}>
                             <div className="box">
                                 <div className="box-img">
-                                    <img src="/images/home/badbanny1.png" alt="" />
+                                    <img src={image3} alt="" />
                                 </div>
                                 <div className="box-body">
                                     <h4 className="blue">OmiseGo</h4>
@@ -404,7 +408,7 @@ const Home = (props: RouteComponentProps) => {
                         <Col md={3} sm={12}>
                             <div className="box">
                                 <div className="box-img">
-                                    <img src="/images/home/badbanny.png" alt="" />
+                                    <img src={image4} alt="" />
                                 </div>
                                 <div className="box-body">
                                     <h4 className="blue">Fintech Pro</h4>
@@ -417,7 +421,7 @@ const Home = (props: RouteComponentProps) => {
 
 
                 {/* About Section */}
-                <div id="about" className="about">
+                <div id="about" className="about wrapper1">
                     {/* <p className="mb-4 show-case"><b>ABOUT</b></p> */}
                     {/* <h4 className="mb-4">Learn More <b className='text-danger'>About Us</b></h4> */}
                     <h4 className="mb-4 blue">Learn More About Us</h4>

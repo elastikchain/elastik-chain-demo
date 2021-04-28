@@ -237,15 +237,7 @@ const Submission = (props: RouteComponentProps) => {
                 <div className="the-idea">
                   <h1>About the idea</h1>
                   <p>
-                    What is the Idea about: Lorem ipsum dolor sit amet,
-                    consectetur adipiscing elit. Sed vel leo suscipit, elementum
-                    metus vel, tempus massa. Curabitur ac felis eu lorem congue
-                    pharetra. In ut felis lobortis, ultricies erat et,
-                    scelerisque ligula. Suspendisse lectus nulla, venenatis quis
-                    vulputate ac, fringilla a ex. Nullam gravida nunc sed purus
-                    malesuada malesuada. Aliquam erat volutpat. Cras leo sapien,
-                    tempor in accumsan vestibulum, laoreet eget arcu. Praesent
-                    egestas suscipit lectus, sit amet dictum augue.
+                    {selectedSubmission.payload.submission}
                   </p>
 
                   <div className="video-list">
@@ -346,26 +338,18 @@ const Submission = (props: RouteComponentProps) => {
               </div>
               <div className="steps">
                 <div className="steps-container">
+                {selectedSubmission.payload.steps.map((obj:any,index:any)=>(
                   <div className="step">
+                    
                     <div className="circle">
-                      <p>1</p>
+                      <p>{index}</p>
                     </div>
-                    <p>STEP 1: Lorem ipsum dolor sit amet, consectetur </p>
+                    <p>STEP {index}:{obj} </p>
                   </div>
-                  <div className="step">
-                    <div className="circle">
-                      <p>2</p>
-                    </div>
-                    <p>STEP 2: Lorem ipsum dolor sit amet, consectetur </p>
+                ))}
+                  
+                
                   </div>
-                  <div className="step">
-                    <div className="circle">
-                      <p>3</p>
-                    </div>
-                    <p>STEP 3: Lorem ipsum dolor sit amet, consectetur </p>
-                  </div>
-                </div>
-              
               </div>
             </div>
           </div>
