@@ -8,7 +8,7 @@ import Button from "@material-ui/core/Button";
 // import Ledger from "@daml/ledger";
 import { useStreamQueries, useLedger, useParty } from "@daml/react";
 import { ContractId } from "@daml/types";
-import { AcceptParticipantRequest, Platform  } from "@daml.js/cosmart-0.0.1/lib/Main";
+import { AcceptUserRequest, Platform  } from "@daml.js/cosmart-0.0.1/lib/Main";
 import { InputDialog, InputDialogProps } from "./InputDialog";
 import { AlertDialog } from "./AlertDialog";
 
@@ -109,7 +109,7 @@ export default function Report() {
   // };
 
 
-  const defaultAcceptParticipantRequestProps : InputDialogProps<AcceptParticipantRequest> = {
+  const defaultAcceptParticipantRequestProps : InputDialogProps<AcceptUserRequest> = {
     open: false,
     title: "",
     defaultValue: {participantProfile: {firstName: "", lastName: "", company: "", email: "", job: "", about: "", pictureUrl: ""}},

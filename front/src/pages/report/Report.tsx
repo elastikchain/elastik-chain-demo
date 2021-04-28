@@ -7,7 +7,7 @@ import TableBody from "@material-ui/core/TableBody";
 import Button from "@material-ui/core/Button";
 // import Ledger from "@daml/ledger";
 import { useStreamQueries, useLedger, useParty } from "@daml/react";
-import { Platform, AcceptRequest,CreateProject, ClientRole, AddChallenge, ClientProject, ParticipantRole, RequestToJoinProject,
+import { Platform, AcceptRequest,CreateProject, ClientRole, AddChallenge, ClientProject, UserRole, RequestToJoinProject,
   ParticipantSubmission,
   ProposeTeammate,
   ProposeSubmission,CriteriaPoint,PrizeData
@@ -29,7 +29,7 @@ export default function Report() {
 
   const participantSubmissionAssets = useStreamQueries(ParticipantSubmission).contracts;
   //const participantInvitationAssets = useStreamQueries(ParticipantInvitation).contracts;
-  const participantRoleAssets = useStreamQueries(ParticipantRole).contracts;
+  const participantRoleAssets = useStreamQueries(UserRole).contracts;
   //const clientInvitationAssets = useStreamQueries(ClientInvitation).contracts;
   const user = useUserState();
 
@@ -284,7 +284,7 @@ export default function Report() {
   };
   const [ registerForProjectProps, setRegisterForProjectProps ] = useState(defaultRegisterForProjectProps);
   // One can pass the original contracts CreateEvent
-  function showRegiterForProject(asset : ParticipantRole.CreateEvent) {
+  function showRegiterForProject(asset : UserRole.CreateEvent) {
     
   };
 

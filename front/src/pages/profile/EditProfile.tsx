@@ -9,7 +9,7 @@ import {
   ClientRole,
   ClientProject,
    CreateProject,
-  ParticipantRole,
+  UserRole,
   JudgeRole,
   ProfileData
 } from "@daml.js/cosmart-0.0.1/lib/Main";
@@ -78,7 +78,7 @@ const EditProfile = (props: RouteComponentProps) => {
   console.log("getSelectedProject()", getSelectedProject());
 
   const projectAssets = useStreamQueries(ClientRole).contracts;
-  const participantAssets = useStreamQueries(ParticipantRole).contracts;
+  const participantAssets = useStreamQueries(UserRole).contracts;
   const judgeAssets = useStreamQueries(JudgeRole).contracts;
   const getUserType = (): "" | "client" | "participant" | "judge" => {
     if (
@@ -145,7 +145,7 @@ const EditProfile = (props: RouteComponentProps) => {
         break;
       case "participant":
         const pa = participantAssets.filter(
-          (p) => p.payload.participant === (user as any).party
+          (p) => p.payload.user === (user as any).party
         );
         if (pa.length > 0) {
           d.firstName = pa[0].payload.participantProfile.firstName;

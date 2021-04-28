@@ -51,7 +51,7 @@ const Scores = (props: RouteComponentProps) => {
               scorecard.map((c) => (
                 <IonItem>
                   {console.log("c.payload",c.payload)}
-                  <IonLabel>{c.payload.submissionId}</IonLabel>
+                  <IonLabel>{c.payload.name}</IonLabel>
                   <IonLabel>{c.payload.submissionId}</IonLabel>
                   <IonLabel>{c.payload.judge}</IonLabel>
                   {(c.payload.scoretable || []).length > 0 ? (

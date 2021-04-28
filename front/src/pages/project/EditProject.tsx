@@ -9,8 +9,9 @@ import {
   ClientRole,
   ClientProject,
    CreateProject,
-  ParticipantRole,
+  // ParticipantRole,
   JudgeRole,
+  UserRole
 } from "@daml.js/cosmart-0.0.1/lib/Main";
 
 import "../profile/Profile.scss";
@@ -143,7 +144,7 @@ const EditProject = (props: RouteComponentProps) => {
   console.log("getSelectedProject()", getSelectedProject());
 
   const projectAssets = useStreamQueries(ClientRole).contracts;
-  const participantAssets = useStreamQueries(ParticipantRole).contracts;
+  const participantAssets = useStreamQueries(UserRole).contracts;
   const judgeAssets = useStreamQueries(JudgeRole).contracts;
 
   console.log("participantAssets", participantAssets);
@@ -182,7 +183,7 @@ const EditProject = (props: RouteComponentProps) => {
 
  
 
-  const userProfileData = () => {
+  const participantProfile = () => {
     console.log("judgeAssets", judgeAssets);
     const d = {
       firstName: "",
@@ -210,7 +211,7 @@ const EditProject = (props: RouteComponentProps) => {
         break;
       case "participant":
         const pa = participantAssets.filter(
-          (p) => p.payload.participant === (user as any).party
+          (p) => p.payload.user === (user as any).party
         );
         if (pa.length > 0) {
           d.firstName = pa[0].payload.participantProfile.firstName;
@@ -313,8 +314,8 @@ const EditProject = (props: RouteComponentProps) => {
                     <div className="profile-info">
                       <div className="profile-header">
                         <h1>
-                          {user.party} ({userProfileData().firstName}{" "}
-                          {userProfileData().lastName})
+                          {user.party} ({participantProfile().firstName}{" "}
+                          {participantProfile().lastName})
                         </h1>
                         <IonButton size="large" className="edit-button">
                           {" "}
@@ -324,16 +325,16 @@ const EditProject = (props: RouteComponentProps) => {
 
                       <div className="profile-about">
                         <h2>About</h2>
-                        <p>{userProfileData().about}</p>
+                        <p>{participantProfile().about}</p>
                         <p>
                           Email:{" "}
-                          <a href={"mailto:" + userProfileData().email}>
-                            {userProfileData().email}
+                          <a href={"mailto:" + participantProfile().email}>
+                            {participantProfile().email}
                           </a>
                         </p>
 
                         <p>
-                          Company: <a href="#">{userProfileData().company}</a>
+                          Company: <a href="#">{participantProfile().company}</a>
                         </p>
                         <p>
                           Linkedin: <a href="#">Information here</a>

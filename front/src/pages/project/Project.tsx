@@ -61,11 +61,13 @@ import {
   ClientRole,
   ParticipantSubmission,
   ProposeSubmission,
-  ParticipantRole,
+  // ParticipantRole,
+  UserRole,
   ParticipantSubmissionProposal,
   AcceptSubmission,
   RequestToJoinProject,
-  ParticipantRequestToJoin,
+  // ParticipantRequestToJoin,
+  UserRoleRequest,
   AddJudge,
   JudgeRole,
   SubmitScorecard,
@@ -81,10 +83,16 @@ const Project = (props: RouteComponentProps) => {
   var userDispatch = useUserDispatch();
   const ledger = useLedger();
 
+  const participantAssets = useStreamQueries(UserRole).contracts;
   const judgeAssets = useStreamQueries(JudgeRole).contracts;
   const selectedProj = useStreamQueries(ClientProject, () => [
     { projectId: getSelectedProject().payload.projectId },
   ]).contracts;
+
+  const pp = participantAssets.filter(
+    (p: any) => p.payload.participant === (user as any).party
+  );
+  console.log("pppp",pp); 
 
    const getUserType = (): "" | "client" | "participant" | "judge" => {
     if (
@@ -866,9 +874,9 @@ const Project = (props: RouteComponentProps) => {
                               </p>
                             
                               
-                              
+                              {/* check if judge is in judges */}
                               <div className="sponsors-challenge">
-                                {getUserType() === "judge" && (
+                                {getUserType() === "judge" || selectedProj[0].payload.judges.includes("Yuling") &&(
                                   <div className="submit-your-score">
                                     <input
                                       type="hidden"

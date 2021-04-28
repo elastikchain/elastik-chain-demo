@@ -11,7 +11,6 @@ import {
   AcceptRequest,
   CreateProject,
   ParticipantSubmissionProposal,
-  ParticipantRole,
   RequestToJoinProject,
   AddParticipant,
   PrizeData,
@@ -78,6 +77,7 @@ import Tab from "../../components/Tabs/Tab";
 import menuItemImg from "../../assets/img/img-menu-item.png";
 import mediumImage from "../../assets/img/medium.jpg";
 import "./Profile.scss";
+import participant from "../report/participant";
 
 interface CriteriaPoint {
   name: string;
@@ -157,7 +157,7 @@ const Profile = (props: RouteComponentProps) => {
   
 
 
-  const participantAssets = useStreamQueries(ParticipantRole).contracts;
+  const participantAssets = useStreamQueries(UserRole).contracts;
   const judgeAssets = useStreamQueries(JudgeRole).contracts;
 
   console.log("participantAssets", participantAssets);
@@ -372,7 +372,7 @@ const Profile = (props: RouteComponentProps) => {
     console.log("downloadURL", downloadURL);
   };
   const handleNewAccountRequest = async(evt:any)=>{
-    const accountRequestData = {user: (user as any).party,operator:'ledger-party-9dd291f2-ead1-4f57-801f-82d38928718b',userProfileData:registerRequest};
+    const accountRequestData = {user: (user as any).party,operator:"Elastik",participantProfile:registerRequest};
     const newAcctRequest = await ledger.create(UserRoleRequest, accountRequestData)
     .then((data:any)=>{
 
@@ -381,7 +381,7 @@ const Profile = (props: RouteComponentProps) => {
     //const [choiceReturnValue, events] = await ledger.exercise(ContractChoice, contractId, choiceArguments);
     alert("Your account requested submitted");
   }
-  const userProfileData = () => {
+  const participantProfile = () => {
     console.log("judgeAssets", judgeAssets);
     const d = {
       firstName: "",
@@ -409,7 +409,7 @@ const Profile = (props: RouteComponentProps) => {
         break;
       case "participant":
         const pa = participantAssets.filter(
-          (p) => p.payload.participant === (user as any).party
+          (p) => p.payload.user === (user as any).party
         );
         if (pa.length > 0) {
           d.firstName = pa[0].payload.participantProfile.firstName;
@@ -999,8 +999,8 @@ const Profile = (props: RouteComponentProps) => {
                     <div className="profile-info">
                       <div className="profile-header">
                         <h1>
-                          {user.party} ({userProfileData().firstName}{" "}
-                          {userProfileData().lastName})
+                          {user.party} ({participantProfile().firstName}{" "}
+                          {participantProfile().lastName})
                         </h1>
                         <IonButton size="large" onClick={(e)=>
                             props.history.push("/main/profile/edit")
@@ -1012,16 +1012,16 @@ const Profile = (props: RouteComponentProps) => {
 
                       <div className="profile-about">
                         <h2>About</h2>
-                        <p>{userProfileData().about}</p>
+                        <p>{participantProfile().about}</p>
                         <p>
                           Email:{" "}
-                          <a href={"mailto:" + userProfileData().email}>
-                            {userProfileData().email}
+                          <a href={"mailto:" + participantProfile().email}>
+                            {participantProfile().email}
                           </a>
                         </p>
 
                         <p>
-                          Company: <a href="#">{userProfileData().company}</a>
+                          Company: <a href="#">{participantProfile().company}</a>
                         </p>
                         <p>
                           Linkedin: <a href="#">Information here</a>
@@ -1122,7 +1122,7 @@ const Profile = (props: RouteComponentProps) => {
                     </div>
                   }
                   {(checkFirstTimeLogin == 2) &&
-                    <h1>You have already requested your account registration process. Please wait untill our admin will not approve your request.</h1>
+                    <h1>We are processing your account registration. Please check back later.</h1>
                   }
                   {checkFirstTimeLogin == 1 &&
                   (getUserType() === "client" ? (

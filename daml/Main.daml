@@ -108,7 +108,7 @@ template Registry
                 exerciseByKey @ClientProject (client, projKey) AddParticipantToGeneralPublic with participant 
 
 
-        
+
           -- now add to the participant list so they can be added to new project listings
           create this with participants = participant::participants 
 
@@ -118,7 +118,6 @@ template Registry
           projectKey: Text 
           client: Party
         do 
-          
           -- first add all current participants to this project listing
           -- exerciseByKey @ClientProjectListing (operator, projectKey) AddMultipleParticipantToListing with newParticipants = participants
           exerciseByKey @ClientProject(client, projectKey) AddGeneralPublic with newParticipants = participants
@@ -142,35 +141,53 @@ template UserRoleRequest
   with 
     user:Party
     operator: Party -- 
-    userProfileData:ProfileData
+    participantProfile:ProfileData
   where 
     signatory user
   
     controller operator can 
       AcceptUserRequest: ContractId UserRole
-        do create UserRole with ..
+        do 
+          exerciseByKey @Registry (operator) AddParticipantToProjectListing with participant = user
+          create UserRole with ..
 
-template UserRole
+template UserRole --
   with 
     user:Party
-    operator: Party -- 
-    userProfileData:ProfileData
+    operator: Party  
+    participantProfile:ProfileData
   where 
     signatory user,operator
+    key (operator,participantProfile.email): (Party, Text)
+    maintainer key._1
   
+    controller operator can
+      nonconsuming PromoteToClient: ContractId ClientRole
+        do create ClientRole with client=user,operator,clientProfile=participantProfile
+    
+    controller operator can -- delete
+      nonconsuming PromoteToJudge: ContractId JudgeRole
+        do create JudgeRole with judge=user,operator,judgeProfile=participantProfile
+
+    controller user can 
+      UpdateParProfile: ContractId UserRole
+        with
+          newparticipantProfile:ProfileData
+        do
+          create UserRole with participantProfile=newparticipantProfile,user,operator
 
 -- Judge invitation / Request to join a hackathon
-template JudgeRequestTojoin -- checkbox to chose this contract
-  with
-    judge: Party 
-    operator: Party
-    judgeProfile: ProfileData
-  where 
-    signatory judge 
+-- template JudgeRequestTojoin -- checkbox to chose this contract
+--   with
+--     judge: Party 
+--     operator: Party
+--     judgeProfile: ProfileData
+--   where 
+--     signatory judge 
 
-    controller operator can 
-      AcceptJudgeRequest: ContractId JudgeRole
-        do create JudgeRole with ..
+--     controller operator can 
+--       AcceptJudgeRequest: ContractId JudgeRole
+--         do create JudgeRole with ..
 
 template JudgeRole
   with 
@@ -194,7 +211,7 @@ template JudgeRole
           client: Party
         do create RequestToJudgeProject with ..
 
-template RequestToJudgeProject
+template RequestToJudgeProject -- 
   with 
     judge: Party 
     client: Party
@@ -203,45 +220,45 @@ template RequestToJudgeProject
   where 
     signatory judge 
 
-    controller client can 
-      AddJudgeToProject: ContractId ClientProject 
-        do 
-          exerciseByKey @ClientProject (client, projectId) AddJudge with judge
+    -- controller client can 
+    --   AddJudgeToProject: ContractId ClientProject 
+    --     do 
+    --       exerciseByKey @ClientProject (client, projectId) AddJudge with judge
 
 --  ----------------------------------------------------------------
 
 -- Participant invitation / Request to join a hackathon
-template ParticipantRequestToJoin
-  with
-    participant: Party 
-    operator: Party
-    participantProfile: ProfileData
-  where 
-    signatory participant
+-- template ParticipantRequestToJoin
+--   with
+--     participant: Party 
+--     operator: Party
+--     participantProfile: ProfileData
+--   where 
+--     signatory participant
 
-    controller operator can
-      AcceptParticipantRequest: ContractId ParticipantRole
-          do 
-            exerciseByKey @Registry (operator) AddParticipantToProjectListing with participant
-            create ParticipantRole with ..
+--     controller operator can
+--       AcceptParticipantRequest: ContractId ParticipantRole
+--           do 
+--             exerciseByKey @Registry (operator) AddParticipantToProjectListing with participant
+--             create ParticipantRole with ..
 
-template ParticipantRole
-  with 
-    participant: Party 
-    operator: Party
-    participantProfile:ProfileData
-  where 
-    signatory participant, operator 
+-- template ParticipantRole
+--   with 
+--     participant: Party 
+--     operator: Party
+--     participantProfile:ProfileData
+--   where 
+--     signatory participant, operator 
 
-    key (operator,participantProfile.email):(Party,Text)
-    maintainer key._1
+--     key (operator,participantProfile.email):(Party,Text)
+--     maintainer key._1
 
-    controller participant can 
-      UpdateParProfile: ContractId ParticipantRole
-        with
-          newparticipantProfile:ProfileData
-        do
-          create ParticipantRole with participantProfile=newparticipantProfile,participant,operator
+--     controller participant can 
+--       UpdateParProfile: ContractId ParticipantRole
+--         with
+--           newparticipantProfile:ProfileData
+--         do
+--           create ParticipantRole with participantProfile=newparticipantProfile,participant,operator
     
     -- *** do this from ClientProjectListing instead
     -- controller participant can 
@@ -482,6 +499,7 @@ template ClientProject
     controller client can 
        AddJudge: ContractId ClientProject 
         with 
+          -- judgemail: Text
           judge: Party 
         do 
           forA projects
@@ -607,7 +625,7 @@ template ParticipantSubmission
     signatory participant,client
     observer participants,judges,client,operator
     
-    key (participant,submissionId): (Party, Text)
+    key (client,submissionId): (Party, Text)
     maintainer key._1
 
     controller client can 
@@ -666,7 +684,7 @@ template ParticipantSubmission
           scores: [CriteriaPoint] 
           judge: Party
         controller judge 
-          do create Scorecard with client, submissionId, scoretable=scores, judge
+          do create Scorecard with client,name, submissionId, scoretable=scores, judge
           
 --  ----------------------------------------------------------------
 
@@ -684,8 +702,8 @@ template TeammateProposal
     controller operator can 
       AcceptTeammateProposal: ()
         do 
-          (c1,co) <- fetchByKey @ParticipantRole (operator,email) 
-          exerciseByKey @ParticipantSubmission (participant,submissionId) AddTeammate with participantToAdd=co.participant,leaderParticipant=operator
+          (c1,co) <- fetchByKey @UserRole (operator,email) 
+          exerciseByKey @ParticipantSubmission (participant,submissionId) AddTeammate with participantToAdd=co.user,leaderParticipant=operator
           return ()
           
 
@@ -842,6 +860,7 @@ template ClosedParticipantProfile
 template Scorecard
     with 
         client: Party 
+        name: Text
         submissionId : Text
         -- participant: Party 
         judge: Party 
@@ -869,10 +888,10 @@ setup = script do
   mohammed <- allocatePartyWithHint "Mohammed" (PartyIdHint "Mohammed")
   yuling <- allocatePartyWithHint "Yuling" (PartyIdHint "Yuling")
 
-  let participantProfile = ProfileData with firstName="Andy",lastName="ke",email="andy@dabl.com",job="engineer",company="",about="",pictureUrl=""
+  let userProfile = ProfileData with firstName="Andy",lastName="ke",email="andy@dabl.com",job="engineer",company="",about="",pictureUrl=""
   let clientProfile = ProfileData with firstName="Asx",lastName="Asx",email="asx@dabl.com",job="engineer",company="",about="",pictureUrl=""
   let judgeProfile = ProfileData with firstName="Yuling",lastName="Yu",email="yling@dabl.com",job="judge",company="",about="",pictureUrl=""
-  let participantProfile1 = ProfileData with firstName="Mohammed",lastName="Id",email="med@dabl.com",job="engineer",company="",about="",pictureUrl=""
+  let userProfile1 = ProfileData with firstName="Mohammed",lastName="Id",email="med@dabl.com",job="engineer",company="",about="",pictureUrl=""
 
   platform <- submit elastik do
     createCmd Platform with
@@ -880,25 +899,42 @@ setup = script do
   registry <- submit elastik do
     exerciseCmd platform CreateRegistry 
 
-  participantRequest <- submit andy do
-    createCmd ParticipantRequestToJoin with participant = andy, operator = elastik, participantProfile 
-  participantRole <- submit elastik do
-    exerciseCmd participantRequest AcceptParticipantRequest
+  -- UserRoleRequest <- submit andy do
+  --   createCmd UserRoleRequest with 
+  --     user = andy, operator = elastik, userProfileData=userProfile
+  -- AcceptUserRequest <- submit elastik do
+  --   exerciseCmd participantRequest AcceptParticipantRequest
 
-  participantRequest <- submit mohammed do
-    createCmd ParticipantRequestToJoin with participant = mohammed, operator = elastik, participantProfile=participantProfile1
-  participantRole <- submit elastik do
-    exerciseCmd participantRequest AcceptParticipantRequest
+  
+  userRoleRequest <- submit andy do
+    createCmd UserRoleRequest with user = andy, operator = elastik, participantProfile=userProfile
+  acceptUserRequest <- submit elastik do
+    exerciseCmd userRoleRequest AcceptUserRequest
 
-  clientRequest <- submit asx do
-    createCmd ClientRequestToJoin with client = asx, operator = elastik, clientProfile 
-  clientRole <- submit elastik do
-    exerciseCmd clientRequest AcceptRequest
+  userRoleRequest <- submit mohammed do
+    createCmd UserRoleRequest with user = mohammed, operator = elastik, participantProfile=judgeProfile
+  acceptUserRequest <- submit elastik do
+    exerciseCmd userRoleRequest AcceptUserRequest
 
-  judgeRequest <- submit yuling do
-    createCmd JudgeRequestTojoin with judge = yuling, operator = elastik, judgeProfile 
-  clientRole <- submit elastik do
-    exerciseCmd judgeRequest AcceptJudgeRequest
+  userRoleRequest <- submit asx do
+    createCmd UserRoleRequest with user = asx, operator = elastik, participantProfile=clientProfile
+  acceptUserRequest <- submit elastik do
+    exerciseCmd userRoleRequest AcceptUserRequest
+
+  -- userRoleRequest <- submit mohammed do
+  --   createCmd UserRole with user = mohammed, operator = elastik,participantProfile=userProfile1
+  -- AcceptUserRequest <- submit elastik do
+  --   exerciseCmd participantRequest AcceptParticipantRequest
+
+  -- UserRoleRequest <- submit asx do
+  --   createCmd UserRoleRequest with user = asx, operator = elastik, participantProfile=clientProfile 
+  -- AcceptUserRequest <- submit elastik do
+  --   exerciseCmd clientRequest AcceptRequest
+
+  -- judgeRequest <- submit yuling do
+  --   createCmd UserRoleRequest with user = yuling, operator = elastik 
+  -- clientRole <- submit elastik do
+  --   exerciseCmd judgeRequest AcceptJudgeRequest
 
   -- clientRole <- submit asx do
   --   createCmd CreateProject with name="proj1",desc="description",projectId="11",startDate=datetime 1970 Jan 2 0 0 0,endDate=datetime 1970 Jan 2 0 0 0,location="online",criteria=[],pictureUrl="pic.com"
