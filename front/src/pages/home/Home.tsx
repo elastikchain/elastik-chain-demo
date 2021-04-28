@@ -3,6 +3,7 @@ import styled from "styled-components";
 import ReactDOM from 'react-dom';
 import { GoogleLogin } from 'react-google-login';
 import { isLocalDev } from "../../config";
+import { Button, Card, Col, Container, Row } from 'react-bootstrap';
 import {
   IonContent,
   IonHeader,
@@ -125,6 +126,7 @@ const categoriesSlidesOptions = {
   spaceBetween: 8,
 };
 const Home = (props: RouteComponentProps) => {
+  const [readMore, setReadMore] = useState(false);
   const [searchText, setSearchText] = useState("");
   const [showLoginModal, setShowLoginModal] = useState(false);
   const [loginSegement, setLoginSegement] = useState("SIGN_IN");
@@ -358,6 +360,110 @@ const Home = (props: RouteComponentProps) => {
             <div className="content-container">{renderWorkSteps()}</div>
           </div>
         </section>
+        {/* Apps Section*/}
+        <div id="showcases" className="apps mb-5">
+                    {/* <p className="mb-4 show-case"><b>SHOW CASES</b></p> */}
+                    <h4 className="mb-4 blue">Here is some Dapps</h4>
+                    {/* <p className="description mb-4">
+                        Dapps is a decentralized computer application that runs on a distributed computing system.
+                    </p> */}
+                    <Row >
+                        <Col md={3} sm={12}>
+                            <div className="box">
+                                <div className="box-img">
+                                    <img src="/images/home/financial-2.png" alt="" />
+                                </div>
+                                <div className="box-body">
+                                    <h4 className="blue">SALT</h4>
+                                    <p>Offering cash loans in return for cryptocurrency collateral, SALT managed to serve those who are in need of cash but don't want to sell their tokens.</p>
+                                </div>
+                            </div>
+                        </Col>
+                        <Col md={3} sm={12}>
+                            <div className="box">
+                                <div className="box-img">
+                                    <img src="/images/home/financial.png" alt="" />
+                                </div>
+                                <div className="box-body">
+                                    <h4 className="blue">Stellar</h4>
+                                    <p>Stellar, or Stellar Lumens, is an open source, decentralized protocol for digital currency to fiat money transfers which allows cross-border transactions between any pair of currencies.</p>
+                                </div>
+                            </div>
+                        </Col>
+                        <Col md={3} sm={12}>
+                            <div className="box">
+                                <div className="box-img">
+                                    <img src="/images/home/badbanny1.png" alt="" />
+                                </div>
+                                <div className="box-body">
+                                    <h4 className="blue">OmiseGo</h4>
+                                    <p>The OMG Network allows you to access, manage, and transact with digital assets that are kept securely on the blockchain.</p>
+                                </div>
+                            </div>
+                        </Col>
+                        <Col md={3} sm={12}>
+                            <div className="box">
+                                <div className="box-img">
+                                    <img src="/images/home/badbanny.png" alt="" />
+                                </div>
+                                <div className="box-body">
+                                    <h4 className="blue">Fintech Pro</h4>
+                                    <p>Pro Fintech provide liquidity and trading management, IT support, development and consultancy services to the financial sector. With our proactive and strategic approach to your requirements, we are poised to deliver first time, every time.</p>
+                                </div>
+                            </div>
+                        </Col>
+                    </Row>
+                </div>
+
+
+                {/* About Section */}
+                <div id="about" className="about">
+                    {/* <p className="mb-4 show-case"><b>ABOUT</b></p> */}
+                    {/* <h4 className="mb-4">Learn More <b className='text-danger'>About Us</b></h4> */}
+                    <h4 className="mb-4 blue">Learn More About Us</h4>
+                    {/* <p className="description mb-4">
+                        Here is simply how Elastik-Chain works we are making it easy for Dapps to scale by getting funded and brought the light to our community.
+                    </p> */}
+                    <Row >
+                        <Col md={6} sm={12}>
+                            <p>
+                                When it comes to personalizing your online store, 
+                                nothing is more effective than an About Us page. 
+                                This is a quick summary of your company's history and purpose, 
+                                and should provide a clear overview of the company's brand story. 
+                                A great About Us page can help tell your brand story, 
+                                establish customer loyalty, 
+                                and turn your bland ecommerce store into an well-loved brand icon. 
+                                Most importantly, it will give your customers a reason 
+                                to shop from your brand.
+                                A great About Us page can help tell your brand story, 
+                                establish customer loyalty, 
+                                and turn your bland ecommerce store into an well-loved brand icon. 
+                                Most importantly, it will give your customers a reason .
+                            </p>
+                        </Col>
+                        <Col md={6} sm={12}>
+                            <p>
+                                When it comes to personalizing your online store, 
+                                nothing is more effective than an About Us page. 
+                                This is a quick summary of your company's history and purpose, 
+                                and should provide a clear overview of{readMore ? <></> :
+                                <span id="dots">...</span>}
+                                {readMore?<span id="more"> the company's brand story. 
+                                A great About Us page can help tell your brand story, 
+                                establish customer loyalty, 
+                                and turn your bland ecommerce store into an well-loved brand icon. 
+                                Most importantly, it will give your customers a reason 
+                                to shop from your brand.</span>:<></>}
+                                
+                            </p>
+                            {readMore ?
+                                <button onClick={() => setReadMore(false)} id="myBtn">Show Less</button>
+
+                                : <button onClick={() => setReadMore(true)} id="myBtn">Learn More</button>}
+                        </Col>
+                    </Row>
+                </div>
         <StyledNewsletter>
           <NewsParent>
             <Newsletter>

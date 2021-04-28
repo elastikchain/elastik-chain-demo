@@ -160,7 +160,7 @@ const Profile = (props: RouteComponentProps) => {
   const participantAssets = useStreamQueries(UserRole).contracts;
   const judgeAssets = useStreamQueries(JudgeRole).contracts;
 
-  console.log("participantAssets", participantAssets);
+  console.log("User Role", participantAssets);
   const getUserType = (): "" | "client" | "participant" | "judge" => {
     if (
       clientProjectAssets.length > 0 &&
@@ -438,7 +438,7 @@ const Profile = (props: RouteComponentProps) => {
     }
     return d;
   };
-  if(projectAssets && projectAssets.length != 0 && checkFirstTimeLogin == 0){ checkFirstTimeLogin = 1;  }
+  if((projectAssets && projectAssets.length != 0 && checkFirstTimeLogin == 0) || (participantAssets && participantAssets.length != 0 && checkFirstTimeLogin == 0)|| (judgeAssets && judgeAssets.length != 0 && checkFirstTimeLogin == 0)){ checkFirstTimeLogin = 1;  }
    if(roleRequested && roleRequested.length != 0 && checkFirstTimeLogin == 0){checkFirstTimeLogin = 2;  }
   const HackathonComponenent = (hackathonProps: any) => {
     const p = hackathonProps.project;
@@ -453,7 +453,7 @@ const Profile = (props: RouteComponentProps) => {
               props.history.push("/main/project/" + p.payload.projectId);
             }}
           >
-            {console.log("payload", p.payload)}
+           
             {p.payload.pictureUrl != "" ? (
               <img src={p.payload.pictureUrl} alt="peoject image" />
             ) : (
@@ -1029,6 +1029,7 @@ const Profile = (props: RouteComponentProps) => {
                         <p>
                           Github: <a href="#">Information here</a>
                         </p>
+                        { getUserType() }
                         {getUserType() === "client" ? (
                           <div>
                             <IonButton
@@ -1083,6 +1084,7 @@ const Profile = (props: RouteComponentProps) => {
                             }
                           ></IonInput>
                         </IonItem>
+                       
                         <IonItem>
                          <IonLabel position="floating">Job</IonLabel>
                           <IonInput

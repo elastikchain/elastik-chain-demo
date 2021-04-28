@@ -857,7 +857,7 @@ const Project = (props: RouteComponentProps) => {
                           </div>
                         ))}
 
-                        {console.log("approvedSubmissions",approvedSubmissions)}
+                       
                         { (approvedSubmissions.length > 0) ? approvedSubmissions.map((sc) => (
                           <IonCard
                             className="submission-card"
@@ -875,8 +875,9 @@ const Project = (props: RouteComponentProps) => {
                             
                               
                               {/* check if judge is in judges */}
+                           
                               <div className="sponsors-challenge">
-                                {getUserType() === "judge" || selectedProj[0].payload.judges.includes("Yuling") &&(
+                                {(selectedProj[0] &&  ((user as any).party in selectedProj[0].payload.judges)) &&(
                                   <div className="submit-your-score">
                                     <input
                                       type="hidden"
@@ -989,6 +990,7 @@ const Project = (props: RouteComponentProps) => {
                 {(getUserType() === "" || getUserType() === "participant") && (
                   <div>
                     <div className="card-for-btn join-participant">
+                    {(approvedSubmissions.length ==  0 && participantSubmissionProposalAssets.length == 0) && 
                       <IonButton
                         onClick={(e) =>
                           setShowCreateSubmissionModal({
@@ -997,9 +999,11 @@ const Project = (props: RouteComponentProps) => {
                           })
                         }
                       >
+                      
                         <IonIcon icon={add}></IonIcon>
                         <IonLabel>Create new Submission</IonLabel>
                       </IonButton>
+                    }
                     </div>
 
                    {/* <div className="card-for-btn join-participant">
