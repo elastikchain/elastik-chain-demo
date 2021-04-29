@@ -877,6 +877,7 @@ const Project = (props: RouteComponentProps) => {
                               {/* check if judge is in judges */}
                             {console.log("select", selectedProj[0])}
                               <div className="sponsors-challenge">
+                                <div className="submission-manage">
                                 {(selectedProj[0] &&  (selectedProj[0].payload.judges.includes((user as any).party))) &&(
                                   <div className="submit-your-score">
                                     <input
@@ -922,6 +923,7 @@ const Project = (props: RouteComponentProps) => {
                                     </form>
                                   </div>
                                 )}
+                                <div className="btn-group">
                                 <a
                                   href="javascript:void 0"
                                   className="btn view-details-btn"
@@ -937,7 +939,7 @@ const Project = (props: RouteComponentProps) => {
                                 >
                                   View details
                                 </a> &nbsp;
-                                {(getUserType() === "participant" || getUserType() === "" )&& (  <a
+                                {((getUserType() === "participant" || getUserType() === "" ) && !(selectedProj[0].payload.judges.includes((user as any).party)))&& (  <a
                                   href="javascript:void 0"
                                   className="btn view-details-btn"
                                   onClick={(e) => {
@@ -951,7 +953,8 @@ const Project = (props: RouteComponentProps) => {
                                 >
                                   Edit
                                 </a> )}
-                                
+                                </div>
+                                </div>
                               </div>
                             </div>
                           </div>

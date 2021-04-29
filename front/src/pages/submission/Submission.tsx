@@ -207,9 +207,6 @@ const Submission = (props: RouteComponentProps) => {
                     Presentation : <span>{selectedSubmission.payload.presentation}</span>
                   </p>
                  
-                  <p>
-                    Submission : <span>{selectedSubmission.payload.submission}</span>
-                  </p>
                 </div>
 
                 {/* <IonList>
