@@ -596,8 +596,8 @@ const Project = (props: RouteComponentProps) => {
                   <IonIcon slot="start" icon={arrowBack}></IonIcon>
                   Back
                 </IonButton>
-                <h2>Category Type</h2>
-                <p>
+                <h2>{getSelectedProject().payload.name}{" "}</h2>
+               {/*}  <p>
                   We feature amazing projects that would bring in next level
                   revolution in Fintech. Lorem ipsum dolor sit amet, consectetur
                   adipiscing elit. Sed vel leo suscipit, elementum metus vel,
@@ -612,7 +612,7 @@ const Project = (props: RouteComponentProps) => {
                   <div className="images-partner-parent">
                     <img src={getSelectedProject().payload.pictureUrl} />
                   </div>
-                </div>
+              </div> */}
               </IonCardContent>
               {/* <IonCardContent>
               <div className="d-flex align-items-center justify-content-space-between">
@@ -812,19 +812,7 @@ const Project = (props: RouteComponentProps) => {
 
                               <div className="sponsors-challenge">
                                
-                                <a
-                                  href="javascript:void 0"
-                                  className="btn view-details-btn"
-                                  onClick={(e) => {
-                                    props.history.push(
-                                      "/main/submission/" +
-                                        sbmt.payload.subName
-                                    );
-                                  }}
-                                >
-                                  View details
-                                </a>{" "}
-                                &nbsp;
+                                
                                 {getUserType() === "client" ? (
                                   
                                   <a
