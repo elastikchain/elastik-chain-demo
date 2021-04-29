@@ -47,7 +47,6 @@ const StyledNewsletter = styled.div`
   margin: 4rem 0;
   background: #fff;
 `;
-
 const Newsletter = styled.div`
   margin: 0 auto;
   width: 60%;
