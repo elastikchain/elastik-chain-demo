@@ -149,18 +149,26 @@ template UserRoleRequest
       AcceptUserRequest: ContractId UserRole
         do 
           exerciseByKey @Registry (operator) AddParticipantToProjectListing with participant = user
-          create UserRole with ..
+          create UserRole with user,operator,participantProfile,observers=[]
 
 template UserRole --
   with 
     user:Party
     operator: Party  
     participantProfile:ProfileData
+    observers:[Party]
   where 
     signatory user,operator
+    observer observers
     key (operator,participantProfile.email): (Party, Text)
     maintainer key._1
-  
+
+    controller user can 
+      AddClientAsObserver: ContractId UserRole
+        with
+          client: Party
+        do create this with observers=client::observers
+
     controller operator can
       nonconsuming PromoteToClient: ContractId ClientRole
         do create ClientRole with client=user,operator,clientProfile=participantProfile
@@ -174,7 +182,14 @@ template UserRole --
         with
           newparticipantProfile:ProfileData
         do
-          create UserRole with participantProfile=newparticipantProfile,user,operator
+          create this with participantProfile=newparticipantProfile,user,operator,observers
+
+    controller user can 
+      AddObserver: ContractId UserRole
+        with
+          partyId: Party
+        do
+          create this with observers=partyId::observers
 
 -- Judge invitation / Request to join a hackathon
 -- template JudgeRequestTojoin -- checkbox to chose this contract
@@ -211,7 +226,7 @@ template JudgeRole
           client: Party
         do create RequestToJudgeProject with ..
 
-template RequestToJudgeProject -- 
+template RequestToJudgeProject  
   with 
     judge: Party 
     client: Party
@@ -220,10 +235,10 @@ template RequestToJudgeProject --
   where 
     signatory judge 
 
-    -- controller client can 
-    --   AddJudgeToProject: ContractId ClientProject 
-    --     do 
-    --       exerciseByKey @ClientProject (client, projectId) AddJudge with judge
+    controller client can 
+      AddJudgeToProject: ContractId ClientProject 
+        do 
+          exerciseByKey @ClientProject (client, projectId) AddJudge with judge
 
 --  ----------------------------------------------------------------
 
@@ -502,13 +517,26 @@ template ClientProject
           -- judgemail: Text
           judge: Party 
         do 
+          -- (c1,co) <- fetchByKey @UserRole (operator,judge) 
           forA projects
             $ \ projKey
               -> do
                 -- exerciseByKey @ClientProjectListing (operator, projKey) AddParticipantToListing with participant 
-                exerciseByKey @ParticipantSubmission (client, projKey) AddJudgToSubmission with judge 
+                exerciseByKey @ParticipantSubmission (client, projKey) AddJudgToSubmission with judge
 
-          create this with operator, client, name, desc, criteria, challenges, judges = judge::judges
+          create this with operator, client, name, desc, criteria, challenges, judges =judge::judges
+    
+    choice RequestToJudge: ContractId RequestToJudgeProject 
+      with 
+        judgemail: Text
+        judge: Party
+          controller judge 
+            do 
+               -- exerciseByKey @ClientProjectListing (operator, projKey) AddParticipantToListing with participant 
+                exerciseByKey @UserRole (operator, judgemail) AddObserver with partyId=client 
+
+                create RequestToJudgeProject with client, judge, operator, projectId
+          
           
     nonconsuming choice ProposeSubmission: ContractId ParticipantSubmissionProposal
         with
@@ -526,6 +554,15 @@ template ClientProject
           -- proj <- fetch p
           -- create this with projects = proj::projects 
         
+    nonconsuming choice GiveAcessToUserRole: ContractId UserRole
+        with
+          generalPublicParticipant: Party 
+          email: Text
+        controller generalPublicParticipant
+        do
+          (c1,co) <- fetchByKey @UserRole (operator,email) 
+          exerciseByKey @UserRole (operator,email) AddObserver with partyId=client
+
     controller client can 
       AddSubmissionToList: ContractId ClientProject 
         with 
@@ -703,7 +740,7 @@ template TeammateProposal
       AcceptTeammateProposal: ()
         do 
           (c1,co) <- fetchByKey @UserRole (operator,email) 
-          exerciseByKey @ParticipantSubmission (participant,submissionId) AddTeammate with participantToAdd=co.user,leaderParticipant=operator
+          exerciseByKey @ParticipantSubmission (participant,submissionId) AddTeammate with participantToAdd=co.user,leaderParticipant=participant
           return ()
           
 
@@ -890,7 +927,7 @@ setup = script do
 
   let userProfile = ProfileData with firstName="Andy",lastName="ke",email="andy@dabl.com",job="engineer",company="",about="",pictureUrl=""
   let clientProfile = ProfileData with firstName="Asx",lastName="Asx",email="asx@dabl.com",job="engineer",company="",about="",pictureUrl=""
-  let judgeProfile = ProfileData with firstName="Yuling",lastName="Yu",email="yling@dabl.com",job="judge",company="",about="",pictureUrl=""
+  let judgeProfile = ProfileData with firstName="Yuling",lastName="Yu",email="yuling@dabl.com",job="judge",company="",about="",pictureUrl=""
   let userProfile1 = ProfileData with firstName="Mohammed",lastName="Id",email="med@dabl.com",job="engineer",company="",about="",pictureUrl=""
 
   platform <- submit elastik do
@@ -911,8 +948,8 @@ setup = script do
   acceptUserRequest <- submit elastik do
     exerciseCmd userRoleRequest AcceptUserRequest
 
-  userRoleRequest <- submit mohammed do
-    createCmd UserRoleRequest with user = mohammed, operator = elastik, participantProfile=judgeProfile
+  userRoleRequest <- submit yuling do
+    createCmd UserRoleRequest with user = yuling, operator = elastik, participantProfile=judgeProfile
   acceptUserRequest <- submit elastik do
     exerciseCmd userRoleRequest AcceptUserRequest
 
