@@ -235,10 +235,10 @@ template RequestToJudgeProject
   where 
     signatory judge 
 
-    -- controller client can 
-    --   AddJudgeToProject: ContractId ClientProject 
-    --     do 
-    --       exerciseByKey @ClientProject (client, projectId) AddJudge with judge
+    controller client can 
+      AddJudgeToProject: ContractId ClientProject 
+        do 
+          exerciseByKey @ClientProject (client, projectId) AddJudge with judge
 
 --  ----------------------------------------------------------------
 
@@ -526,24 +526,15 @@ template ClientProject
 
           create this with operator, client, name, desc, criteria, challenges, judges =judge::judges
 
-    controller generalPublic can 
-      nonconsuming RequestToJudge: ContractId RequestToJudgeProject
-        with 
-          judgemail: Text
-          judge: Party
-        do 
-          exerciseByKey @UserRole (operator, judgemail) AddObserver with partyId=client 
-          create RequestToJudgeProject with client, judge, operator, projectId
-    
-    -- choice RequestToJudge: ContractId RequestToJudgeProject 
-    --   with 
-    --     judgemail: Text
-    --     judge: Party
-    --       controller judge 
-    --         do 
-    --            -- exerciseByKey @ClientProjectListing (operator, projKey) AddParticipantToListing with participant 
-    --           exerciseByKey @UserRole (operator, judgemail) AddObserver with partyId=client 
-    --           create RequestToJudgeProject with client, judge, operator, projectId
+    nonconsuming choice RequestToJudge: ContractId RequestToJudgeProject 
+      with 
+        judgemail: Text
+        judge: Party
+          controller judge 
+            do 
+               -- exerciseByKey @ClientProjectListing (operator, projKey) AddParticipantToListing with participant 
+              exerciseByKey @UserRole (operator, judgemail) AddObserver with partyId=client 
+              create RequestToJudgeProject with client, judge, operator, projectId
           
           
     nonconsuming choice ProposeSubmission: ContractId ParticipantSubmissionProposal
