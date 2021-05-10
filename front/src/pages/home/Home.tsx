@@ -28,7 +28,7 @@ import icWork1 from "../../assets/img/icon-idea.png";
 import icWork2 from "../../assets/img/icon-product.png";
 import icWork3 from "../../assets/img/icon-work.png";
 import icWork4 from "../../assets/img/ic-work4.png";
-import image1 from "../../assets/img/financial-2.png";
+import image1 from "../../assets/img/1asx_logo_blue.jpg";
 import image2 from "../../assets/img/financial.png";
 import image3 from "../../assets/img/badbanny1.png";
 import image4 from "../../assets/img/badbanny.png";
@@ -366,41 +366,47 @@ const Home = (props: RouteComponentProps) => {
         {/* Apps Section*/}
         <div id="showcases" className="apps mb-5 wrapper1">
                     {/* <p className="mb-4 show-case"><b>SHOW CASES</b></p> */}
-                    <h4 className="mb-4 blue">Here is some Dapps</h4>
+                    <h4 className="mb-4 blue">Featured Hackathons</h4>
                     {/* <p className="description mb-4">
                         Dapps is a decentralized computer application that runs on a distributed computing system.
                     </p> */}
                     <Row >
-                        <Col md={3} sm={12}>
+                        <Col md={12} sm={12}>
                             <div className="box">
+                              <h4 className="blue">ASX Daml Hackathon</h4>
                                 <div className="box-img">
-                                    <img src={image1} alt="" />
+                                    <img src="https://www.zdnet.com/a/hub/i/r/2018/10/25/6ab96a00-3a4a-4b21-8ae8-697bf922980e/thumbnail/770x578/d7529b45e96702f47a57219dc25d6c84/asx.jpg" alt="" />
                                 </div>
                                 <div className="box-body">
-                                    <h4 className="blue">SALT</h4>
-                                    <p>Offering cash loans in return for cryptocurrency collateral, SALT managed to serve those who are in need of cash but don't want to sell their tokens.</p>
+                                    <h4 className="blue">15 July - 20 August</h4>
+                                    <p>This is an exciting opportunity to drive innovation in the Austrlian business landscape.
+                                      Join us to brainstorm and develop exciting projects. Win cool prizes.
+                                    </p>
                                 </div>
                             </div>
                         </Col>
-                        <Col md={3} sm={12}>
+                        {/* <Col md={6} sm={12}>
                             <div className="box">
+                              <h4 className="blue">Open Banking Hackathon</h4>
                                 <div className="box-img">
                                     <img src={image2} alt="" />
                                 </div>
                                 <div className="box-body">
-                                    <h4 className="blue">Stellar</h4>
-                                    <p>Stellar, or Stellar Lumens, is an open source, decentralized protocol for digital currency to fiat money transfers which allows cross-border transactions between any pair of currencies.</p>
+                                    <h4 className="blue">15 August - 29 August</h4>
+                                    <p>Get your hack on! Unleash the power of open banking to create new customer experiences, revenue models, and industry ecosystems.
+                                      Your challenge is to showcase a unique and tangible use case.</p>
                                 </div>
                             </div>
-                        </Col>
-                        <Col md={3} sm={12}>
+                        </Col> */}
+                        </Row>
+                        {/* <Col md={3} sm={12}>
                             <div className="box">
                                 <div className="box-img">
                                     <img src={image3} alt="" />
                                 </div>
                                 <div className="box-body">
-                                    <h4 className="blue">OmiseGo</h4>
-                                    <p>The OMG Network allows you to access, manage, and transact with digital assets that are kept securely on the blockchain.</p>
+                                    <h4 className="blue">Coming soon</h4>
+                                    <p>A new Blockchain Hackathon.</p>
                                 </div>
                             </div>
                         </Col>
@@ -410,12 +416,41 @@ const Home = (props: RouteComponentProps) => {
                                     <img src={image4} alt="" />
                                 </div>
                                 <div className="box-body">
-                                    <h4 className="blue">Fintech Pro</h4>
-                                    <p>Pro Fintech provide liquidity and trading management, IT support, development and consultancy services to the financial sector. With our proactive and strategic approach to your requirements, we are poised to deliver first time, every time.</p>
+                                    <h4 className="blue">Coming soon</h4>
+                                    <p>A new Blockchain Hackathon</p>
                                 </div>
                             </div>
-                        </Col>
-                    </Row>
+                        </Col> */}
+                    <Row >
+                        {/* <Col md={6} sm={12}>
+                            <div className="box">
+                            <h4 className="blue">Food Supply Chain Hackathon</h4>
+                                <div className="box-body">
+                                    
+                                    <div className="box-img">
+                                    <img src="https://www.highspot.com/wp-content/uploads/Hackathon-blog-header.png" alt="" />
+                                </div>
+                                    <h4 className="blue">15 July - 20 August</h4>
+                                    <p>Today’s supply chains need to be more scalable and transparent. We invite creative minds to think 
+                                      beyond the current models and push the innovation horizon.
+                                    </p>
+                                </div>
+                            </div>
+                        </Col> */}
+                        {/* <Col md={6} sm={12}>
+                            <div className="box">
+                            <h3 className="blue">Insurer of the Future</h3> 
+                                <div className="box-img">
+                                    <img src="https://www.joc.com/sites/default/files/field_feature_image/Hackathon%20concept_0.jpg" alt="" />
+                                </div>
+                                <div className="box-body">
+                                    <h4 className="blue">15 August - 29 August</h4>
+                                    <p>Help the insurance sector launch into the future with creative ideas that streamline business processes and bring new products to market faster. 
+                                      Explore the trends that are changing insurance – and how the industry’s business models and thinking need to change.</p>
+                                </div>
+                            </div>
+                        </Col> */}
+                        </Row>
                 </div>
 
 
@@ -428,43 +463,28 @@ const Home = (props: RouteComponentProps) => {
                         Here is simply how Elastik-Chain works we are making it easy for Dapps to scale by getting funded and brought the light to our community.
                     </p> */}
                     <Row >
-                        <Col md={6} sm={12}>
+                        {/* <Col md={6} sm={12}>
                             <p>
-                                When it comes to personalizing your online store, 
-                                nothing is more effective than an About Us page. 
-                                This is a quick summary of your company's history and purpose, 
-                                and should provide a clear overview of the company's brand story. 
-                                A great About Us page can help tell your brand story, 
-                                establish customer loyalty, 
-                                and turn your bland ecommerce store into an well-loved brand icon. 
-                                Most importantly, it will give your customers a reason 
-                                to shop from your brand.
-                                A great About Us page can help tell your brand story, 
-                                establish customer loyalty, 
-                                and turn your bland ecommerce store into an well-loved brand icon. 
-                                Most importantly, it will give your customers a reason .
+                                When it comes to innovation hackathons are one of the fastest way to get an idea tested, 
+                                or come up with a new solution. 
+                                A hackathon is a design sprint-like event; often, in which computer programmers and others involved 
+                                in software development, including graphic designers, interface designers, project managers, domain experts, 
+                                and others collaborate intensively on software projects. 
                             </p>
-                        </Col>
-                        <Col md={6} sm={12}>
+                        </Col> */}
+                        {/* <Col md={6} sm={12}>
                             <p>
-                                When it comes to personalizing your online store, 
-                                nothing is more effective than an About Us page. 
-                                This is a quick summary of your company's history and purpose, 
-                                and should provide a clear overview of{readMore ? <></> :
+                                ElastikChain is a blockchain hackathon platform build on daml and aims to supported
+                                new projects on multiple fileds. {readMore ? <></> :
                                 <span id="dots">...</span>}
-                                {readMore?<span id="more"> the company's brand story. 
-                                A great About Us page can help tell your brand story, 
-                                establish customer loyalty, 
-                                and turn your bland ecommerce store into an well-loved brand icon. 
-                                Most importantly, it will give your customers a reason 
-                                to shop from your brand.</span>:<></>}
+                                {readMore?<span id="more"> Elastikchain V2 will include diffirent features.</span>:<></>}
                                 
                             </p>
                             {readMore ?
                                 <button onClick={() => setReadMore(false)} id="myBtn">Show Less</button>
 
                                 : <button onClick={() => setReadMore(true)} id="myBtn">Learn More</button>}
-                        </Col>
+                        </Col> */}
                     </Row>
                 </div>
         <StyledNewsletter>
@@ -484,7 +504,7 @@ const Home = (props: RouteComponentProps) => {
             <img className="footer-logo" src={logoBlue} alt="logo slogan" />
             <div className="footer-text">
               <span>Terms of use</span> | <span>Privacy Statement</span> |{" "}
-              <span>Copyright ASX Ltd 2021</span>
+              <span>Copyright ElastikChain Ltd 2021</span>
             </div>
           </div>
         </footer>

@@ -10,7 +10,7 @@ const Footer = () => {
         <img className="footer-logo" src={logoBlue} alt="logo slogan" />
         <div className="footer-text">
           <span>Terms of use</span> | <span>Privacy Statement</span> |{" "}
-          <span>Copyright ASX Ltd 2021</span>
+          <span>Copyright ElastikChain Ltd 2021</span>
         </div>
       </div>
     </footer>

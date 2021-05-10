@@ -759,7 +759,7 @@ const Project = (props: RouteComponentProps) => {
                         </div>
                       </div>
                     </Tab>
-                    <Tab title={`2. Challanges (${selectedProj[0] && selectedProj[0].payload.challenges.length})`} className="tabs-contant">
+                    <Tab title={`2. Challenges (${selectedProj[0] && selectedProj[0].payload.challenges.length})`} className="tabs-contant">
                     {selectedProj[0] ? selectedProj[0].payload.challenges.map(key => 
                       (
                         <div className="challanges-listing">
@@ -772,7 +772,7 @@ const Project = (props: RouteComponentProps) => {
                           <div className="amount-main">
                             <h1 className="highlight-amount">
                               {" "}
-                              <span>Prize</span> ${key.prize}
+                              <span>Prize ${key.prize}</span>
                             </h1>
                           </div>
                         </div>
@@ -957,7 +957,7 @@ const Project = (props: RouteComponentProps) => {
                       }
                       </div>
                     </Tab>
-                    <Tab title="Judging criteria" className="tabs-contant">
+                    {/* <Tab title="Judging criteria" className="tabs-contant"> */}
                       {/* <IonNote>
                       Judging criteria:{" "}
                       {getSelectedProject()
@@ -965,13 +965,13 @@ const Project = (props: RouteComponentProps) => {
                         .join(", ")}
                     </IonNote> */}
 
-                      <div className="list_inner judging_criteria">
+                      {/* <div className="list_inner judging_criteria">
                         <h2>JUDGING CRITERIA</h2>
                         <ul>
                          {selectedProj[0] && selectedProj[0].payload.criteria.map(k=>(<li>{k.name}</li>))}
                         </ul>
                       </div>
-                    </Tab>
+                    </Tab> */}
                   </Tabs>
                 </div>
 

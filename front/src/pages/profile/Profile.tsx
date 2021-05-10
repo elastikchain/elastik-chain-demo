@@ -999,8 +999,9 @@ const Profile = (props: RouteComponentProps) => {
                     <div className="profile-info">
                       <div className="profile-header">
                         <h1>
-                          {user.party} ({participantProfile().firstName}{" "}
-                          {participantProfile().lastName})
+                          {/* {user.party}  */}
+                          {participantProfile().firstName}{" "}
+                          {participantProfile().lastName}
                         </h1>
                         <IonButton size="large" onClick={(e)=>
                             props.history.push("/main/profile/edit")
