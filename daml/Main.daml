@@ -235,10 +235,10 @@ template RequestToJudgeProject
   where 
     signatory judge 
 
-    controller client can 
-      AddJudgeToProject: ContractId ClientProject 
-        do 
-          exerciseByKey @ClientProject (client, projectId) AddJudge with judge
+    -- controller client can 
+    --   AddJudgeToProject: ContractId ClientProject 
+    --     do 
+    --       exerciseByKey @ClientProject (client, projectId) AddJudge with judge
 
 --  ----------------------------------------------------------------
 
@@ -525,17 +525,25 @@ template ClientProject
                 exerciseByKey @ParticipantSubmission (client, projKey) AddJudgToSubmission with judge
 
           create this with operator, client, name, desc, criteria, challenges, judges =judge::judges
-    
-    choice RequestToJudge: ContractId RequestToJudgeProject 
-      with 
-        judgemail: Text
-        judge: Party
-          controller judge 
-            do 
-               -- exerciseByKey @ClientProjectListing (operator, projKey) AddParticipantToListing with participant 
-                exerciseByKey @UserRole (operator, judgemail) AddObserver with partyId=client 
 
-                create RequestToJudgeProject with client, judge, operator, projectId
+    controller generalPublic can 
+      nonconsuming RequestToJudge: ContractId RequestToJudgeProject
+        with 
+          judgemail: Text
+          judge: Party
+        do 
+          exerciseByKey @UserRole (operator, judgemail) AddObserver with partyId=client 
+          create RequestToJudgeProject with client, judge, operator, projectId
+    
+    -- choice RequestToJudge: ContractId RequestToJudgeProject 
+    --   with 
+    --     judgemail: Text
+    --     judge: Party
+    --       controller judge 
+    --         do 
+    --            -- exerciseByKey @ClientProjectListing (operator, projKey) AddParticipantToListing with participant 
+    --           exerciseByKey @UserRole (operator, judgemail) AddObserver with partyId=client 
+    --           create RequestToJudgeProject with client, judge, operator, projectId
           
           
     nonconsuming choice ProposeSubmission: ContractId ParticipantSubmissionProposal
@@ -699,7 +707,7 @@ template ParticipantSubmission
           email: Text
         do 
         -- create this with participants=participantToAdd::participants
-          create TeammateProposal with email,operator,submissionId,participant
+          create TeammateProposal with email,operator,submissionId,participant,client
 
     choice AddTeammate : ContractId ParticipantSubmission
         with 
@@ -733,6 +741,7 @@ template TeammateProposal
     submissionId: Text
     participant: Party
     email: Text
+    client: Party
   where
     signatory participant
 
@@ -740,7 +749,7 @@ template TeammateProposal
       AcceptTeammateProposal: ()
         do 
           (c1,co) <- fetchByKey @UserRole (operator,email) 
-          exerciseByKey @ParticipantSubmission (participant,submissionId) AddTeammate with participantToAdd=co.user,leaderParticipant=participant
+          exerciseByKey @ParticipantSubmission (client,submissionId) AddTeammate with participantToAdd=co.user,leaderParticipant=participant
           return ()
           
 
