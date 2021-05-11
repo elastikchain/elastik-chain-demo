@@ -599,3 +599,7 @@ span.Criteria-lisitng {
     float: none;
     margin-top: 16px;
 }
+textarea.native-textarea.sc-ion-textarea-md {
+    resize: both;
+    overflow: auto;
+}

@@ -423,7 +423,7 @@ ion-label#ion-input-6-lbl {
   float: left;
 }
 // end login form css
-.wrapper1{max-width: 1110px;
+.wrapper1{max-width: 700px;
   margin: 0 auto;}  
 
  
@@ -501,4 +501,14 @@ img {
   text-align: justify;
     padding: 35px;
 }
-.col-md-6 p{color: #757474; line-height: 26px;}
+.wrapper1 .row .box .box-img img {
+  max-width: 80%;
+  margin: 0;
+  margin-left: 0;
+  display: inline-block;
+  float: none;
+}
+
+.box-img {
+  text-align: center;
+}

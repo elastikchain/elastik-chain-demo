@@ -780,3 +780,7 @@ ion-button.go-back2 {
         background: #f3f3f3;
         padding: 5px 4px;
     } 
+    textarea.native-textarea.sc-ion-textarea-md {
+        resize: both;
+        overflow: auto;
+    }
