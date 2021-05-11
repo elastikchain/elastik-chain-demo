@@ -515,6 +515,7 @@ const EditProject = (props: RouteComponentProps) => {
                 </div>
               </IonPage>
             </IonSplitPane>
+			  <Footer />
           </div>
         </IonContent>
       </IonPage>

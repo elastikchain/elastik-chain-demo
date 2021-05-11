@@ -287,6 +287,7 @@ import {
            
           </IonCard>
           </div>
+		    <Footer />
           </div>
         </IonContent>
       </IonPage>

@@ -1022,13 +1022,14 @@ const Profile = (props: RouteComponentProps) => {
                         </p>
 
                         <p>
-                          Company: <a href="#">{participantProfile().company}</a>
+                          Name: {participantProfile().firstName} {participantProfile().lastName}
+                        </p>
+						
+                        <p>
+                          Job: {participantProfile().job}
                         </p>
                         <p>
-                          Linkedin: <a href="#">Information here</a>
-                        </p>
-                        <p>
-                          Github: <a href="#">Information here</a>
+                          About: {participantProfile().about}
                         </p>
                         { getUserType() }
                         {getUserType() === "client" ? (
@@ -1155,9 +1156,13 @@ const Profile = (props: RouteComponentProps) => {
                       ))}
                     </IonList>
                   )) }
+				    <Footer />
                 </div>
+				
               </IonPage>
+			  
             </IonSplitPane>
+			
           </div>
         </IonContent>
       </IonPage>

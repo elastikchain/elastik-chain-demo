@@ -751,6 +751,14 @@ const Project = (props: RouteComponentProps) => {
                             }
                           </ul>
                         </div>
+						<div className="judges">
+                          <h2>Terms Link</h2>
+                          <p> {selectedProj[0] && selectedProj[0].payload.termsLink}</p>
+                        </div>
+						<div className="judges">
+                          <h2>Privacy Link</h2>
+                          <p> {selectedProj[0] && selectedProj[0].payload.privacyLink}</p>
+                        </div>
                         <div className="list_inner judging_criteria">
                           <h2>JUDGING CRITERIA</h2>
                           <ul>
