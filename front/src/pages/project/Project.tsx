@@ -122,6 +122,9 @@ const Project = (props: RouteComponentProps) => {
 
   const [showChallengeModal, setShowChallengeModal] = useState(false);
   const [showJudgeModal, setShowJudgeModal] = useState(false);
+  
+  const projectAssets = useStreamQueries(ClientRole).contracts;
+  const clientProjectAssets = useStreamQueries(ClientProject).contracts;
   const [
     showDltChallenderConfirmation,
     deleteChallenderConfirmation,
@@ -235,7 +238,84 @@ const Project = (props: RouteComponentProps) => {
         alert("Error: " + JSON.stringify(err));
       });
   };
-
+  const userProfileData = () => {
+    console.log("judgeAssets", clientProjectAssets);
+    const d = {
+      firstName: "",
+      lastName: "",
+      email: "",
+      job: "",
+      about: "",
+      company: "",
+      pictureUrl: "",
+      contractId:'',
+    };
+    switch (getUserType()) {
+      case "judge":
+        const ja = judgeAssets.filter(
+          (j) => j.payload.judge === (user as any).party
+        );
+        if (ja.length > 0) {
+          d.firstName = ja[0].payload.judgeProfile.firstName;
+          d.lastName = ja[0].payload.judgeProfile.lastName;
+          d.email = ja[0].payload.judgeProfile.email;
+          d.job = ja[0].payload.judgeProfile.job;
+          d.about = ja[0].payload.judgeProfile.about;
+          d.company = ja[0].payload.judgeProfile.company;
+          d.pictureUrl = ja[0].payload.judgeProfile.pictureUrl;
+          d.contractId = ja[0].contractId;
+        }
+        break;
+      case "participant":
+        const pa = participantAssets.filter(
+          (p) => p.payload.user === (user as any).party
+        );
+        if (pa.length > 0) {
+          d.firstName = pa[0].payload.participantProfile.firstName;
+          d.lastName = pa[0].payload.participantProfile.lastName;
+          d.email = pa[0].payload.participantProfile.email;
+          d.job = pa[0].payload.participantProfile.job;
+          d.about = pa[0].payload.participantProfile.about;
+          d.company = pa[0].payload.participantProfile.company;
+          d.pictureUrl = pa[0].payload.participantProfile.pictureUrl;
+          d.contractId = pa[0].contractId;
+        }
+        break;
+      case "client":
+        const ca = projectAssets.filter(
+          (c) => c.payload.client === (user as any).party
+        );
+        if (ca.length > 0) {
+          d.firstName = ca[0].payload.clientProfile.firstName;
+          d.lastName = ca[0].payload.clientProfile.lastName;
+          d.email = ca[0].payload.clientProfile.email;
+          d.job = ca[0].payload.clientProfile.job;
+          d.about = ca[0].payload.clientProfile.about;
+          d.company = ca[0].payload.clientProfile.company;
+          d.pictureUrl = ca[0].payload.clientProfile.pictureUrl;
+          d.contractId = ca[0].contractId;
+        }
+        break;
+    }
+    return d;
+  };
+ const sendRequestForJudge = ()=>{
+    ledger
+    .exercise(
+      ClientProject.RequestToJudge,
+      selectedProj[0]!.contractId,
+      { judgemail: userProfileData().email, judge: (user as any).party}
+    )
+    .then(() => {
+     
+      alert("Successfully submitted your request");
+      
+    })
+    .catch((err: any) => {
+      setShowChallengeModal(false);
+      alert("Error: " + JSON.stringify(err));
+    });
+ }
   const formattedDate = (dateStr: string) => {
     const dateTimeFormatOptions: Intl.DateTimeFormatOptions = {
       year: "numeric",
@@ -696,8 +776,8 @@ const Project = (props: RouteComponentProps) => {
                           </h5> */}
                           <div className="prize_list">
 
-                            {selectedProj[0] && selectedProj[0].payload.prizes.map(k=>(
-                              <div className="">
+                            {selectedProj[0] && selectedProj[0].payload.prizes.map((k,index)=>(
+                              <div className="" key={index}>
                               <h3>
                                 <span>*</span> {k.currency}{k.value} {k.name}
                               </h3>
@@ -795,8 +875,8 @@ const Project = (props: RouteComponentProps) => {
                     </Tab>
                     <Tab title={`3. Submissions (${approvedSubmissions && approvedSubmissions.length})`} className="tabs-contant">
                       <div className="submission-item-list">
-                         {(getUserType() != "judge" ) &&  participantSubmissionProposalAssets.map((sbmt) => (
-                          <div className="submission-listing request-to-join">
+                         {(getUserType() != "judge" ) &&  participantSubmissionProposalAssets.map((sbmt,index) => (
+                          <div className="submission-listing request-to-join" key={index}>
                             <div className="left-image-submission">
                               <img src={topbannerImg} alt="project image" />
                             </div>
@@ -1003,6 +1083,10 @@ const Project = (props: RouteComponentProps) => {
                         <IonLabel>Create new Submission</IonLabel>
                       </IonButton>
                     }
+                      <IonButton className = "add-judges" onClick={(e) => sendRequestForJudge()}>
+                      <IonIcon icon={man}></IonIcon>
+                      <IonLabel>Request For Judge</IonLabel>
+                    </IonButton>
                     </div>
 
                    {/* <div className="card-for-btn join-participant">
@@ -1013,6 +1097,8 @@ const Project = (props: RouteComponentProps) => {
                     </div> */}
                   </div>
                 )}
+              
+
                 {getUserType() === "client" && (
                   <div className="card-for-btn join-participant">
                     <IonButton onClick={(e) => setShowChallengeModal(true)}>
@@ -1092,7 +1178,7 @@ const Project = (props: RouteComponentProps) => {
                           <IonIcon icon={add}></IonIcon> Criteria :
                           <div>
                             <span className="Criteria-lisitng">
-                            {selectedProj[0] && selectedProj[0].payload.criteria.map(k=>(<li>{k.name}</li>))}
+                            <ul>{selectedProj[0] && selectedProj[0].payload.criteria.map(k=>(<li>{k.name}</li>))}</ul>
                             </span>
                           </div>
                         </div>
