@@ -69,7 +69,7 @@ import {
   // ParticipantRequestToJoin,
   UserRoleRequest,
   AddJudge,
-  JudgeRole,
+  // JudgeRole,
   SubmitScorecard,
   CriteriaPoint,
   Scorecard
@@ -84,7 +84,7 @@ const Project = (props: RouteComponentProps) => {
   const ledger = useLedger();
 
   const participantAssets = useStreamQueries(UserRole).contracts;
-  const judgeAssets = useStreamQueries(JudgeRole).contracts;
+  // const judgeAssets = useStreamQueries(JudgeRole).contracts;
   const selectedProj = useStreamQueries(ClientProject, () => [
     { projectId: getSelectedProject().payload.projectId },
   ]).contracts;
@@ -109,14 +109,14 @@ const Project = (props: RouteComponentProps) => {
     ) {
       return "client";
     }
-    if (
-      judgeAssets.filter(c => (user as any).party === c.payload.judge)
-        .length > 0
-    ) {
-      return "judge";
-    }
+    // if (
+    //   judgeAssets.filter(c => (user as any).party === c.payload.judge)
+    //     .length > 0
+    // ) {
+    //   return "judge";
+    // }
 
-    return "";
+    return "participant";
   };
 
 
@@ -251,21 +251,21 @@ const Project = (props: RouteComponentProps) => {
       contractId:'',
     };
     switch (getUserType()) {
-      case "judge":
-        const ja = judgeAssets.filter(
-          (j) => j.payload.judge === (user as any).party
-        );
-        if (ja.length > 0) {
-          d.firstName = ja[0].payload.judgeProfile.firstName;
-          d.lastName = ja[0].payload.judgeProfile.lastName;
-          d.email = ja[0].payload.judgeProfile.email;
-          d.job = ja[0].payload.judgeProfile.job;
-          d.about = ja[0].payload.judgeProfile.about;
-          d.company = ja[0].payload.judgeProfile.company;
-          d.pictureUrl = ja[0].payload.judgeProfile.pictureUrl;
-          d.contractId = ja[0].contractId;
-        }
-        break;
+      // case "judge":
+      //   const ja = judgeAssets.filter(
+      //     (j) => j.payload.judge === (user as any).party
+      //   );
+      //   if (ja.length > 0) {
+      //     d.firstName = ja[0].payload.judgeProfile.firstName;
+      //     d.lastName = ja[0].payload.judgeProfile.lastName;
+      //     d.email = ja[0].payload.judgeProfile.email;
+      //     d.job = ja[0].payload.judgeProfile.job;
+      //     d.about = ja[0].payload.judgeProfile.about;
+      //     d.company = ja[0].payload.judgeProfile.company;
+      //     d.pictureUrl = ja[0].payload.judgeProfile.pictureUrl;
+      //     d.contractId = ja[0].contractId;
+      //   }
+      //   break;
       case "participant":
         const pa = participantAssets.filter(
           (p) => p.payload.user === (user as any).party
@@ -299,6 +299,7 @@ const Project = (props: RouteComponentProps) => {
     }
     return d;
   };
+  console.log("user profile",userProfileData())
  const sendRequestForJudge = ()=>{
     ledger
     .exercise(
@@ -310,7 +311,7 @@ const Project = (props: RouteComponentProps) => {
      
       alert("Successfully submitted your request");
       
-    })
+    }) 
     .catch((err: any) => {
       setShowChallengeModal(false);
       alert("Error: " + JSON.stringify(err));
