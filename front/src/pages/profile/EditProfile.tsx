@@ -187,28 +187,29 @@ const EditProfile = (props: RouteComponentProps) => {
     };
     const [profileDetail, setProfileDetail] = useState(defaultProfiletDetail);
     const handleEditProfileSubmit  = (evt:any)=>{
-        console.log("userProfileData",userProfileData().contractId);
+        console.log("userProfileData",userProfileData().contractId); 
+        
         if(getUserType() ===  "client"){
-            const profileData = {newClientProfile: profileDetail};
-          ledger.exercise(ClientRole.AddEditCliProfile,userProfileData().contractId,profileData)
-          .then((data:any)=>{
-              alert("Successfull updated profile");
-          })
-          .catch((err:any)=>{
-              alert(err);
-          });
-        }else{
-          const profileData = {newparticipantProfile: profileDetail};
-          const userContractId = userProfileData().contractId
-          ledger.exercise(UserRole.UpdateParProfile,userContractId,profileData)
-          .then((data:any)=>{
-              alert("Successfull updated profile");
-          })
-          .catch((err:any)=>{
-              alert(err);
-          });
-        }
-       
+          const profileData = {newClientProfile: profileDetail};
+        ledger.exercise(ClientRole.AddEditCliProfile,userProfileData().contractId,profileData)
+        .then((data:any)=>{
+            alert("Successfull updated profile");
+        })
+        .catch((err:any)=>{
+            alert(err);
+        });
+      }else{
+        const profileData = {newparticipantProfile: profileDetail};
+        const userContractId = userProfileData().contractId
+        ledger.exercise(UserRole.UpdateParProfile,userContractId,profileData)
+        .then((data:any)=>{
+            alert("Successfull updated profile");
+        })
+        .catch((err:any)=>{
+            alert(err);
+        });
+      }
+     
     }
 
   if (!user.isAuthenticated) {
