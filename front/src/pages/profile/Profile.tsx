@@ -160,7 +160,8 @@ const Profile = (props: RouteComponentProps) => {
   const participantAssets = useStreamQueries(UserRole).contracts;
   const judgeAssets = useStreamQueries(JudgeRole).contracts;
 
-  console.log("User Role", participantAssets);
+  console.log("User Role Data", participantAssets);
+  console.log("User Role Data", projectAssets);
   const getUserType = (): "" | "client" | "participant" | "judge" => {
     if (
       clientProjectAssets.length > 0 &&
@@ -185,13 +186,7 @@ const Profile = (props: RouteComponentProps) => {
       return "participant";
     }
 
-    if (
-      judgeAssets.filter((c) => (user as any).party === c.payload.judge)
-        .length > 0
-    ) {
-      return "judge";
-    }
-    return "";
+    return "participant";
   };
 
   const SubmissionToAcceptComponent = (props: any) => {
@@ -393,20 +388,6 @@ const Profile = (props: RouteComponentProps) => {
       pictureUrl: "",
     };
     switch (getUserType()) {
-      case "judge":
-        const ja = judgeAssets.filter(
-          (j) => j.payload.judge === (user as any).party
-        );
-        if (ja.length > 0) {
-          d.firstName = ja[0].payload.judgeProfile.firstName;
-          d.lastName = ja[0].payload.judgeProfile.lastName;
-          d.email = ja[0].payload.judgeProfile.email;
-          d.job = ja[0].payload.judgeProfile.job;
-          d.about = ja[0].payload.judgeProfile.about;
-          d.company = ja[0].payload.judgeProfile.company;
-          d.pictureUrl = ja[0].payload.judgeProfile.pictureUrl;
-        }
-        break;
       case "participant":
         const pa = participantAssets.filter(
           (p) => p.payload.user === (user as any).party
