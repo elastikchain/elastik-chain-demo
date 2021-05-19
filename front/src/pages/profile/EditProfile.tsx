@@ -94,7 +94,7 @@ const EditProfile = (props: RouteComponentProps) => {
       projectAssets.filter((c: any) => (user as any).party === c.payload.client)
         .length > 0
     ) {
-      return "client";
+      return "participant";
     }
     if (
       participantAssets.filter(
@@ -110,9 +110,9 @@ const EditProfile = (props: RouteComponentProps) => {
     ) {
       return "judge";
     }
-    return "";
+    return "participant";
   };
-
+  let userContract:any;
  
   const[contractIdUser,setContractIdUser] = useState();
   const userProfileData = () => {
@@ -125,7 +125,7 @@ const EditProfile = (props: RouteComponentProps) => {
       about: "",
       company: "",
       pictureUrl: "",
-      contractId:'',
+      contractId: userContract,
     };
     switch (getUserType()) {
       case "judge":
@@ -188,14 +188,15 @@ const EditProfile = (props: RouteComponentProps) => {
     const [profileDetail, setProfileDetail] = useState(defaultProfiletDetail);
     const handleEditProfileSubmit  = (evt:any)=>{
         console.log("userProfileData",userProfileData().contractId);
-       /* const profileData = {newClientProfile: profileDetail};
-        ledger.exercise(ClientRole.AddEditCliProfile,"00a74745af2a573e78d7219ebc1fa7e3848e9fa9c228678408f33fa403445c709a",profileData)
+        const profileData = {newparticipantProfile: profileDetail};
+        const userContractId = userProfileData().contractId
+        ledger.exercise(UserRole.UpdateParProfile,userContractId,profileData)
         .then((data:any)=>{
             alert("Successfull updated profile");
         })
         .catch((err:any)=>{
             alert(err);
-        });*/
+        });
     }
 
   if (!user.isAuthenticated) {
