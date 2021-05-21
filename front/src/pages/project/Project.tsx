@@ -1,7 +1,7 @@
 import React, { useState } from "react";
 import { RouteComponentProps } from "react-router-dom";
 
-import { useUserDispatch, useUserState } from "../../context/UserContext";
+import { useUserState } from "../../context/UserContext";
 
 import {
   getSelectedProject,
@@ -13,47 +13,31 @@ import Tab from "../../components/Tabs/Tab";
 
 import {
   IonButton,
-  IonButtons,
   IonCard,
   IonCardContent,
   IonContent,
-  IonFab,
-  IonFabButton,
-  IonHeader,
   IonIcon,
   IonInput,
   IonItem,
   IonLabel,
   IonModal,
-  IonNote,
   IonPage,
-  IonSearchbar,
-  IonSegment,
-  IonSegmentButton,
   IonTextarea,
-  IonToolbar,
-  IonList,
 } from "@ionic/react";
 
 import topbannerImg from "../../assets/img/topbanner-image.png";
 import userImg from "../../assets/img/user.png";
-import logo from "../../assets/img/logo-combination.png";
 import {
   add,
   man,
   close,
   arrowBack,
-  time,
-  location,
-  open,
-  trash,
-  pencil,
   logoFacebook,
   logoInstagram,
   logoTwitter,
 } from "ionicons/icons";
 import "./Project.scss";
-import { useLedger, useQuery, useStreamQueries } from "@daml/react";
+import { useLedger, useStreamQueries } from "@daml/react";
 
 import {
   AddChallenge,
@@ -64,23 +48,16 @@ import {
   // ParticipantRole,
   UserRole,
   ParticipantSubmissionProposal,
-  AcceptSubmission,
-  RequestToJoinProject,
-  // ParticipantRequestToJoin,
-  UserRoleRequest,
   AddJudge,
   // JudgeRole,
   SubmitScorecard,
   CriteriaPoint,
-  Scorecard
 } from "@daml.js/cosmart-0.0.1/lib/Main";
 
-import submissionPlaceHolder from "../../assets/img/img-proj-placeholder.png";
 import SubHeader from "../../components/Header/subheader";
 import Footer from "../../components/Footer/footer";
 const Project = (props: RouteComponentProps) => {
   const user = useUserState();
-  var userDispatch = useUserDispatch();
   const ledger = useLedger();
 
   const participantAssets = useStreamQueries(UserRole).contracts;
@@ -140,9 +117,7 @@ const Project = (props: RouteComponentProps) => {
     judge:(user as any).party,
     scores:Array<CriteriaPoint>()
   };
-  const [submitScoreDetailetail, setSubmitScoreDetailetail] = useState(
-    defaultSubmitScoreDetail
-  );
+
   const defaultJudgeDetail: AddJudge = {
     judge : ""
   };
@@ -157,7 +132,7 @@ const Project = (props: RouteComponentProps) => {
   const [challengeDetail, setChallengeDetail] = useState(
     defaultChallengeDetail
   );
-  const [showedtChallengeToggle, editChallengeToggle] = useState(false);
+ 
   const resetCreateChallenge = () => {
     setChallengeDetail(defaultChallengeDetail);
     setChallengeIdTouched(false);
@@ -317,18 +292,7 @@ const Project = (props: RouteComponentProps) => {
       alert("Error: " + JSON.stringify(err));
     });
  }
-  const formattedDate = (dateStr: string) => {
-    const dateTimeFormatOptions: Intl.DateTimeFormatOptions = {
-      year: "numeric",
-      month: "numeric",
-      day: "numeric",
-      hour: "2-digit",
-      hour12: false,
-      minute: "2-digit",
-    };
-    return new Date(dateStr).toLocaleDateString("en-US", dateTimeFormatOptions);
-  };
-
+  
   const approvedSubmissions = useStreamQueries(ParticipantSubmission, () => [
     {
       client: getSelectedProject().payload.client,
@@ -336,177 +300,12 @@ const Project = (props: RouteComponentProps) => {
     },
   ]).contracts;
 
-  const [selectedChallengeId, setSelectedChallengeId] = useState(0);
+  
   const [showCreateSubmissionModal, setShowCreateSubmissionModal] = useState({
     show: false,
     challengeId: "",
   } as { show: boolean; challengeId?: string });
-  const ChallengeCompoenent = (props: any) => {
-    /* console.log("Challenge For customer",props.challengeId);
-    const stream = useQuery(
-      Challenge,
-      () => ({ challengeId: props.challengeId }),
-      []
-    );
-    console.log(
-      "Challenge get",
-      stream,
-      "challengeId: props.challengeId=",
-      props.challengeId
-    );
-      
-    if ((stream.contracts || []).length > 0) {
-      return (
-        <IonCard>
-          <div className="d-flex" id="view-project">
-            {showedtChallengeToggle != props.challengeId ? (
-              <IonCardContent className="list-item-data">
-                {console.log("Contacr", stream.contracts[0].payload)}
 
-                <h1 className="proj-chall-name">
-                  {stream.contracts[0].payload.nameOf}{" "}
-                  <IonNote>Id: {props.challengeId}</IonNote>
-                </h1>
-                <h2 className="proj-chall-example">Dolor sit amet</h2>
-                <p className="proj-chall-description">
-                {stream.contracts[0].payload.description}
-                </p>
-                <p>Fund: ${stream.contracts[0].payload.prize}</p>
-                
-                {getUserType() === "participant" ? (
-                  <IonButton
-                    onClick={() => {
-                      setSelectedChallengeId(props.challengeId);
-                      setShowCreateSubmissionModal({
-                        show: true,
-                        challengeId: props.challengeId,
-                      });
-                    }}
-                    className="create-project-button"
-                  >
-                    {" "}
-                    Create New Submission{" "}
-                  </IonButton>
-                ) : null}
-                <IonIcon
-                  icon={pencil}
-                  onClick={() => {
-                    editChallengeToggle(props.challengeId);
-                  }}
-                ></IonIcon>
-
-                <IonIcon
-                  icon={trash}
-                  onClick={() => {
-                    deleteChallenderConfirmation({
-                      status: true,
-                      challengeID: props.challengeId,
-                      contractID: stream.contracts[0].contractId,
-                    });
-                  }}
-                ></IonIcon>
-              </IonCardContent>
-            ) : (
-              <IonCardContent className="editClient-challenge">
-                <IonButton
-                  fill="clear"
-                  onClick={() => {
-                    editChallengeToggle(false);
-                  }}
-                >
-                  <IonIcon slot="start" icon={arrowBack}></IonIcon>
-                  Back
-                </IonButton>
-                <div className="edi-challenge">
-                  <form onSubmit={handleChallengeSubmission}>
-                    <IonItem>
-                      <IonLabel position="floating">Challenge Name</IonLabel>
-                      <IonInput
-                        required={true}
-                        value={stream.contracts[0].payload.nameOf}
-                        name="challengeName"
-                      ></IonInput>
-                    </IonItem>
-                    <IonItem>
-                      <IonLabel position="floating">Challenge ID</IonLabel>
-                      <IonInput
-                        required={true}
-                        value={props.challengeId}
-                        name="challengeId"
-                      ></IonInput>
-                    </IonItem>
-                    <IonItem>
-                      <IonLabel position="floating">
-                        Challenge Description
-                      </IonLabel>
-                      <IonTextarea
-                        required={true}
-                        value={stream.contracts[0].payload.description}
-                        name="challengeDesc"
-                      ></IonTextarea>
-                    </IonItem>
-
-                    <IonItem>
-                      <IonLabel position="floating">Challenge Price</IonLabel>
-                     
-                      <IonInput
-                        required={true}
-                        value={stream.contracts[0].contractId}
-                        name="contractId"
-                        className="hidden"
-                      ></IonInput>
-                      <IonInput
-                        required={true}
-                        value={stream.contracts[0].payload.prize}
-                        name="challengePrize"
-                      ></IonInput>
-                    </IonItem>
-
-                    <IonButton className="submit-button" type="submit">
-                      Update Challenge
-                    </IonButton>
-                  </form>
-                </div>
-              </IonCardContent>
-            )}
-          </div>
-        </IonCard>
-      );
-    } else return null;*/
-  };
-
-  const [selectedSegement, setSelectedSegement] = useState("submissions");
-  
-  
-
- 
-  
-  const getChallengesIds = () => {
-    return (
-      (selectedProj && selectedProj.length > 0
-        ? selectedProj[0]
-        : { payload: {} }
-      ).payload.challenges || []
-    );
-  };
-  const partycipantRequestToJoinProject = async (evt: any) => {
-    evt.preventDefault();
-    const formData = {
-      participant: user,
-      client: getSelectedProject().payload.client,
-      operator: getSelectedProject().payload.client.operator,
-      projectId: getSelectedProject().payload.client.projectId,
-    }; 
-    
-    /*ledger
-      .exercise(
-        ParticipantRequestToJoin.RequestToJoinProject,
-        getSelectedProject().contractId,
-        formData
-      )
-      .then((data) => { alert("Submitted Your Request");})
-      .catch((err) => console.log(err)); */
-  };
   const deleteChallegeFromStorage = (challengeID: any, contractID: any) => {
     /*console.log(contractID);
     ledger
@@ -523,26 +322,7 @@ const Project = (props: RouteComponentProps) => {
       })
       .catch((err: any) => console.log(err));*/
   };
-  const handleChallengeSubmission = async (event: any) => {
-    /*  event.preventDefault();
-    ledger
-      .exercise(
-        Challenge.ModifieChallenge,
-        event.target.elements.contractId.value,
-        {
-          newname: event.target.elements.challengeName.value,
-          newprize: event.target.elements.challengePrize.value,
-					newdescription: event.target.elements.challengeDesc.value,
-        }
-      )
-      .then((data: any) => {
-        editChallengeToggle(false);
-      })
-      .catch((err: any) => {
-        editChallengeToggle(false);
-      });
-    console.log(event.target.elements.challengeName.value);*/
-  };
+ 
   const parseVideoLink = (videoLink: string) => {
     let res = videoLink;
     if(!res) res = "https://www.youtube.com/embed/IQHk9UCbQq4";
@@ -654,17 +434,17 @@ const Project = (props: RouteComponentProps) => {
           <div className="image-heading-and-contant">
             <IonCard className="top-banner-details">
               {getSelectedProject() &&
-              getSelectedProject().payload.pictureUrl != "" ? (
+              getSelectedProject().payload.pictureUrl !== "" ? (
                 <img
                   className="project-picture"
                   src={getSelectedProject().payload.pictureUrl}
-                  alt="project image"
+                  alt="project "
                 />
               ) : (
                 <img
                   className="project-picture"
                   src={topbannerImg}
-                  alt="project image"
+                  alt="project "
                 />
               )}
 
@@ -819,7 +599,7 @@ const Project = (props: RouteComponentProps) => {
                             {
                               selectedProj[0] && selectedProj[0].payload.judges.map(j => (
                                 <li>
-                                  <img src={userImg} />
+                                  <img src={userImg} alt=""/>
                                   <span>
                                     <b>{j}</b>
                                     <i>
@@ -876,10 +656,10 @@ const Project = (props: RouteComponentProps) => {
                     </Tab>
                     <Tab title={`3. Submissions (${approvedSubmissions && approvedSubmissions.length})`} className="tabs-contant">
                       <div className="submission-item-list">
-                         {(getUserType() != "judge" ) &&  participantSubmissionProposalAssets.map((sbmt,index) => (
+                         {(getUserType() !== "judge" ) &&  participantSubmissionProposalAssets.map((sbmt,index) => (
                           <div className="submission-listing request-to-join" key={index}>
                             <div className="left-image-submission">
-                              <img src={topbannerImg} alt="project image" />
+                              <img src={topbannerImg} alt="" />
                             </div>
                             <div className="right-contant-submission">
                               <h1>{sbmt.payload.subName}</h1>
@@ -1070,7 +850,7 @@ const Project = (props: RouteComponentProps) => {
                 {(getUserType() === "" || getUserType() === "participant") && (
                   <div>
                     <div className="card-for-btn join-participant">
-                    {(approvedSubmissions.length ==  0 && participantSubmissionProposalAssets.length == 0) && 
+                    {(approvedSubmissions.length ===  0 && participantSubmissionProposalAssets.length === 0) && 
                       <IonButton
                         onClick={(e) =>
                           setShowCreateSubmissionModal({

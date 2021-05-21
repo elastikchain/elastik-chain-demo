@@ -7,14 +7,13 @@ import TableBody from "@material-ui/core/TableBody";
 import Button from "@material-ui/core/Button";
 // import Ledger from "@daml/ledger";
 import { useStreamQueries, useLedger, useParty } from "@daml/react";
-import { Platform, AcceptRequest,CreateProject, ClientRole, AddChallenge, ClientProject, UserRole, RequestToJoinProject,
+import { Platform, AcceptRequest, ClientRole, AddChallenge, ClientProject, UserRole, RequestToJoinProject,
   ParticipantSubmission,
-  ProposeTeammate,
-  ProposeSubmission,CriteriaPoint,PrizeData
+  ProposeTeammate
 } from "@daml.js/cosmart-0.0.1/lib/Main";
 import { InputDialog, InputDialogProps } from "./InputDialog";
 import useStyles from "./styles";
-import { publicParty, useUserState } from "../../context/UserContext";
+import { useUserState } from "../../context/UserContext";
 
 export default function Report() {
   const classes = useStyles();
@@ -142,14 +141,10 @@ export default function Report() {
   };
 
  
-  const [ createProjectProps, setCreateProjectProps ] = useState("");
+
   // One can pass the original contracts CreateEvent
   function showCreateProject(asset : ClientRole.CreateEvent) {
-    async function onClose(state : CreateProject | null) {
-     // setCreateProjectProps({ ...defaultCreateProjectProps, open: false});
-      await ledger.exercise(ClientRole.CreateProject, asset.contractId, state);
-      alert("Project has been created successfully!");
-    };
+   
    // setCreateProjectProps({ ...defaultCreateProjectProps, open: true, onClose})
   };
   
@@ -188,8 +183,7 @@ export default function Report() {
     setAddUpdateChallengeProps({ ...defaultAddUpdateChallengeProps, open: true, onClose})
   };
 
- 
-  const [ addUpdateSubmissionProps, setAddUpdateSubmissionProps ] = useState("");
+
   // One can pass the original contracts CreateEvent
   function showParticipantSubmission(asset : ClientProject.CreateEvent) {
     
@@ -282,7 +276,7 @@ export default function Report() {
     },
     onClose: async function() {}
   };
-  const [ registerForProjectProps, setRegisterForProjectProps ] = useState(defaultRegisterForProjectProps);
+  const [ registerForProjectProps ] = useState(defaultRegisterForProjectProps);
   // One can pass the original contracts CreateEvent
   function showRegiterForProject(asset : UserRole.CreateEvent) {
     

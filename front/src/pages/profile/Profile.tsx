@@ -4,17 +4,15 @@ import { RouteComponentProps } from "react-router-dom";
 import firebase from "firebase/app";
 import { useLedger, useStreamQueries } from "@daml/react";
 import * as damlTypes from "@daml/types";
-
+import ProfileMenu from "./profileMenu";
 import {
   ClientRole,
   ClientProject,
-  AcceptRequest,
   CreateProject,
   ParticipantSubmissionProposal,
   RequestToJoinProject,
   AddParticipant,
   PrizeData,
-  ChallengeData,
   JudgeRole,
   UserRoleRequest,
   UserRole
@@ -23,7 +21,6 @@ import {
 
 import "./Profile.scss";
 import {
-  publicParty,
   useUserDispatch,
   useUserState,
 } from "../../context/UserContext";
@@ -33,16 +30,11 @@ import SubHeader from "../../components/Header/subheader";
 import Footer from "../../components/Footer/footer";
 import PrizesComponent from "../../components/PrizesComponent/PrizesComponent";
 import CriteriaTagsInput from "../../components/CriteriaTagsInput/CriteriaTagsInput";
-import AddMore from "../../components/AddMore/AddMore";
 import {
   IonPage,
-  IonHeader,
-  IonToolbar,
   IonButton,
   IonContent,
-  IonMenu,
   IonSplitPane,
-  IonTitle,
   IonItem,
   IonList,
   IonLabel,
@@ -57,12 +49,10 @@ import {
 } from "@ionic/react";
 
 import {
-  open,
   close,
   pencil,
   trash,
   calendar,
-  calendarClear,
   trophy,
   globe,
   flag,
@@ -71,13 +61,8 @@ import {
   hammer,
 } from "ionicons/icons";
 
-import Tabs from "../../components/Tabs";
-import Tab from "../../components/Tabs/Tab";
-
-import menuItemImg from "../../assets/img/img-menu-item.png";
 import mediumImage from "../../assets/img/medium.jpg";
 import "./Profile.scss";
-import participant from "../report/participant";
 
 interface CriteriaPoint {
   name: string;
@@ -636,31 +621,7 @@ const Profile = (props: RouteComponentProps) => {
               </IonModal>
 
               {/*--  the side menu  --*/}
-              <IonMenu contentId="main" className="leftbar-main">
-                <IonHeader className="d-none">
-                  <IonToolbar>
-                    <IonTitle></IonTitle>
-                  </IonToolbar>
-                </IonHeader>
-                <IonContent>
-                  <IonList className="menu-items-list">
-                    {/* <Tabs>
-                    <Tab title="Lemon">Lemon is yellow</Tab>
-                    <Tab title="Strawberry">Strawberry is red</Tab>
-                    <Tab title="Pear">Pear is green</Tab>
-                  </Tabs> */}
-
-                    <IonItem>
-                      <img slot="start" src={menuItemImg} alt="menu item" />
-                      <IonLabel>Profile</IonLabel>
-                    </IonItem>
-                    <IonItem>
-                      <img slot="start" src={menuItemImg} alt="menu item" />
-                      <IonLabel>Account Settings</IonLabel>
-                    </IonItem>
-                  </IonList>
-                </IonContent>
-              </IonMenu>
+              <ProfileMenu {...props}/>
               {/*-- the main content --*/}
               <IonPage className="full-width-container" id="main">
                 {/*--  modal showCreateProjectModal --*/}

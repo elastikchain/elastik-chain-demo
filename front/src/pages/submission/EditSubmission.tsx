@@ -1,84 +1,39 @@
 import {
     IonButton,
-    IonButtons,
-    IonList,
     IonContent,
-    IonFab,
-    IonFabButton,
-    IonHeader,
     IonIcon,
-    IonTitle,
-    IonMenu,
     IonTextarea,
     IonInput,
     IonItem,
     IonLabel,
     IonPage,
-    IonSplitPane,
-    IonSearchbar,
-    IonToolbar,
     IonCard,
     IonCardContent
   } from "@ionic/react";
   import React, { useState } from "react";
   import menuItemImg from "../../assets/img/img-menu-item.png";
-  import { Link, RouteComponentProps } from "react-router-dom";
-  import logo from "../../assets/img/logo-combination.png";
-  import userImg from "../../assets/img/user.png";
+  import {  RouteComponentProps } from "react-router-dom";
   import AddMore from "../../components/AddMore/AddMore";
   import {
     getSelectedSubmission,
-    setSelectedSubmission,
+
   } from "../../context/SharedContext";
-  import { arrowBack, add } from "ionicons/icons";
-  import submissionPlaceHolder from "../../assets/img/img-proj-placeholder.png";
-  import "./Submission.scss";
+  import { arrowBack } from "ionicons/icons";
+   import "./Submission.scss";
   import { useLedger, useStreamQueries } from "@daml/react";
   import {
-    ClientProject,
-    ParticipantSubmission,
-    ParticipantSubmissionProposal,
+     ParticipantSubmission
   } from "@daml.js/cosmart-0.0.1/lib/Main";
-  import {
-    signOut,
-    useUserDispatch,
-    useUserState,
-  } from "../../context/UserContext";
   import SubHeader from "../../components/Header/subheader";
   import Footer from "../../components/Footer/footer";
   import topbannerImg from "../../assets/img/topbanner-image.png";
   const EditSubmission = (props: RouteComponentProps) => {
-    const [searchText, setSearchText] = useState("");
     const selectedSubmission = getSelectedSubmission();
-   
-    
-    const user = useUserState();
-    var userDispatch = useUserDispatch();
     const ledger = useLedger();
     const submission = useStreamQueries(ParticipantSubmission, () => [
         props.match.params,
     ]).contracts;
-
-    const selectedProj = useStreamQueries(ClientProject, () => [
-      { projectId: selectedSubmission.payload.projectId },
-    ]).contracts;
-    const getCurrentUserType = (): "" | "client" | "participant" | "judge" => {
-      if ((user as any).party) {
-        if (
-          submission.filter((c) => c.payload.participant === (user as any).party)
-            .length > 0
-        ) {
-          return "participant";
-        }
-        if (
-          selectedProj.filter((c) => (user as any).party === c.payload.client)
-            .length > 0
-        ) {
-          return "client";
-        }
-      }
-      return "judge";
-    };
+ 
     console.log("submission", props.match.params);
     console.log("selectedSubmission", submission);
     const defaultSubmission = {
@@ -99,7 +54,6 @@ import {
             ledger.exercise(ParticipantSubmission.UpdateSubmission,selectedSubmission.contractId,submissionDetails)
             .then((data:any)=>{
                 alert("Successfully updated");
-                const sumid = selectedSubmission.payload.submissionId;
                 //selectedSubmission.contractId = data[0];
                 //setSelectedSubmission(selectedSubmission);  
                 props.history.goBack();
@@ -108,33 +62,7 @@ import {
 
             });
     }
-    const JudgingComponent = (judgingProps: any) => {
-      const [criterias, setCriterias] = useState(
-        getSelectedSubmission().payload.criteria as Array<{
-          name: string;
-          point: string;
-        }>
-      );
-      return (
-        <div>
-          {criterias.map((c, idx) => (
-            <IonItem>
-              <IonLabel position="floating">{c.name}</IonLabel>
-              <IonInput
-                type="number"
-                onIonChange={(e) => {
-                  const cs = criterias;
-                  cs[idx].point = e.detail.value!;
-                  setCriterias(cs);
-                }}
-                value={Number(c.point)}
-              ></IonInput>
-            </IonItem>
-          ))}
-        </div>
-      );
-    };
-  
+      
     return (
       <IonPage>
         <SubHeader {...props} />
@@ -145,7 +73,7 @@ import {
                 <img
                   className="project-picture"
                   src={topbannerImg}
-                  alt="project image"
+                  alt="project"
                 />
             
               <IonCardContent className="left-contant-details">
@@ -168,10 +96,10 @@ import {
                 <h3>Partners</h3>
                 <div className="partners-images d-flex">
                   <div className="images-partner-parent">
-                    <img src={menuItemImg} />
+                    <img src={menuItemImg}  alt="p log"/>
                   </div>
                   <div className="images-partner-parent">
-                    <img src={menuItemImg} />
+                    <img src={menuItemImg}  alt=" icon "/>
                   </div>
                 </div>
               </IonCardContent>

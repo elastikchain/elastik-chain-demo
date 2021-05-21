@@ -1,9 +1,7 @@
 import React, { useState } from "react";
 import styled from "styled-components";
-import ReactDOM from 'react-dom';
-import { GoogleLogin } from 'react-google-login';
 import { isLocalDev } from "../../config";
-import { Button, Card, Col, Container, Row } from 'react-bootstrap';
+import {Col, Row } from 'react-bootstrap';
 import {
   IonContent,
   IonHeader,
@@ -23,17 +21,11 @@ import {
 import logo from "../../assets/img/logo-combination.png";
 import logoBlue from "../../assets/img/asx_logo_blue.jpg";
 import timelineLine from "../../assets/img/img-how-it-work-timeline.png";
-import googleIcon from "../../assets/img/google.svg";
 import icWork1 from "../../assets/img/icon-idea.png";
 import icWork2 from "../../assets/img/icon-product.png";
 import icWork3 from "../../assets/img/icon-work.png";
 import icWork4 from "../../assets/img/ic-work4.png";
-import image1 from "../../assets/img/1asx_logo_blue.jpg";
-import image2 from "../../assets/img/financial.png";
-import image3 from "../../assets/img/badbanny1.png";
-import image4 from "../../assets/img/badbanny.png";
 import topBannerImage from "../../assets/img/img-top-section.png";
-import {ClientRole} from "@daml.js/cosmart-0.0.1/lib/Main";
 import "./Home.scss";
 import { useUserDispatch, loginUser,loginDablUser } from "../../context/UserContext";
 import { RouteComponentProps } from "react-router-dom";
@@ -41,7 +33,6 @@ import { Fade, Typography } from "@material-ui/core";
 
 import { close } from "ionicons/icons";
 import loginImg from "../../assets/img/logo-slogan.jpg";
-import { registerTemplate } from "@daml/types";
 
 const StyledNewsletter = styled.div`
   margin: 4rem 0;
@@ -84,7 +75,7 @@ const workSteps = [
 ];
 const renderWorkSteps = () => {
   return workSteps.map((item, index) => (
-    <div className="work-step">
+    <div className="work-step" key={index}>
       <img src={item.icon} alt="step" />
       <div className={"dot dot-" + (index + 1)}></div>
       <p>{item.content}</p>
@@ -102,7 +93,7 @@ const categories = [
 ];
 const renderCatgoriesSlides = () => {
   const arr = categories.map((item: string, index: number) => (
-    <IonSlide>
+    <IonSlide key={index}>
       <a className="category-item" href="#">
         <p>{item}</p>
       </a>

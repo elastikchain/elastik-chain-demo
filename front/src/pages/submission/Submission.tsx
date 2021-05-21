@@ -1,33 +1,24 @@
 import {
   IonButton,
-  IonButtons,
-  IonList,
   IonContent,
   IonFab,
   IonFabButton,
-  IonHeader,
   IonIcon,
   IonInput,
   IonItem,
   IonLabel,
   IonPage,
-  IonSearchbar,
-  IonToolbar,
   IonModal
 } from "@ionic/react";
 import {
-  open,
   close,
  
 } from "ionicons/icons";
 
 import React, { useState } from "react";
-import { Link, RouteComponentProps } from "react-router-dom";
-import logo from "../../assets/img/logo-combination.png";
-import userImg from "../../assets/img/user.png";
+import { RouteComponentProps } from "react-router-dom";
 import {
   getSelectedSubmission,
-  setSelectedSubmission,
 } from "../../context/SharedContext";
 import { arrowBack, add } from "ionicons/icons";
 import submissionPlaceHolder from "../../assets/img/img-proj-placeholder.png";
@@ -36,22 +27,17 @@ import { useLedger, useStreamQueries } from "@daml/react";
 import {
   ClientProject,
   ParticipantSubmission,
-  ParticipantSubmissionProposal,
 } from "@daml.js/cosmart-0.0.1/lib/Main";
 import {
-  signOut,
-  useUserDispatch,
   useUserState,
 } from "../../context/UserContext";
 import SubHeader from "../../components/Header/subheader";
 import Footer from "../../components/Footer/footer";
 const Submission = (props: RouteComponentProps) => {
-  const [searchText, setSearchText] = useState("");
   const selectedSubmission = getSelectedSubmission();
   console.log("selectedSubmission", selectedSubmission);
   const [showModal, setShowModal] = useState(false);
   const user = useUserState();
-  var userDispatch = useUserDispatch();
   const ledger = useLedger();
   const submission = useStreamQueries(ParticipantSubmission, () => [
     { submissionId: selectedSubmission.payload.submissionId },

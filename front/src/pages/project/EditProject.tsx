@@ -1,10 +1,8 @@
 import React, { useState } from "react";
 import { RouteComponentProps } from "react-router-dom";
 
-import firebase from "firebase/app";
 import { useLedger, useStreamQueries } from "@daml/react";
-import * as damlTypes from "@daml/types";
-
+import ProfileMenu from "../profile/profileMenu";
 import {
   ClientRole,
   ClientProject,
@@ -16,54 +14,25 @@ import {
 
 import "../profile/Profile.scss";
 import {
-  publicParty,
-  useUserDispatch,
   useUserState,
 } from "../../context/UserContext";
 import "./Project.scss";
-import { setSelectedProject } from "../../context/SharedContext";
 import SubHeader from "../../components/Header/subheader";
-import menuItemImg from "../../assets/img/img-menu-item.png";
 import Footer from "../../components/Footer/footer";
 import PrizesComponent from "../../components/PrizesComponent/PrizesComponent";
-import CriteriaTagsInput from "../../components/CriteriaTagsInput/CriteriaTagsInput";
 import AddMore from "../../components/AddMore/AddMore";
 import {
   IonPage,
-  IonHeader,
-  IonToolbar,
   IonButton,
   IonContent,
-  IonMenu,
   IonSplitPane,
-  IonTitle,
   IonItem,
-  IonList,
   IonLabel,
-  IonModal,
   IonInput,
-  IonListHeader,
   IonTextarea,
   IonDatetime,
-  IonNote,
-  IonSpinner,
   IonIcon,
 } from "@ionic/react";
-
-import {
-  open,
-  close,
-  pencil,
-  trash,
-  calendar,
-  calendarClear,
-  trophy,
-  globe,
-  flag,
-  man,
-  pricetags,
-  hammer,
-} from "ionicons/icons";
 import { getSelectedProject } from "../../context/SharedContext";
 import { arrowBack } from "ionicons/icons";
 
@@ -106,7 +75,6 @@ const EditProject = (props: RouteComponentProps) => {
       prizes: val,
     });
   };
-  const userDispatch = useUserDispatch();
   const user = useUserState();
   interface FrontCreateProject extends CreateProject {
     projectImageFile?: File;
@@ -255,31 +223,7 @@ const EditProject = (props: RouteComponentProps) => {
             
 
               {/*--  the side menu  --*/}
-              <IonMenu contentId="main" className="leftbar-main">
-                <IonHeader className="d-none">
-                  <IonToolbar>
-                    <IonTitle></IonTitle>
-                  </IonToolbar>
-                </IonHeader>
-                <IonContent>
-                  <IonList className="menu-items-list">
-                    {/* <Tabs>
-                    <Tab title="Lemon">Lemon is yellow</Tab>
-                    <Tab title="Strawberry">Strawberry is red</Tab>
-                    <Tab title="Pear">Pear is green</Tab>
-                  </Tabs> */}
-
-                    <IonItem>
-                      <img slot="start" src={menuItemImg} alt="menu item" />
-                      <IonLabel>Profile</IonLabel>
-                    </IonItem>
-                    <IonItem>
-                      <img slot="start" src={menuItemImg} alt="menu item" />
-                      <IonLabel>Account Settings</IonLabel>
-                    </IonItem>
-                  </IonList>
-                </IonContent>
-              </IonMenu>
+              <ProfileMenu {...props} />
               {/*-- the main content --*/}
               <IonPage className="full-width-container" id="main">
               <IonButton className="go-back2" fill="clear" onClick={(e) => props.history.goBack()}>
@@ -291,18 +235,18 @@ const EditProject = (props: RouteComponentProps) => {
                     <div className="profile-img-container">
                       
                       {projectAssets.length > 0 &&
-                      projectAssets[0].payload.clientProfile.pictureUrl !=
+                      projectAssets[0].payload.clientProfile.pictureUrl !==
                         "" ? (
                         <img
                           src={
                             projectAssets[0].payload.clientProfile.pictureUrl
                           }
-                          alt="profile image"
+                          alt="profile "
                         />
                       ) : (
                         <img
                           src="https://via.placeholder.com/214x198.png"
-                          alt="profile image"
+                          alt="profile "
                         />
                       )}
                       <input
@@ -334,13 +278,13 @@ const EditProject = (props: RouteComponentProps) => {
                         </p>
 
                         <p>
-                          Company: <a href="#">{participantProfile().company}</a>
+                          Company: <a href="">{participantProfile().company}</a>
                         </p>
                         <p>
-                          Linkedin: <a href="#">Information here</a>
+                          Linkedin: <a href="">Information here</a>
                         </p>
                         <p>
-                          Github: <a href="#">Information here</a>
+                          Github: <a href="">Information here</a>
                         </p>
                       
                       </div>

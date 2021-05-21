@@ -22,9 +22,7 @@ import logo from "../../assets/img/logo-combination.png";
 
 
 const SubHeader = (props: any) => {
-  const classes = useStyles();
   const [searchText, setSearchText] = useState("");
-  const userState = useUserState();
   const userDispatch = useUserDispatch();
 
   return (

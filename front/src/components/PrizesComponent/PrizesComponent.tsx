@@ -83,7 +83,7 @@ const PrizesComponent = (props: any) => {
               className="price-input"
             />
             </div>
-            { idx != 0 &&
+            { idx !== 0 &&
             <button className="remove-btn" type="button" onClick={() => handleRemove(idx)}>
               X Remove Prize
             </button>

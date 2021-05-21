@@ -1,75 +1,36 @@
 import React, { useState } from "react";
 import { RouteComponentProps } from "react-router-dom";
-
-import firebase from "firebase/app";
 import { useLedger, useStreamQueries } from "@daml/react";
-import * as damlTypes from "@daml/types";
-
 import {
   ClientRole,
   ClientProject,
-   CreateProject,
   UserRole,
   JudgeRole,
-  ProfileData
 } from "@daml.js/cosmart-0.0.1/lib/Main";
 
 import "./Profile.scss";
 import {
-  publicParty,
-  useUserDispatch,
   useUserState,
 } from "../../context/UserContext";
-import { setSelectedProject } from "../../context/SharedContext";
 import SubHeader from "../../components/Header/subheader";
-import menuItemImg from "../../assets/img/img-menu-item.png";
 import Footer from "../../components/Footer/footer";
-import PrizesComponent from "../../components/PrizesComponent/PrizesComponent";
-import CriteriaTagsInput from "../../components/CriteriaTagsInput/CriteriaTagsInput";
-import AddMore from "../../components/AddMore/AddMore";
 import {
   IonPage,
-  IonHeader,
-  IonToolbar,
   IonButton,
   IonContent,
-  IonMenu,
   IonSplitPane,
-  IonTitle,
   IonItem,
-  IonList,
   IonLabel,
-  IonModal,
   IonInput,
-  IonListHeader,
   IonTextarea,
-  IonDatetime,
-  IonNote,
-  IonSpinner,
   IonIcon,
 } from "@ionic/react";
 
-import {
-  open,
-  close,
-  pencil,
-  trash,
-  calendar,
-  calendarClear,
-  trophy,
-  globe,
-  flag,
-  man,
-  pricetags,
-  hammer,
-} from "ionicons/icons";
 import { getSelectedProject } from "../../context/SharedContext";
 import { arrowBack } from "ionicons/icons";
-
+import ProfileMenu from "./profileMenu";
 
 const EditProfile = (props: RouteComponentProps) => {
-  
-  const userDispatch = useUserDispatch();
   const user = useUserState();
   
  
@@ -114,7 +75,7 @@ const EditProfile = (props: RouteComponentProps) => {
   };
   let userContract:any;
  
-  const[contractIdUser,setContractIdUser] = useState();
+ 
   const userProfileData = () => {
     console.log("judgeAssets", clientProjectAssets);
     const d = {
@@ -225,31 +186,7 @@ const EditProfile = (props: RouteComponentProps) => {
             
 
               {/*--  the side menu  --*/}
-              <IonMenu contentId="main" className="leftbar-main">
-                <IonHeader className="d-none">
-                  <IonToolbar>
-                    <IonTitle></IonTitle>
-                  </IonToolbar>
-                </IonHeader>
-                <IonContent>
-                  <IonList className="menu-items-list">
-                    {/* <Tabs>
-                    <Tab title="Lemon">Lemon is yellow</Tab>
-                    <Tab title="Strawberry">Strawberry is red</Tab>
-                    <Tab title="Pear">Pear is green</Tab>
-                  </Tabs> */}
-
-                    <IonItem>
-                      <img slot="start" src={menuItemImg} alt="menu item" />
-                      <IonLabel>Profile</IonLabel>
-                    </IonItem>
-                    <IonItem>
-                      <img slot="start" src={menuItemImg} alt="menu item" />
-                      <IonLabel>Account Settings</IonLabel>
-                    </IonItem>
-                  </IonList>
-                </IonContent>
-              </IonMenu>
+                <ProfileMenu {...props}/>
               {/*-- the main content --*/}
               <IonPage className="full-width-container" id="main">
               <IonButton className="go-back2" fill="clear" onClick={(e) => props.history.goBack()}>
