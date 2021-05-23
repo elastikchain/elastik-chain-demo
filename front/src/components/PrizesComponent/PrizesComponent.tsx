@@ -8,7 +8,7 @@ const PrizesComponent = (props: any) => {
   ]);
   if('defaultPrice' in props){
     props.defaultPrice.map((data:any,index:any)=>{
-      fields[index] = data;
+      return fields[index] = data;
     });
     
   }

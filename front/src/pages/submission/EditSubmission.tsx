@@ -47,7 +47,7 @@ import {
     
     const defaultSteps:any = [];
     selectedSubmission.payload.steps.map((data:any)=>{
-      defaultSteps.push({name:data,id:''});
+      return defaultSteps.push({name:data,id:''});
     })
     const [submissionDetails,setSubmissionDetail] = useState(defaultSubmission);
     const handleEditSubmissionSubmit = (evnt:any)=>{

@@ -177,7 +177,6 @@ ion-label.sc-ion-label-md-h.sc-ion-label-md-s.md.hydrated {
     color: #143b6c;
 }
 
-.breadcrumb-submission {}
 
 .breadcrumb-submission ul {
     display: inline-block;
@@ -191,7 +190,7 @@ ion-label.sc-ion-label-md-h.sc-ion-label-md-s.md.hydrated {
     position: relative;
 }
 
-.breadcrumb-submission ul li a {
+.breadcrumb-submission ul li span {
     text-decoration: none;
     color: #143b6c;
     text-transform: uppercase;

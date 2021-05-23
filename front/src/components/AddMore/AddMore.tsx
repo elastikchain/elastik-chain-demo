@@ -64,7 +64,7 @@ class AddMore extends React.Component<{defaultTags?: Array<Tag>, onChange?: (tag
 
     proposeNewSuggestion(str: string){
       const suggestions = (this.state.suggestions || []);
-      if (suggestions.length == 3){
+      if (suggestions.length === 3){
         suggestions.push({id: str, name: str});
       }else{
         suggestions[suggestions.length - 1] = {id: str, name: str};

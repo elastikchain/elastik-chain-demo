@@ -7,7 +7,7 @@ import {
   UserRole,
   JudgeRole,
 } from "@daml.js/cosmart-0.0.1/lib/Main";
-
+import Alert from "./alert";
 import "./Profile.scss";
 import {
   useUserState,
@@ -26,17 +26,19 @@ import {
   IonIcon,
 } from "@ionic/react";
 
-import { getSelectedProject } from "../../context/SharedContext";
+
 import { arrowBack } from "ionicons/icons";
 import ProfileMenu from "./profileMenu";
 
 const EditProfile = (props: RouteComponentProps) => {
   const user = useUserState();
   
- 
+  const [showAlert, setAlerts] = useState(false);
+  const [messageType, setMessageType] = useState("");
+  const [messageText, setMessageText] = useState("");
   const ledger = useLedger();
   const clientProjectAssets = useStreamQueries(ClientProject).contracts;
-  console.log("getSelectedProject()", getSelectedProject());
+
 
   const projectAssets = useStreamQueries(ClientRole).contracts;
   const participantAssets = useStreamQueries(UserRole).contracts;
@@ -77,7 +79,7 @@ const EditProfile = (props: RouteComponentProps) => {
  
  
   const userProfileData = () => {
-    console.log("judgeAssets", clientProjectAssets);
+ 
     const d = {
       firstName: "",
       lastName: "",
@@ -137,7 +139,7 @@ const EditProfile = (props: RouteComponentProps) => {
     }
     return d;
   };
-  const defaultProfiletDetail = {
+  let defaultProfiletDetail = {
         firstName: userProfileData().firstName,
         lastName: userProfileData().lastName,
         email: userProfileData().email,
@@ -146,28 +148,38 @@ const EditProfile = (props: RouteComponentProps) => {
         about: userProfileData().about,
         pictureUrl: userProfileData().pictureUrl,
     };
+  
     const [profileDetail, setProfileDetail] = useState(defaultProfiletDetail);
     const handleEditProfileSubmit  = (evt:any)=>{
-        console.log("userProfileData",userProfileData().contractId); 
+       
         
         if(getUserType() ===  "client"){
           const profileData = {newClientProfile: profileDetail};
         ledger.exercise(ClientRole.AddEditCliProfile,userProfileData().contractId,profileData)
         .then((data:any)=>{
-            alert("Successfull updated profile");
+          setAlerts(true);
+          setMessageText("Successfully updated profile");
+          setMessageType("success");
+           
         })
         .catch((err:any)=>{
-            alert(err);
+          setAlerts(true);
+          setMessageText(JSON.stringify(err));
+          setMessageType("error");
         });
       }else{
         const profileData = {newparticipantProfile: profileDetail};
         const userContractId = userProfileData().contractId
         ledger.exercise(UserRole.UpdateParProfile,userContractId,profileData)
         .then((data:any)=>{
-            alert("Successfull updated profile");
+          setAlerts(true);
+          setMessageText("Successfully updated profile");
+          setMessageType("success");
         })
         .catch((err:any)=>{
-            alert(err);
+          setAlerts(true);
+          setMessageText(JSON.stringify(err));
+          setMessageType("error");
         });
       }
      
@@ -180,6 +192,7 @@ const EditProfile = (props: RouteComponentProps) => {
       <IonPage>
        
         <SubHeader {...props} />
+        <Alert type={messageType} showAlert={showAlert} setAlerts={setAlerts} text={messageText} />
         <IonContent>
           <div className="content-container">
             <IonSplitPane className="menu-container" contentId="main">
@@ -303,7 +316,9 @@ const EditProfile = (props: RouteComponentProps) => {
               Update Profile
             </IonButton>
           </div>
+          <Footer />
                 </div>
+              
               </IonPage>
             </IonSplitPane>
           </div>

@@ -1,6 +1,7 @@
 import React, { useState } from "react";
 import { RouteComponentProps } from "react-router-dom";
-
+import Confirmation from "../profile/confirmation";
+import Alert from "../profile/alert";
 import { useUserState } from "../../context/UserContext";
 
 import {
@@ -66,10 +67,7 @@ const Project = (props: RouteComponentProps) => {
     { projectId: getSelectedProject().payload.projectId },
   ]).contracts;
 
-  const pp = participantAssets.filter(
-    (p: any) => p.payload.participant === (user as any).party
-  );
-  console.log("pppp",pp); 
+ 
 
    const getUserType = (): "" | "client" | "participant" | "judge" => {
     if (
@@ -86,22 +84,16 @@ const Project = (props: RouteComponentProps) => {
     ) {
       return "client";
     }
-    // if (
-    //   judgeAssets.filter(c => (user as any).party === c.payload.judge)
-    //     .length > 0
-    // ) {
-    //   return "judge";
-    // }
-
     return "participant";
   };
 
 
   const [showChallengeModal, setShowChallengeModal] = useState(false);
   const [showJudgeModal, setShowJudgeModal] = useState(false);
-  
+  const [showConfirmation,setConfirmation] = useState(false);
   const projectAssets = useStreamQueries(ClientRole).contracts;
-  const clientProjectAssets = useStreamQueries(ClientProject).contracts;
+   const[showAlert,setAlerts] = useState(false);
+
   const [
     showDltChallenderConfirmation,
     deleteChallenderConfirmation,
@@ -152,12 +144,16 @@ const Project = (props: RouteComponentProps) => {
       )
       .then(() => {
         setShowJudgeModal(false);
-        alert("Successfully Submitted Your Score");
+        setAlerts(true);
+        setMessageText("Successfully Submitted Your Score");
+        setMessageType("success");
         
       })
       .catch((err: any) => {
         setShowJudgeModal(false);
-        alert("Error: " + JSON.stringify(err));
+        setAlerts(true);
+        setMessageText(JSON.stringify(err));
+        setMessageType("error");
       });
 
   };
@@ -168,7 +164,12 @@ const Project = (props: RouteComponentProps) => {
         ParticipantSubmissionProposal.AcceptSubmission,
         contractId,
         {submissionId: (new Date().getTime()).toString()}
-      ).then(data=> console.log("accepted"))
+      ).then(data => {
+        setAlerts(true);
+        setMessageText("Successfully accepted ");
+        setMessageType("success");
+
+      })
   };
   
   const handleJudgeSubmit = async (evt: any) => {
@@ -181,12 +182,15 @@ const Project = (props: RouteComponentProps) => {
       )
       .then(() => {
         setShowJudgeModal(false);
-        alert("Judge Added Successfully!");
-        
+        setAlerts(true);
+        setMessageText("Judge Added Successfully!");
+        setMessageType("success");
       })
       .catch((err: any) => {
         setShowJudgeModal(false);
-        alert("Error: " + JSON.stringify(err));
+        setAlerts(true);
+        setMessageText(JSON.stringify(err));
+        setMessageType("error");
       });
   }
   const handleChallengeSubmit = async (evt: any) => {
@@ -199,22 +203,26 @@ const Project = (props: RouteComponentProps) => {
       )
       .then(() => {
         setShowChallengeModal(false);
-        alert("Challenge Created Successfully!");
+        setAlerts(true);
+        setMessageText("Challenge Created Successfully!");
+        setMessageType("success");
         // reset project detail info
         setTimeout(() => {
           resetCreateChallenge();
           setTimeout(() => {
-            console.log("selectedProj this >>", selectedProj);
+            
           }, 1000);
         }, 250);
       })
       .catch((err: any) => {
         setShowChallengeModal(false);
-        alert("Error: " + JSON.stringify(err));
+        setAlerts(true);
+        setMessageText(JSON.stringify(err));
+        setMessageType("error");
       });
   };
   const userProfileData = () => {
-    console.log("judgeAssets", clientProjectAssets);
+    
     const d = {
       firstName: "",
       lastName: "",
@@ -274,7 +282,7 @@ const Project = (props: RouteComponentProps) => {
     }
     return d;
   };
-  console.log("user profile",userProfileData())
+ 
  const sendRequestForJudge = ()=>{
     ledger
     .exercise(
@@ -283,13 +291,16 @@ const Project = (props: RouteComponentProps) => {
       { judgemail: userProfileData().email, judge: (user as any).party}
     )
     .then(() => {
-     
-      alert("Successfully submitted your request");
-      
+      setAlerts(true);
+      setMessageText("Successfully submitted your request");
+      setMessageType("success");
+       
     }) 
     .catch((err: any) => {
       setShowChallengeModal(false);
-      alert("Error: " + JSON.stringify(err));
+      setAlerts(true);
+      setMessageText(JSON.stringify(err));
+      setMessageType("error");
     });
  }
   
@@ -322,7 +333,17 @@ const Project = (props: RouteComponentProps) => {
       })
       .catch((err: any) => console.log(err));*/
   };
- 
+  const [messageType, setMessageType] = useState("");
+  const [messageText, setMessageText] = useState("");
+  const requestJudgeConfirmation = () =>{
+    sendRequestForJudge();
+    setConfirmation(false);
+  }
+  const requestForProjectJudge = ()=>{
+    setConfirmation(true);
+    setMessageType("success");
+    setMessageText("Are you sure! You want to send request as a Judge for this project");
+  }
   const parseVideoLink = (videoLink: string) => {
     let res = videoLink;
     if(!res) res = "https://www.youtube.com/embed/IQHk9UCbQq4";
@@ -359,15 +380,19 @@ const Project = (props: RouteComponentProps) => {
         )
         .then(() => {
           setShowCreateSubmissionModal({ show: false });
-          alert("Submission Created Successfully!");
-          // reset project detail info
+          setAlerts(true);
+          setMessageText("Submission Created Successfully!");
+          setMessageType("success");
+            // reset project detail info
           setTimeout(() => {
             resetCreateSubmission();
           }, 250);
         })
         .catch((err: any) => {
           setShowCreateSubmissionModal({ show: false });
-          alert("Error: " + JSON.stringify(err));
+          setAlerts(true);
+          setMessageText(JSON.stringify(err));
+          setMessageType("error");
         });
     };
     return (
@@ -429,6 +454,14 @@ const Project = (props: RouteComponentProps) => {
   return (
     <IonPage>
       <SubHeader {...props} />
+      <Confirmation 
+                  type={messageType} 
+                  text={messageText}
+                  showConfirmation={showConfirmation} 
+                  setConfirmation={setConfirmation}
+                  actionHandler  ={requestJudgeConfirmation }  
+                />
+       <Alert type={messageType} showAlert={showAlert} setAlerts={setAlerts} text={messageText} />
       <IonContent>
         <div className="content-container">
           <div className="image-heading-and-contant">
@@ -597,8 +630,8 @@ const Project = (props: RouteComponentProps) => {
                           <h2>JUDGES ({selectedProj[0] && selectedProj[0].payload.judges ? selectedProj[0].payload.judges.length : "0"})</h2>
                           <ul>
                             {
-                              selectedProj[0] && selectedProj[0].payload.judges.map(j => (
-                                <li>
+                              selectedProj[0] && selectedProj[0].payload.judges.map((j,index) => (
+                                <li key={index}>
                                   <img src={userImg} alt=""/>
                                   <span>
                                     <b>{j}</b>
@@ -623,15 +656,15 @@ const Project = (props: RouteComponentProps) => {
                         <div className="list_inner judging_criteria">
                           <h2>JUDGING CRITERIA</h2>
                           <ul>
-                           {selectedProj[0] && selectedProj[0].payload.criteria.map(k=>(<li>{k.name}</li>))}
+                           {selectedProj[0] && selectedProj[0].payload.criteria.map((k,index)=>(<li key={index}>{k.name}</li>))}
                           </ul>
                         </div>
                       </div>
                     </Tab>
                     <Tab title={`2. Challenges (${selectedProj[0] && selectedProj[0].payload.challenges.length})`} className="tabs-contant">
-                    {selectedProj[0] ? selectedProj[0].payload.challenges.map(key => 
+                    {selectedProj[0] ? selectedProj[0].payload.challenges.map((key,index) => 
                       (
-                        <div className="challanges-listing">
+                        <div className="challanges-listing" key={index}>
                         
                         <div className="chanlanges-titles">
                           <h1>{key.nameOf}</h1>
@@ -661,7 +694,7 @@ const Project = (props: RouteComponentProps) => {
                             <div className="left-image-submission">
                               <img src={topbannerImg} alt="" />
                             </div>
-                            <div className="right-contant-submission">
+                            <div className="right-contant-submission" key={`request (${index})`}>
                               <h1>{sbmt.payload.subName}</h1>
                               <p>
                                 {sbmt.payload.subDesc}
@@ -684,22 +717,21 @@ const Project = (props: RouteComponentProps) => {
                                 
                                 {getUserType() === "client" ? (
                                   
-                                  <a
-                                  href="javascript:void 0"
-                                  className="btn view-details-btn"
+                                  <span
+                                 className="btn view-details-btn"
                                   onClick={(e)=>{acceptSubmission(sbmt.contractId)}}
                                 >
                                  Accept Request
-                                </a>
+                                </span>
                                   
                                 ):
-                                <a
-                                href="javascript:void 0"
+                                <span
+                                
                                 className="btn view-details-btn"
                                 
                               >
                                Pending For Approval
-                              </a>
+                              </span>
                                 }
                                 {/* <div className="sponsors-main">
                                         <h4>Sponsors : </h4>
@@ -713,16 +745,17 @@ const Project = (props: RouteComponentProps) => {
                             </div>
                           </div>
                         ))}
-
+                        {console.log(approvedSubmissions)}
                        
-                        { (approvedSubmissions.length > 0) ? approvedSubmissions.map((sc) => (
+                        { (approvedSubmissions.length > 0) ? approvedSubmissions.map((sc,index) => (
                           <IonCard
+                            key={index}
                             className="submission-card"
                             
                           >
                             <div className="submission-listing">
                             <div className="left-image-submission">
-                              <img src={topbannerImg} alt="project image" />
+                              <img src={topbannerImg} alt="project" />
                             </div>
                             <div className="right-contant-submission">
                               <h1>{sc.payload.name}</h1>
@@ -732,7 +765,7 @@ const Project = (props: RouteComponentProps) => {
                             
                               
                               {/* check if judge is in judges */}
-                            {console.log("select", selectedProj[0])}
+                           
                               <div className="sponsors-challenge">
                                 <div className="submission-manage">
                                 {(selectedProj[0] &&  (selectedProj[0].payload.judges.includes((user as any).party))) &&(
@@ -749,8 +782,8 @@ const Project = (props: RouteComponentProps) => {
                                       value=""
                                     />
                                     <form method="post" onSubmit={handleSubmitJudgeScore}>
-                                    { (sc.payload.criteria.length > 0) && sc.payload.criteria.map((crt) => (
-                                     <div className="judging">
+                                    { (sc.payload.criteria.length > 0) && sc.payload.criteria.map((crt,index) => (
+                                     <div className="judging" key={index}>
                                      <label>{crt.name}</label>
                                      <input
                                       type="number"
@@ -782,7 +815,7 @@ const Project = (props: RouteComponentProps) => {
                                 )}
                                 <div className="btn-group">
                                 <a
-                                  href="javascript:void 0"
+                                  href="#top"
                                   className="btn view-details-btn"
                                   onClick={(e) => {
                                     e.preventDefault();
@@ -797,7 +830,7 @@ const Project = (props: RouteComponentProps) => {
                                   View details
                                 </a> &nbsp;
                                 {((getUserType() === "participant" || getUserType() === "" ) && !(selectedProj[0].payload.judges.includes((user as any).party)))&& (  <a
-                                  href="javascript:void 0"
+                                  href="#top"
                                   className="btn view-details-btn"
                                   onClick={(e) => {
                                     const selectedSub = sc as any;  
@@ -864,10 +897,14 @@ const Project = (props: RouteComponentProps) => {
                         <IonLabel>Create new Submission</IonLabel>
                       </IonButton>
                     }
-                      <IonButton className = "add-judges" onClick={(e) => sendRequestForJudge()}>
+                  
+                    
+                    { (selectedProj[0] && (selectedProj[0].payload.judges).includes((user as any).party))?'': 
+                      <IonButton className = "add-judges" onClick={(e) => requestForProjectJudge()}>
                       <IonIcon icon={man}></IonIcon>
                       <IonLabel>Request For Judge</IonLabel>
                     </IonButton>
+                    }
                     </div>
 
                    {/* <div className="card-for-btn join-participant">
@@ -899,7 +936,7 @@ const Project = (props: RouteComponentProps) => {
                     <span>
                       Winners announced<b>{selectedProj[0] && new Date(selectedProj[0].payload.endDate).toDateString()}</b>
                     </span>
-                    <a href="#">View schedule</a>
+                    <a href="#top">View schedule</a>
                   </div>
                   <div className="iconlist_sidebar">
                     <ul>
@@ -933,10 +970,10 @@ const Project = (props: RouteComponentProps) => {
 
                       <li>
                         <p>
-                          <div className="online-point">
+                          <span className="online-point">
                             {" "}
                             <IonIcon icon={add}></IonIcon> {selectedProj[0] ? selectedProj[0].payload.location : "" }
-                          </div>
+                          </span>
                         </p>
                       </li>
 
@@ -959,7 +996,7 @@ const Project = (props: RouteComponentProps) => {
                           <IonIcon icon={add}></IonIcon> Criteria :
                           <div>
                             <span className="Criteria-lisitng">
-                            <ul>{selectedProj[0] && selectedProj[0].payload.criteria.map(k=>(<li>{k.name}</li>))}</ul>
+                            <ul>{selectedProj[0] && selectedProj[0].payload.criteria.map((k,index)=>(<li key={index}>{k.name}</li>))}</ul>
                             </span>
                           </div>
                         </div>
@@ -973,19 +1010,19 @@ const Project = (props: RouteComponentProps) => {
                     <h2>Invite others to compete</h2>
                     <ul>
                       <li>
-                        <a href="#">
+                        <a href="#top">
                           {" "}
                           <IonIcon icon={logoFacebook}></IonIcon>
                         </a>
                       </li>
                       <li>
-                        <a href="#">
+                        <a href="#top">
                           {" "}
                           <IonIcon icon={logoTwitter}></IonIcon>
                         </a>
                       </li>
                       <li>
-                        <a href="#">
+                        <a href="#top">
                           {" "}
                           <IonIcon icon={logoInstagram}></IonIcon>
                         </a>

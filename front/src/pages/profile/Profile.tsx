@@ -5,13 +5,12 @@ import firebase from "firebase/app";
 import { useLedger, useStreamQueries } from "@daml/react";
 import * as damlTypes from "@daml/types";
 import ProfileMenu from "./profileMenu";
+import Alert from "./alert";
+import Confirmation from "./confirmation";
 import {
   ClientRole,
   ClientProject,
   CreateProject,
-  ParticipantSubmissionProposal,
-  RequestToJoinProject,
-  AddParticipant,
   PrizeData,
   JudgeRole,
   UserRoleRequest,
@@ -21,7 +20,6 @@ import {
 
 import "./Profile.scss";
 import {
-  useUserDispatch,
   useUserState,
 } from "../../context/UserContext";
 
@@ -70,7 +68,6 @@ interface CriteriaPoint {
 }
 
 const Profile = (props: RouteComponentProps) => {
-  const userDispatch = useUserDispatch();
   const user = useUserState();
   interface FrontCreateProject extends CreateProject {
     projectImageFile?: File;
@@ -117,7 +114,9 @@ const Profile = (props: RouteComponentProps) => {
   const [registerProjectId, setRegisterProjectId] = useState("");
   const [registerProjectClient, setRegisterProjectClient] = useState("");
   const [showRequestModal, setShowRequestModal] = useState(false);
-
+  const [showAlert, setAlerts] = useState(false);
+  const [messageType, setMessageType] = useState("");
+  const [messageText, setMessageText] = useState("");
   const [participantId, setParicipantId] = useState("");
   const [showParticipantModal, setShowParticipantModal] = useState(false);
 
@@ -136,17 +135,9 @@ const Profile = (props: RouteComponentProps) => {
   const ledger = useLedger();
   const projectAssets = useStreamQueries(ClientRole).contracts;
   const roleRequested = useStreamQueries(UserRoleRequest).contracts;
-  console.log("clientRole",projectAssets);
-  console.log("roleRequested",roleRequested);
   const clientProjectAssets = useStreamQueries(ClientProject).contracts;
-  
-
-
   const participantAssets = useStreamQueries(UserRole).contracts;
   const judgeAssets = useStreamQueries(JudgeRole).contracts;
-
-  console.log("User Role Data", participantAssets);
-  console.log("User Role Data", projectAssets);
   const getUserType = (): "" | "client" | "participant" | "judge" => {
     if (
       clientProjectAssets.length > 0 &&
@@ -174,48 +165,7 @@ const Profile = (props: RouteComponentProps) => {
     return "participant";
   };
 
-  const SubmissionToAcceptComponent = (props: any) => {
-    const participantSubmissionProposalAssets = useStreamQueries(
-      ParticipantSubmissionProposal,
-      () => [{ projectId: props.projectId }]
-    ).contracts;
-    // console.log(
-    //   "participantSubmissionProposalAssets",
-    //   participantSubmissionProposalAssets
-    // );
-    const els = participantSubmissionProposalAssets.map((c) => (
-      <IonItem className="proj-details">
-        <IonLabel>
-          <h2>Submission Name: {c.payload.subName}</h2>
-          <p>Submission Description: {c.payload.subDesc}</p>
-          <p>Submission Content: {c.payload.submission}</p>
-        </IonLabel>
-        <IonButton
-          slot="end"
-          onClick={(e) => {
-            e.stopPropagation();
-            e.preventDefault();
-            const d = new Date();
-            const submissionId =
-              c.payload.subName.replace(/\W/g, "_") +
-              "_" +
-              (d.getSeconds() + d.getMinutes() + d.getMilliseconds());
-            ledger
-              .exercise(
-                ParticipantSubmissionProposal.AcceptSubmission,
-                c.contractId,
-                { submissionId }
-              )
-              .then((_) => alert("Submission Accepted!"))
-              .catch((err) => alert(JSON.stringify(err.errors || [])));
-          }}
-        >
-          Accept {c.payload.participant} Submission
-        </IonButton>
-      </IonItem>
-    ));
-    return els.length > 0 ? <div>{els}</div> : null;
-  };
+
 
   const handleCreateProject = async (evt: any) => {
     evt.preventDefault();
@@ -230,7 +180,9 @@ const Profile = (props: RouteComponentProps) => {
         )
         .then(() => {
           setShowCreateProjectModal(false);
-          alert("Project Created Successfully!");
+          setAlerts(true);
+          setMessageText("Successfully Created Project!");
+          setMessageType("success");
           props.history.push("/main/profile");
           // reset project detail info
           setTimeout(() => {
@@ -240,7 +192,10 @@ const Profile = (props: RouteComponentProps) => {
         })
         .catch((err: any) => {
           setShowCreateProjectModal(false);
-          alert("Error: " + JSON.stringify(err));
+          setAlerts(true);
+          setMessageText(JSON.stringify(err));
+          setMessageType("error");
+         
           cb();
         });
     };
@@ -271,13 +226,17 @@ const Profile = (props: RouteComponentProps) => {
             })
             .catch((err) => {
               // console.error(err);
-              alert(JSON.stringify(err));
-              setProjectDetail({ ...projectDetail, loading: false });
+              setAlerts(true);
+              setMessageText(JSON.stringify(err));
+              setMessageType("error");
+                  setProjectDetail({ ...projectDetail, loading: false });
             });
         })
         .catch((err) => {
           // console.error(err);
-          alert(JSON.stringify(err));
+          setAlerts(true);
+          setMessageText(JSON.stringify(err));
+          setMessageType("error");
           setProjectDetail({ ...projectDetail, loading: false });
         });
     } else {
@@ -290,13 +249,13 @@ const Profile = (props: RouteComponentProps) => {
   const handleJoinProject = async (evt: any) => {
     evt.preventDefault();
 
-    const formData = {
+    /* const formData = {
       participant: user,
       client: registerProjectClient,
       operator: "Elastik",
       projectId: registerProjectId,
     };
-    /*
+   
     ledger
       .exercise(
         ParticipantRole.RegisterForProject,
@@ -307,9 +266,6 @@ const Profile = (props: RouteComponentProps) => {
       .catch((err) => console.log(err)); */
   };
 
-  const requestToJoinProjectAssets = useStreamQueries(RequestToJoinProject)
-    .contracts;
-  console.log("requestToJoinProjectAssets", requestToJoinProjectAssets);
 
   const deleteProjectFromStorage = (contactID: any) => {
     ledger
@@ -322,47 +278,22 @@ const Profile = (props: RouteComponentProps) => {
         });
       })
       .catch((err: any) => console.log(err));
-    console.log(contactID);
   };
 
-  const handleAddParticipant = async (
-    contractId: any,
-    state: AddParticipant
-  ) => {
-    console.log("state", state);
-    ledger
-      .exercise(ClientProject.AddParticipant, contractId, {
-        participant: state.participant,
-      })
-      .then((data) => console.log(data))
-      .catch((err) => console.log(err));
-  };
-
-  const handleUploadError = (err: any) => {
-    console.log(err);
-  };
-
-  const handleUploadSuccess = async (filename: string) => {
-    console.log("success upload");
-    const downloadURL = await firebase
-      .storage()
-      .ref("images")
-      .child(filename)
-      .getDownloadURL();
-    console.log("downloadURL", downloadURL);
-  };
   const handleNewAccountRequest = async(evt:any)=>{
     const accountRequestData = {user: (user as any).party,operator:"ledger-party-f8182415-8d34-42dc-8597-e25ef8810ce9",participantProfile:registerRequest};
-    const newAcctRequest = await ledger.create(UserRoleRequest, accountRequestData)
+   await ledger.create(UserRoleRequest, accountRequestData)
     .then((data:any)=>{
-
+      setAlerts(true);
+      setMessageText("Your account requested submitted");
+      setMessageType("success");
     });
     //const archiveEvent = await Ledger.archive(ContractTemplate, contractId);
     //const [choiceReturnValue, events] = await ledger.exercise(ContractChoice, contractId, choiceArguments);
-    alert("Your account requested submitted");
+    
+
   }
   const participantProfile = () => {
-    console.log("judgeAssets", judgeAssets);
     const d = {
       firstName: "",
       lastName: "",
@@ -404,8 +335,9 @@ const Profile = (props: RouteComponentProps) => {
     }
     return d;
   };
-  if((projectAssets && projectAssets.length != 0 && checkFirstTimeLogin == 0) || (participantAssets && participantAssets.length != 0 && checkFirstTimeLogin == 0)|| (judgeAssets && judgeAssets.length != 0 && checkFirstTimeLogin == 0)){ checkFirstTimeLogin = 1;  }
-   if(roleRequested && roleRequested.length != 0 && checkFirstTimeLogin == 0){checkFirstTimeLogin = 2;  }
+  if((projectAssets && projectAssets.length !== 0 && checkFirstTimeLogin === 0) || (participantAssets && participantAssets.length !== 0 && checkFirstTimeLogin === 0)|| (judgeAssets && judgeAssets.length !== 0 && checkFirstTimeLogin === 0)){ checkFirstTimeLogin = 1;  }
+   if(roleRequested && roleRequested.length !== 0 && checkFirstTimeLogin === 0){checkFirstTimeLogin = 2;  }
+   if(checkFirstTimeLogin === 0){checkFirstTimeLogin = 3;}
   const HackathonComponenent = (hackathonProps: any) => {
     const p = hackathonProps.project;
      return (
@@ -420,10 +352,10 @@ const Profile = (props: RouteComponentProps) => {
             }}
           >
            
-            {p.payload.pictureUrl != "" ? (
-              <img src={p.payload.pictureUrl} alt="peoject image" />
+            {p.payload.pictureUrl !== "" ? (
+              <img src={p.payload.pictureUrl} alt="peoject" />
             ) : (
-              <img src={mediumImage} alt="peoject image" />
+              <img src={mediumImage} alt="peoject" />
             )}
           </div>
           <div
@@ -456,8 +388,8 @@ const Profile = (props: RouteComponentProps) => {
             <div className="price-chanllanges-parti">
               <div className="project-price-lsiitng">
                 <h3 className="price-heading">Prizes</h3>
-                {p.payload.prizes.map((prize: any) => (
-                  <p className="price-listing">
+                {p.payload.prizes.map((prize: any,index:any) => (
+                  <p className="price-listing" key={index}>
                     <IonIcon icon={trophy}></IonIcon>{" "}
                     <b>
                       {prize.currency} {prize.value}{" "}
@@ -495,7 +427,7 @@ const Profile = (props: RouteComponentProps) => {
               <div>
                 <span className="Criteria-lisitng">
                   {p.payload.criteria &&
-                    p.payload.criteria.map((k: any) => <li>{k.name}</li>)}
+                    p.payload.criteria.map((k: any,index:any) => <li key={index}>{k.name}</li>)}
                 </span>
               </div>
             </div>
@@ -546,6 +478,19 @@ const Profile = (props: RouteComponentProps) => {
       </div>
     );
   };
+  const setConfirmation = ()=>{
+    setShowTrashProjectModal({
+      status: false,
+      projectID: "",
+      contractID: "",
+    })
+  }
+  const deleteProject = ()=>{
+      
+    deleteProjectFromStorage(
+      showTrashProjectModal.contractID
+    )
+  }
 
   if (!user.isAuthenticated) {
     return null;
@@ -562,63 +507,20 @@ const Profile = (props: RouteComponentProps) => {
           </IonButton>
         ) : null}
         <SubHeader {...props} />
+        <Alert type={messageType} showAlert={showAlert} setAlerts={setAlerts} text={messageText} />
+       
         <IonContent>
           <div className="content-container">
             <IonSplitPane className="menu-container" contentId="main">
               {/*-- Delete Project confirmation setShowTrashProjectModal --*/}
-              <IonModal
-                isOpen={showTrashProjectModal.status}
-                onDidDismiss={() =>
-                  setShowTrashProjectModal({
-                    status: false,
-                    projectID: "",
-                    contractID: "",
-                  })
-                }
-                cssClass="my-custom-class-trash trash-popup"
-              >
-                <div className="content trash-project-modal-content">
-                  <h1>Are you sure !</h1>
-                  <IonButton
-                    className="confirm-submit-button"
-                    type="button"
-                    onClick={() => {
-                      deleteProjectFromStorage(
-                        showTrashProjectModal.contractID
-                      );
-                    }}
-                  >
-                    Yes
-                  </IonButton>
-                  <IonButton
-                    className="decline-submit-button"
-                    type="button"
-                    onClick={() => {
-                      setShowTrashProjectModal({
-                        status: false,
-                        projectID: "",
-                        contractID: "",
-                      });
-                    }}
-                  >
-                    No
-                  </IonButton>
-                </div>
-                <IonButton
-                  className="modal-default-close-btn"
-                  fill="clear"
-                  color="danger"
-                  onClick={() => {
-                    setShowTrashProjectModal({
-                      status: false,
-                      projectID: "",
-                      contractID: "",
-                    });
-                  }}
-                >
-                  <IonIcon icon={close}></IonIcon>
-                </IonButton>
-              </IonModal>
+              <Confirmation 
+                  type="success" 
+                  text="Are you sure !" 
+                  showConfirmation={showTrashProjectModal.status} 
+                  setConfirmation={setConfirmation}
+                  actionHandler  ={deleteProject }  
+                />
+            
 
               {/*--  the side menu  --*/}
               <ProfileMenu {...props}/>
@@ -918,18 +820,18 @@ const Profile = (props: RouteComponentProps) => {
                   <div className="profile-info-container">
                     <div className="profile-img-container">
                       {projectAssets.length > 0 &&
-                      projectAssets[0].payload.clientProfile.pictureUrl !=
+                      projectAssets[0].payload.clientProfile.pictureUrl !==
                         "" ? (
                         <img
                           src={
                             projectAssets[0].payload.clientProfile.pictureUrl
                           }
-                          alt="profile image"
+                          alt="profile1"
                         />
                       ) : (
                         <img
                           src="https://via.placeholder.com/214x198.png"
-                          alt="profile image"
+                          alt="profile"
                         />
                       )}
                       <input
@@ -987,7 +889,7 @@ const Profile = (props: RouteComponentProps) => {
                       </div>
                     </div>
                   </div>
-                  {checkFirstTimeLogin == 0 &&
+                  {checkFirstTimeLogin === 3 &&
                     <div className="new-user-profile">
                         <IonItem>
                          <IonLabel position="floating">First Name</IonLabel>
@@ -1067,10 +969,10 @@ const Profile = (props: RouteComponentProps) => {
                       </IonItem>    
                     </div>
                   }
-                  {(checkFirstTimeLogin == 2) &&
+                  {(checkFirstTimeLogin === 2) &&
                     <h1>We are processing your account registration. Please check back later.</h1>
                   }
-                  {checkFirstTimeLogin == 1 &&
+                  {checkFirstTimeLogin === 1 &&
                   (getUserType() === "client" ? (
                     clientProjectAssets.filter(
                       (c) => (user as any).party === c.payload.client
@@ -1081,9 +983,10 @@ const Profile = (props: RouteComponentProps) => {
                           .filter(
                             (c) => (user as any).party === c.payload.client
                           )
-                          .map((p) => (
+                          .map((p,index) => (
                             <HackathonComponenent
                               project={p}
+                              key={index}
                             ></HackathonComponenent>
                           ))}
                       </IonList>

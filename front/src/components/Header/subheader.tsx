@@ -3,12 +3,8 @@ import React, { useState } from "react";
 import {
   useUserDispatch,
   signOut,
-  useUserState,
 } from "../../context/UserContext";
-
-
 import "./subheader.scss";
-import useStyles from "./styles";
 import {
   IonButton,
   IonButtons,

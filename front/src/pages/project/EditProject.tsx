@@ -1,15 +1,12 @@
 import React, { useState } from "react";
 import { RouteComponentProps } from "react-router-dom";
 
-import { useLedger, useStreamQueries } from "@daml/react";
+import { useLedger } from "@daml/react";
 import ProfileMenu from "../profile/profileMenu";
+import Alert from "../profile/alert";
 import {
-  ClientRole,
   ClientProject,
    CreateProject,
-  // ParticipantRole,
-  JudgeRole,
-  UserRole
 } from "@daml.js/cosmart-0.0.1/lib/Main";
 
 import "../profile/Profile.scss";
@@ -57,15 +54,15 @@ const EditProject = (props: RouteComponentProps) => {
   };
   const requirements:any = [];
   getSelectedProject().payload.requirements.map((data:any)=>{
-    requirements.push({name:data,id:''});
+    return requirements.push({name:data,id:''});
   })
   const eligibility:any = [];
   getSelectedProject().payload.eligibility.map((data:any)=>{
-    eligibility.push({name:data,id:''});
+    return eligibility.push({name:data,id:''});
   })
   const rules:any = [];
   getSelectedProject().payload.rules.map((data:any)=>{
-    rules.push({name:data,id:''});
+    return rules.push({name:data,id:''});
   })
  
   const [projectDetail, setProjectDetail] = useState(defaultProjectDetail);
@@ -80,7 +77,9 @@ const EditProject = (props: RouteComponentProps) => {
     projectImageFile?: File;
     loading: boolean;
   }
-
+  const [showAlert, setAlerts] = useState(false);
+  const [messageType, setMessageType] = useState("");
+  const [messageText, setMessageText] = useState("");
  const handleEditProjectSubmit  = (evt:any)=>{
        evt.preventDefault();
       const UpdatedefaultProjectDetail = {
@@ -100,114 +99,26 @@ const EditProject = (props: RouteComponentProps) => {
       
         ledger.exercise(ClientProject.AddUpdateClientProject,getSelectedProject().contractId,UpdatedefaultProjectDetail)
         .then((data:any)=>{
-          alert("Successfully updated project");
-          props.history.push("/main/profile");
+          setAlerts(true);
+          setMessageText("Successfully updated project");
+          setMessageType("success");
+          
         })
         .catch((err:any)=>{
-          alert("Seems error!");
+          setAlerts(true);
+          setMessageText(JSON.stringify(err));
+          setMessageType("error");
         });
  }
+ const confirmUpdate  = (evt:any)=>{
+    setAlerts(false);
+    props.history.push("/main/profile");
+
+ }
   const ledger = useLedger();
-  const clientProjectAssets = useStreamQueries(ClientProject).contracts;
-  console.log("getSelectedProject()", getSelectedProject());
 
-  const projectAssets = useStreamQueries(ClientRole).contracts;
-  const participantAssets = useStreamQueries(UserRole).contracts;
-  const judgeAssets = useStreamQueries(JudgeRole).contracts;
 
-  console.log("participantAssets", participantAssets);
-  const getUserType = (): "" | "client" | "participant" | "judge" => {
-    if (
-      clientProjectAssets.length > 0 &&
-      clientProjectAssets[0].payload.participants
-        .map((p) => p.toLowerCase())
-        .filter((p) => p === (user as any).party.toLowerCase()).length > 0
-    ) {
-      return "participant";
-    }
 
-    if (
-      projectAssets.filter((c: any) => (user as any).party === c.payload.client)
-        .length > 0
-    ) {
-      return "client";
-    }
-    if (
-      participantAssets.filter(
-        (p: any) => p.payload.participant === (user as any).party
-      ).length > 0
-    ) {
-      return "participant";
-    }
-
-    if (
-      judgeAssets.filter((c) => (user as any).party === c.payload.judge)
-        .length > 0
-    ) {
-      return "judge";
-    }
-    return "";
-  };
-
- 
-
-  const participantProfile = () => {
-    console.log("judgeAssets", judgeAssets);
-    const d = {
-      firstName: "",
-      lastName: "",
-      email: "",
-      job: "",
-      about: "",
-      company: "",
-      pictureUrl: "",
-    };
-    switch (getUserType()) {
-      case "judge":
-        const ja = judgeAssets.filter(
-          (j) => j.payload.judge === (user as any).party
-        );
-        if (ja.length > 0) {
-          d.firstName = ja[0].payload.judgeProfile.firstName;
-          d.lastName = ja[0].payload.judgeProfile.lastName;
-          d.email = ja[0].payload.judgeProfile.email;
-          d.job = ja[0].payload.judgeProfile.job;
-          d.about = ja[0].payload.judgeProfile.about;
-          d.company = ja[0].payload.judgeProfile.company;
-          d.pictureUrl = ja[0].payload.judgeProfile.pictureUrl;
-        }
-        break;
-      case "participant":
-        const pa = participantAssets.filter(
-          (p) => p.payload.user === (user as any).party
-        );
-        if (pa.length > 0) {
-          d.firstName = pa[0].payload.participantProfile.firstName;
-          d.lastName = pa[0].payload.participantProfile.lastName;
-          d.email = pa[0].payload.participantProfile.email;
-          d.job = pa[0].payload.participantProfile.job;
-          d.about = pa[0].payload.participantProfile.about;
-          d.company = pa[0].payload.participantProfile.company;
-          d.pictureUrl = pa[0].payload.participantProfile.pictureUrl;
-        }
-        break;
-      case "client":
-        const ca = projectAssets.filter(
-          (c) => c.payload.client === (user as any).party
-        );
-        if (ca.length > 0) {
-          d.firstName = ca[0].payload.clientProfile.firstName;
-          d.lastName = ca[0].payload.clientProfile.lastName;
-          d.email = ca[0].payload.clientProfile.email;
-          d.job = ca[0].payload.clientProfile.job;
-          d.about = ca[0].payload.clientProfile.about;
-          d.company = ca[0].payload.clientProfile.company;
-          d.pictureUrl = ca[0].payload.clientProfile.pictureUrl;
-        }
-        break;
-    }
-    return d;
-  };
 
 
   if (!user.isAuthenticated) {
@@ -215,7 +126,7 @@ const EditProject = (props: RouteComponentProps) => {
   } else {
     return (
       <IonPage>
-       
+        <Alert type={messageType} showAlert={showAlert} setAlerts={confirmUpdate} text={messageText} />
         <SubHeader {...props} />
         <IonContent>
           <div className="content-container">
@@ -231,66 +142,6 @@ const EditProject = (props: RouteComponentProps) => {
             Back
           </IonButton>
                  <div className="wrapper">
-                  <div className="profile-info-container">
-                    <div className="profile-img-container">
-                      
-                      {projectAssets.length > 0 &&
-                      projectAssets[0].payload.clientProfile.pictureUrl !==
-                        "" ? (
-                        <img
-                          src={
-                            projectAssets[0].payload.clientProfile.pictureUrl
-                          }
-                          alt="profile "
-                        />
-                      ) : (
-                        <img
-                          src="https://via.placeholder.com/214x198.png"
-                          alt="profile "
-                        />
-                      )}
-                      <input
-                        className="profile-picture-input"
-                        type="file"
-                        accept="image/*"
-                      />
-                    </div>
-                    <div className="profile-info">
-                      <div className="profile-header">
-                        <h1>
-                          {user.party} ({participantProfile().firstName}{" "}
-                          {participantProfile().lastName})
-                        </h1>
-                        <IonButton size="large" className="edit-button">
-                          {" "}
-                          Edit{" "}
-                        </IonButton>
-                      </div>
-
-                      <div className="profile-about">
-                        <h2>About</h2>
-                        <p>{participantProfile().about}</p>
-                        <p>
-                          Email:{" "}
-                          <a href={"mailto:" + participantProfile().email}>
-                            {participantProfile().email}
-                          </a>
-                        </p>
-
-                        <p>
-                          Company: <a href="">{participantProfile().company}</a>
-                        </p>
-                        <p>
-                          Linkedin: <a href="">Information here</a>
-                        </p>
-                        <p>
-                          Github: <a href="">Information here</a>
-                        </p>
-                      
-                      </div>
-                    </div>
-                  </div>
-
                   {/*--Edit Project-- */}
                   <div className="edit-project">
                     <h2>Edit Project : {projectDetail.name}</h2>
@@ -455,11 +306,11 @@ const EditProject = (props: RouteComponentProps) => {
             >
               Update Project
             </IonButton>
-          </div>
+          </div>  <Footer />
                 </div>
               </IonPage>
             </IonSplitPane>
-			  <Footer />
+			
           </div>
         </IonContent>
       </IonPage>

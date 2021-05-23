@@ -94,7 +94,7 @@ const categories = [
 const renderCatgoriesSlides = () => {
   const arr = categories.map((item: string, index: number) => (
     <IonSlide key={index}>
-      <a className="category-item" href="#">
+      <a className="category-item" href="#top">
         <p>{item}</p>
       </a>
     </IonSlide>
@@ -120,7 +120,7 @@ const categoriesSlidesOptions = {
   spaceBetween: 8,
 };
 const Home = (props: RouteComponentProps) => {
-  const [readMore, setReadMore] = useState(false);
+
   const [searchText, setSearchText] = useState("");
   const [showLoginModal, setShowLoginModal] = useState(false);
   const [loginSegement, setLoginSegement] = useState("SIGN_IN");
@@ -128,26 +128,14 @@ const Home = (props: RouteComponentProps) => {
   const defaultRegister = {name:"",email:''};
   const [registerUser, setRegisterUser] = useState(defaultRegister);
   const [loginPassword, setLoginPassword] = useState("");
-  var [isLoading, setIsLoading] = useState(false);
+  var [, setIsLoading] = useState(false);
   var [error, setError] = useState(false);
   var userDispatch = useUserDispatch();
   const handleRegisterSubmit = (evt:any)=>{
     evt.preventDefault();
     console.log(registerUser);
   }
-  const responseGoogle = (response:any) => {
-    setShowLoginModal(false);
-    console.log("response From Google",response);
-    loginUser(
-      userDispatch,
-      response.googleId,
-      response.googleId,
-      props.history,
-      setIsLoading,
-      setError,
-      false
-    );
-  }
+
   const handleLoginSubmit = (evt: any) => {
     evt.preventDefault();
     // console.log('handleLoginSubmit', evt);
@@ -324,7 +312,7 @@ const Home = (props: RouteComponentProps) => {
         </IonModal>
         <section className="app-header">
         <div className="banner-img">
-                            <img src={topBannerImage} alt="Banner image"/>
+                            <img src={topBannerImage} alt="Banner"/>
          </div>      
           <div className="content-container">
             <h1>Ideas change the world we live in</h1>

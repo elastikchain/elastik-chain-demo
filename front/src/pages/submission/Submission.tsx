@@ -14,7 +14,7 @@ import {
   close,
  
 } from "ionicons/icons";
-
+import Alert from "../profile/alert";
 import React, { useState } from "react";
 import { RouteComponentProps } from "react-router-dom";
 import {
@@ -35,7 +35,7 @@ import SubHeader from "../../components/Header/subheader";
 import Footer from "../../components/Footer/footer";
 const Submission = (props: RouteComponentProps) => {
   const selectedSubmission = getSelectedSubmission();
-  console.log("selectedSubmission", selectedSubmission);
+  
   const [showModal, setShowModal] = useState(false);
   const user = useUserState();
   const ledger = useLedger();
@@ -62,11 +62,14 @@ const Submission = (props: RouteComponentProps) => {
     }
     return "judge";
   };
+  const [showAlert, setAlerts] = useState(false);
+  const [messageType, setMessageType] = useState("");
+  const [messageText, setMessageText] = useState("");
   const validateEmail = (email: string) =>{
-    const re = /^(([^<>()[\]\\.,;:\s@\"]+(\.[^<>()[\]\\.,;:\s@\"]+)*)|(\".+\"))@((\[[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\])|(([a-zA-Z\-0-9]+\.)+[a-zA-Z]{2,}))$/;
+    const re = /^(([^<>()\[\]\\.,;:\s@"]+(\.[^<>()\[\]\\.,;:\s@"]+)*)|(".+"))@((\[[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}])|(([a-zA-Z\-0-9]+\.)+[a-zA-Z]{2,}))$/;
     return re.test(email);
   }
-  console.log("submission", submission);
+  
   const [participantEmail,setParicipantEmail] = useState("");
   const handleJoinTeam = (evnt:any) =>{
     evnt.preventDefault();
@@ -77,52 +80,28 @@ const Submission = (props: RouteComponentProps) => {
           selectedSubmission.contractId,
           { email: participantEmail  }
         ).then((data:any)=>{
-          alert(
-            "Teammate request has been sent successfully!"
-          );
+          setAlerts(true);
+          setMessageText( "Teammate request has been sent successfully!");
+          setMessageType("success");
+         
         }).catch((err:any)=>{
-          alert(
-            err
-          );
+          setAlerts(true);
+          setMessageText(JSON.stringify(err));
+          setMessageType("error");
         });
         setShowModal(false);
       } else {
+          setAlerts(true);
+          setMessageText( participantEmail  + " is not a valid email!");
+          setMessageType("error");
        
-        alert(  participantEmail  + " is not a valid email!");
       }
     }
   }
-  const JudgingComponent = (judgingProps: any) => {
-    const [criterias, setCriterias] = useState(
-      getSelectedSubmission().payload.criteria as Array<{
-        name: string;
-        point: string;
-      }>
-    );
-    return (
-      <div>
-        {criterias.map((c, idx) => (
-          <IonItem>
-            <IonLabel position="floating">{c.name}</IonLabel>
-            <IonInput
-              type="number"
-              onIonChange={(e) => {
-                const cs = criterias;
-                cs[idx].point = e.detail.value!;
-                setCriterias(cs);
-              }}
-              value={Number(c.point)}
-            ></IonInput>
-          </IonItem>
-        ))}
-      </div>
-    );
-  };
-
   return (
     <IonPage>
       <SubHeader {...props} />
-
+      <Alert type={messageType} showAlert={showAlert} setAlerts={setAlerts} text={messageText} />
       <IonContent className="submission-content">
         <div className="content-container">
           <div className="submission-wrapper">
@@ -138,50 +117,21 @@ const Submission = (props: RouteComponentProps) => {
             <div className="breadcrumb-submission">
               <ul>
                 <li>
-                  <a href="#">Projects</a>
+                  <span>Projects</span>
                 </li>
                 <li>
-                  <a href="#">Fintech</a>
+                  <span>Fintech</span>
                 </li>
                 <li>
-                  <a href="#">{selectedSubmission.payload.name}</a>
+                  <span>{selectedSubmission.payload.name}</span>
                 </li>
               </ul>
             </div>
 
-            {/* <div className="page-breadcrumb">
-                    <IonList className="breadcrumbs">
-                    <IonItem>
-                            <IonLabel>Projects {'>'}</IonLabel>
-                    </IonItem>
-                    <IonItem>
-                        <IonLabel>Fintech {'>'}</IonLabel>
-                    </IonItem>
-                    <IonItem className="active">
-                        <IonLabel>{selectedSubmission.payload.name}</IonLabel>
-                    </IonItem>
-                    </IonList>
-                </div> */}
-            {/* <div className="nav-info-header">
-                        <div className="nav-info">
-                        <IonButton fill="clear" onClick={e => props.history.goBack() }>
-                            <IonIcon slot="start" icon={arrowBack}></IonIcon>
-                            Back
-                        </IonButton>
-                        </div>
-                        {
-                            getCurrentUserType() === 'judge' ? (
-                                <JudgingComponent></JudgingComponent>
-                            ) : (
-                                <IonButton>
-                                    Edit    
-                                </IonButton>
-                            )
-                        }
-                    </div> */}
+            
             <div className="submission-info-container">
               <div className="submission-img">
-                <img src={submissionPlaceHolder} alt="submission image" />
+                <img src={submissionPlaceHolder} alt="submission" />
               </div>
               <div className="short-info-container">
                 <h1>{selectedSubmission.payload.name}</h1>
@@ -195,24 +145,7 @@ const Submission = (props: RouteComponentProps) => {
                  
                 </div>
 
-                {/* <IonList>
-                           <IonItem>
-                              <IonLabel>Challenge ID :- </IonLabel>
-                              {selectedSubmission.payload.challengeId}
-                          </IonItem> 
-                          <IonItem>
-                              <IonLabel>Submission :- </IonLabel>
-                              {selectedSubmission.payload.submission}
-                          </IonItem>
-                          <IonItem>
-                              <IonLabel>Presentation :- </IonLabel>
-                              {selectedSubmission.payload.presentation}
-                          </IonItem>
-                          <IonItem>
-                              <IonLabel>Video Link :-  </IonLabel>
-                              {selectedSubmission.payload.videoLink}
-                          </IonItem>
-                        </IonList> */}
+               
               </div>
             </div>
             <div className="idea-teammate-steps">
@@ -224,7 +157,7 @@ const Submission = (props: RouteComponentProps) => {
                   </p>
 
                   <div className="video-list">
-                  {selectedSubmission.payload.videoLink != "" && 
+                  {selectedSubmission.payload.videoLink !== "" && 
                     <iframe
                       width="560"
                       height="315"
@@ -296,11 +229,11 @@ const Submission = (props: RouteComponentProps) => {
                   </IonButton>
                 </IonModal>
                   <div className="teammate-container">
-                    {submission.map((c) => (
-                      <div className="team-member">
+                    {submission.map((c,index) => (
+                      <div className="team-member" key={index}>
                         <img
                           src="https://via.placeholder.com/152x128.png"
-                          alt="team member image"
+                          alt="team member"
                         />
                         <p>{c.payload.participant}</p>
                       </div>
@@ -310,7 +243,7 @@ const Submission = (props: RouteComponentProps) => {
                         <div className="team-member">
                           <img
                             src="https://via.placeholder.com/152x128.png"
-                            alt="team member image"
+                            alt="team member item"
                           />
                           <p>{p}</p>
                         </div>

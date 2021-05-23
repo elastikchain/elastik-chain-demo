@@ -1,0 +1,30 @@
+.my-custom-modal .modal-wrapper.sc-ion-modal-md {
+    max-width: 500px;
+    height: auto;
+    min-height: 190px;
+    box-shadow: 0px 11px 15px -7px rgba(0, 0, 0, 0.2), 0px 24px 38px 3px rgba(0, 0, 0, 0.14), 0px 9px 46px 8px rgba(0, 0, 0, 0.12);
+    border-radius: 4px;
+    
+}
+.my-custom-modal .modal-wrapper.sc-ion-modal-md .ion-page{
+    padding: 30px 0px 16px;
+}
+.my-custom-modal .alert-content, .my-custom-modal .confirm-content{
+    font-size: 1.5em;
+    font-weight: 500;
+    width: 100%;
+    display: inline-block;
+    padding: 0 30px;
+}
+.my-custom-modal .btn-group{
+    width: 100%;
+    display: inline-block;
+    margin-top: 40px;
+    border-top: solid 1px #cccccc;
+    padding-top: 16px;
+}
+.my-custom-modal .btn-group .modal-default-close-btn{
+    position: relative;
+    top: 0;
+    right: 0;
+}
