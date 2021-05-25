@@ -475,6 +475,8 @@ const Profile = (props: RouteComponentProps) => {
             )}
           </div>
         </div>
+        
+        
       </div>
     );
   };
@@ -577,6 +579,7 @@ const Profile = (props: RouteComponentProps) => {
                             }}
                           ></IonInput>
                         </IonItem>
+                        
                       </div>
                       <IonItem>
                         <IonLabel position="floating">Location</IonLabel>

@@ -3,7 +3,7 @@ import { RouteComponentProps } from "react-router-dom";
 import Confirmation from "../profile/confirmation";
 import Alert from "../profile/alert";
 import { useUserState } from "../../context/UserContext";
-
+import RequestForJudgeOnProject from "./projectRequest";
 import {
   getSelectedProject,
   setSelectedSubmission,
@@ -57,6 +57,7 @@ import {
 
 import SubHeader from "../../components/Header/subheader";
 import Footer from "../../components/Footer/footer";
+
 const Project = (props: RouteComponentProps) => {
   const user = useUserState();
   const ledger = useLedger();
@@ -859,21 +860,15 @@ const Project = (props: RouteComponentProps) => {
                       }
                       </div>
                     </Tab>
-                    {/* <Tab title="Judging criteria" className="tabs-contant"> */}
-                      {/* <IonNote>
-                      Judging criteria:{" "}
-                      {getSelectedProject()
-                        .payload.criteria.map((c: any) => c.name)
-                        .join(", ")}
-                    </IonNote> */}
-
-                      {/* <div className="list_inner judging_criteria">
-                        <h2>JUDGING CRITERIA</h2>
-                        <ul>
-                         {selectedProj[0] && selectedProj[0].payload.criteria.map(k=>(<li>{k.name}</li>))}
-                        </ul>
+                     <Tab title="Judge Requests" className="tabs-contant"> 
+                      <div className="list_inner">
+                        <h2>Judge Requests</h2>
+                        
+                        
+                         {selectedProj[0] &&  <RequestForJudgeOnProject projectId={selectedProj[0].payload.projectId}/> }
+                       
                       </div>
-                    </Tab> */}
+                    </Tab> 
                   </Tabs>
                 </div>
 
