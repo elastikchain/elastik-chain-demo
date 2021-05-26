@@ -860,15 +860,17 @@ const Project = (props: RouteComponentProps) => {
                       }
                       </div>
                     </Tab>
+                   
                      <Tab title="Judge Requests" className="tabs-contant"> 
-                      <div className="list_inner">
+                     {  getUserType() === "client"  &&  <div className="list_inner">
                         <h2>Judge Requests</h2>
                         
                         
                          {selectedProj[0] &&  <RequestForJudgeOnProject projectId={selectedProj[0].payload.projectId}/> }
                        
-                      </div>
+                      </div>}
                     </Tab> 
+                   
                   </Tabs>
                 </div>
 
