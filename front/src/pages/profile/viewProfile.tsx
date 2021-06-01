@@ -153,78 +153,78 @@ const ViewProfile = (props: RouteComponentProps) => {
               <ProfileMenu {...props}/>
               {/*-- the main content --*/}
               <IonPage className="full-width-container" id="main">
-               
-
-            
-
-                <div className="wrapper">
-                  <div className="profile-info-container">
-                    <div className="profile-img-container">
-                      {projectAssets.length > 0 &&
-                      projectAssets[0].payload.clientProfile.pictureUrl !==
-                        "" ? (
-                        <img
-                          src={
-                            projectAssets[0].payload.clientProfile.pictureUrl
-                          }
-                          alt="profile s"
-                        />
-                      ) : (
-                        <img
-                          src="https://via.placeholder.com/214x198.png"
-                          alt="profile "
-                        />
-                      )}
-                      <input
-                        className="profile-picture-input"
-                        type="file"
-                        accept="image/*"
-                      />
-                    </div>
-                    <div className="profile-info">
-                      <div className="profile-header">
-                        <h1>
-                          {/* {user.party}  */}
-                          {participantProfile().firstName}{" "}
-                          {participantProfile().lastName}
-                        </h1>
-                        <IonButton size="large" onClick={(e)=>
-                            props.history.push("/main/profile")
-                        } className="edit-button">
-                          
-                          Go Back {" "}
-                        </IonButton>
-                      </div>
-
-                      <div className="profile-about">
-                        <h2>About</h2>
-                        <p>{participantProfile().about}</p>
-                        <p>
-                          Email:{" "}
-                          <a href={"mailto:" + participantProfile().email}>
-                            {participantProfile().email}
-                          </a>
-                        </p>
-
-                        <p>
-                          Name: {participantProfile().firstName} {participantProfile().lastName}
-                        </p>
-						
-                        <p>
-                          Job: {participantProfile().job}
-                        </p>
-                        <p>
-                          About: {participantProfile().about}
-                        </p>
-                        
-                      </div>
-                    </div>
-                  </div>
-                 
-                
-				    <Footer />
+                <div className="profile-header">
+      
                 </div>
-				
+                <div className="wrapper">
+                    <div className="profile-info-container">
+                      <div className="profile-img-container">
+                        {projectAssets.length > 0 &&
+                        projectAssets[0].payload.clientProfile.pictureUrl !==
+                          "" ? (
+                          <img
+                            src={
+                              projectAssets[0].payload.clientProfile.pictureUrl
+                            }
+                            alt="profile s"
+                          />
+                        ) : (
+                          <img
+                            src="https://via.placeholder.com/214x198.png"
+                            alt="profile "
+                          />
+                        )}
+                        <input
+                          className="profile-picture-input"
+                          type="file"
+                          accept="image/*"
+                        />
+                      </div>
+                      <div className="profile-info">
+                        <div className="profile-header">
+                          <h1>
+                            {/* {user.party}  */}
+                            {participantProfile().firstName}{" "}
+                            {participantProfile().lastName}
+                          </h1>
+                          <IonButton size="large" onClick={(e)=>
+                              props.history.push("/main/profile")
+                          } className="edit-button">
+                            
+                            Go Back {" "}
+                          </IonButton>
+                        </div>
+
+                        <div className="profile-about">
+                          <h2>About</h2>
+                          <p>{participantProfile().about}</p>
+                          <p>
+                            Email:{" "}
+                            <a href={"mailto:" + participantProfile().email}>
+                              {participantProfile().email}
+                            </a>
+                          </p>
+
+                          <p>
+                            Name: {participantProfile().firstName} {participantProfile().lastName}
+                          </p>
+              
+                          <p>
+                            Job: {participantProfile().job}
+                          </p>
+                          <p>
+                            About: {participantProfile().about}
+                          </p>
+                          
+                        </div>
+                      </div>
+                    </div>
+                  
+                  
+                    <Footer />
+                  </div>
+
+                  
               </IonPage>
 			  
             </IonSplitPane>

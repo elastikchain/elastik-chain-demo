@@ -18,6 +18,11 @@ import {
   IonItem,
   IonIcon,
 } from "@ionic/react";
+
+import "slick-carousel/slick/slick.css"; 
+import "slick-carousel/slick/slick-theme.css";
+import Slider from "react-slick";
+
 import logo from "../../assets/img/logo-combination.png";
 import logoBlue from "../../assets/img/asx_logo_blue.jpg";
 import timelineLine from "../../assets/img/img-how-it-work-timeline.png";
@@ -93,32 +98,16 @@ const categories = [
 ];
 const renderCatgoriesSlides = () => {
   const arr = categories.map((item: string, index: number) => (
-    <IonSlide key={index}>
+    <div style={{width: '221px'}} key={index}>
       <a className="category-item" href="#top">
         <p>{item}</p>
       </a>
-    </IonSlide>
+    </div>
     
   ));
   return arr;
 };
-const categoriesSlidesOptions = {
-  width: 221,
-  initialSlide: 0,
-  loopedSlides: categories.length,
-  centeredSlides: true,
-  loop: true,
-  autoplay: {
-    delay: 1500,
-  },
-  pager:true,
-  pagination:true,
-  navigation: {
-    prevEl: ".slider .prev-btn",
-    nextEl: ".slider .next-btn",
-  },
-  spaceBetween: 8,
-};
+const slides = renderCatgoriesSlides();
 const Home = (props: RouteComponentProps) => {
 
   const [searchText, setSearchText] = useState("");
@@ -327,9 +316,35 @@ const Home = (props: RouteComponentProps) => {
           </div>
         </section>
         <section className="categories">
-          <IonSlides  pager={true}  options={categoriesSlidesOptions}>
-            {renderCatgoriesSlides()}
-          </IonSlides>
+          {
+            /*
+            width: 221,
+            initialSlide: 0,
+            loopedSlides: categories.length,
+            centeredSlides: true,
+            loop: true,
+            autoplay: {
+              delay: 1500,
+            },
+            pager:true,
+            pagination:true,
+            navigation: {
+              prevEl: ".slider .prev-btn",
+              nextEl: ".slider .next-btn",
+            },
+            spaceBetween: 8,
+            */
+          }
+          <Slider
+          infinite={true}
+          autoplay={true}
+          autoplaySpeed={2500}
+          variableWidth={true}
+          dots={false}
+          arrows={false}
+          >
+            {slides}
+          </Slider>
         </section>
         <section className="how-it-work">
           <h1 className="title">How does it work</h1>
@@ -343,7 +358,7 @@ const Home = (props: RouteComponentProps) => {
           </div>
         </section>
         {/* Apps Section*/}
-        <div id="showcases" className="apps mb-5 wrapper1">
+        <div id="showcases" className="apps mb-5 wrapper1 wrapper2">
                     {/* <p className="mb-4 show-case"><b>SHOW CASES</b></p> */}
                     <h4 className="mb-4 blue">Featured Hackathons</h4>
                     {/* <p className="description mb-4">
@@ -352,11 +367,11 @@ const Home = (props: RouteComponentProps) => {
                     <Row >
                         <Col md={12} sm={12}>
                             <div className="box">
-                              <h4 className="blue">ASX Daml Hackathon</h4>
                                 <div className="box-img">
                                     <img src="https://www.zdnet.com/a/hub/i/r/2018/10/25/6ab96a00-3a4a-4b21-8ae8-697bf922980e/thumbnail/770x578/d7529b45e96702f47a57219dc25d6c84/asx.jpg" alt="" />
                                 </div>
                                 <div className="box-body">
+                                    <h4 className="blue">ASX Daml Hackathon</h4>
                                     <h4 className="blue">15 July - 20 August</h4>
                                     <p>This is an exciting opportunity to drive innovation in the Austrlian business landscape.
                                       Join us to brainstorm and develop exciting projects. Win cool prizes.

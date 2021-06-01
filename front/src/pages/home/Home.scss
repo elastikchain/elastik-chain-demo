@@ -21,6 +21,9 @@
     }
   }
 }
+.slick-list {margin: 0 -4px;}
+.slick-slide>div {padding: 0 4px;}
+
 .toolbar-buttons {
   ion-button {
     margin-right: 0.5rem;
@@ -68,10 +71,10 @@ section {
   }
   &.categories {
     .category-item {
+      max-width: 221px;
       color: #fff;
       text-decoration: none;
       height: 104px;
-      width: 221px;
       background-color: #0C3B6C;
 			display: flex;
 			font-weight: 600;
@@ -423,8 +426,18 @@ ion-label#ion-input-6-lbl {
   float: left;
 }
 // end login form css
-.wrapper1{max-width: 700px;
-  margin: 0 auto;}  
+.wrapper1{
+  max-width: 700px;
+  margin: 0 auto;
+}  
+
+.wrapper2{
+  max-width: 1320px;
+  margin: 0 auto;
+  display: flex;
+  align-items: center;
+  flex-direction: column;
+}  
 
  
 
@@ -467,7 +480,7 @@ img {
   cursor: pointer;
   height: 100%;
   display: flex;
-  flex-direction: column;
+  flex-direction: row;
   align-items: center;
   justify-content: space-around;
   -webkit-box-shadow: 3px 3px 5px 6px #ccc;  /* Safari 3-4, iOS 4.0.2 - 4.2, Android 2.3+ */
