@@ -53,6 +53,7 @@ import {
   // JudgeRole,
   SubmitScorecard,
   CriteriaPoint,
+  RequestToJudgeProject,
 } from "@daml.js/cosmart-0.0.1/lib/Main";
 
 import SubHeader from "../../components/Header/subheader";
@@ -68,9 +69,14 @@ const Project = (props: RouteComponentProps) => {
     { projectId: getSelectedProject().payload.projectId },
   ]).contracts;
 
+  console.log('selectedProj', selectedProj);
+  
+
  
 
    const getUserType = (): "" | "client" | "participant" | "judge" => {
+     console.log('user type', (user as any).party);
+     
     if (
       selectedProj.filter(
         (c) => c.payload.participants.indexOf((user as any).party) > -1
@@ -311,6 +317,17 @@ const Project = (props: RouteComponentProps) => {
       projectId: getSelectedProject().payload.projectId,
     },
   ]).contracts;
+
+
+  const requestToJudgeProject = useStreamQueries(RequestToJudgeProject, () => [
+      {
+        judge: (user as any).party
+      }
+    ]
+  ).contracts
+
+  console.log("requestToJudgeProject", requestToJudgeProject);
+  
 
   
   const [showCreateSubmissionModal, setShowCreateSubmissionModal] = useState({
@@ -860,16 +877,23 @@ const Project = (props: RouteComponentProps) => {
                       }
                       </div>
                     </Tab>
-                   
-                     <Tab title="Judge Requests" className="tabs-contant"> 
-                     {  getUserType() === "client"  &&  <div className="list_inner">
-                        <h2>Judge Requests</h2>
+                    {
+                      (getUserType() === "client" || requestToJudgeProject.length < 1) ? 
+                          <Tab title="Judge Requests" className="tabs-contant"> 
+                            <div className="list_inner">
+                              <h2>Judge Requests</h2>
+                              
+                              {selectedProj[0] &&  <RequestForJudgeOnProject projectId={selectedProj[0].payload.projectId}/> }
+                            
+                            </div>
+                          
+                          </Tab>
+
+                          :
+
+                          <Tab title="" className="hidden"></Tab>
                         
-                        
-                         {selectedProj[0] &&  <RequestForJudgeOnProject projectId={selectedProj[0].payload.projectId}/> }
-                       
-                      </div>}
-                    </Tab> 
+                    }
                    
                   </Tabs>
                 </div>
@@ -896,10 +920,20 @@ const Project = (props: RouteComponentProps) => {
                     }
                   
                     
-                    { (selectedProj[0] && (selectedProj[0].payload.judges).includes((user as any).party))?'': 
-                      <IonButton className = "add-judges" onClick={(e) => requestForProjectJudge()}>
+                    { (selectedProj[0] && (selectedProj[0].payload.judges).includes((user as any).party)) ? '': 
+                    <IonButton color={requestToJudgeProject.length > 0 ? 'secondary' : 'primary'} className = "add-judges" onClick={(e) => requestToJudgeProject.length < 1 ? requestForProjectJudge() : null }>
                       <IonIcon icon={man}></IonIcon>
-                      <IonLabel>Request For Judge</IonLabel>
+                      <IonLabel>
+                        {
+                          requestToJudgeProject.length > 0 ? (
+                            'Your request is Pending ..'
+                          ) :
+                          (
+                            'Request For Judge'
+                          )
+                        }
+                        
+                      </IonLabel>
                     </IonButton>
                     }
                     </div>

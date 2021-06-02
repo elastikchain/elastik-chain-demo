@@ -10,6 +10,7 @@ import Submission from "../../pages/submission/Submission";
 import EditProject from "../../pages/project/EditProject";
 import EditProfile from "../../pages/profile/EditProfile";
 import ViewProfile from "../../pages/profile/viewProfile";
+import AccountSetting from "../../pages/profile/AccountSetting"
 import Scores from "../../pages/scores/Scores";
 
 
@@ -32,6 +33,7 @@ const FrontLayout = (props: any) => {
         <Switch>
           <Route path="/main/profile/edit" component={EditProfile} />
           <Route path="/main/profile/view" component={ViewProfile} />
+          <Route path="/main/profile/setting" component={AccountSetting} />
           <Route path="/main/projects/:id/edit" component={EditProject} />
           <Route path="/main/project/:id" component={Project} />
           <Route path="/main/profile" component={Profile} />

@@ -5,20 +5,35 @@
     --min-height: 3.8rem;
 }
 
+.view-profile-content{
+    position: relative;
+    overflow-y: scroll;
+    overflow-x: hidden;
+}
+.profile-top-header{
+    position: absolute;
+    top: 0;
+    z-index: -1;
+    background-color: #CAD4E6;
+    width: 100%;
+    height: 16rem;
+}
+
 .wrapper {
     overflow-y: scroll;
     max-width: 1110px;
     margin: 0 auto;
     .profile-info-container{
-        margin-top: 4.2rem;
+        margin-top: 7.2rem;
         display: flex;
         .profile-img-container{
-            position: relative;
-            min-width: 214px;
-            max-height: 198px;
+            position: relative; 
+            min-width: 13rem;
+            max-height: 13rem;
             img{
                 width: 100%;
                 height: 100%;
+                border-radius: 100%;
             }
             .profile-picture-input{
                 width: 100%;
@@ -32,6 +47,7 @@
         }
         .profile-info{
             padding-left: 2rem;
+            padding-top: 4rem;
             .profile-header{
                 max-width: 584px;
                 display: flex;

@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useState } from "react";
 import { RouteComponentProps } from "react-router-dom";
 import { useStreamQueries } from "@daml/react";
 import * as damlTypes from "@daml/types";
@@ -26,6 +26,9 @@ import {
   IonButton,
   IonContent,
   IonSplitPane,
+  IonLabel,
+  IonSegment,
+  IonSegmentButton,
 } from "@ionic/react";
 
 import "./Profile.scss";
@@ -92,6 +95,7 @@ const ViewProfile = (props: RouteComponentProps) => {
     .contracts;
   console.log("requestToJoinProjectAssets", requestToJoinProjectAssets);
 
+  const [selectedTab, setSelectedTab] = useState("coordinates");
 
   const participantProfile = () => {
     console.log("judgeAssets", judgeAssets);
@@ -140,6 +144,8 @@ const ViewProfile = (props: RouteComponentProps) => {
    if(roleRequested && roleRequested.length !== 0 && checkFirstTimeLogin === 0){checkFirstTimeLogin = 2;  }
 
 
+
+
   if (!user.isAuthenticated) {
     return null;
   } else {
@@ -153,8 +159,9 @@ const ViewProfile = (props: RouteComponentProps) => {
               <ProfileMenu {...props}/>
               {/*-- the main content --*/}
               <IonPage className="full-width-container" id="main">
-                <div className="profile-header">
-      
+                <div className="view-profile-content">
+                <div className="profile-top-header">
+
                 </div>
                 <div className="wrapper">
                     <div className="profile-info-container">
@@ -181,41 +188,47 @@ const ViewProfile = (props: RouteComponentProps) => {
                         />
                       </div>
                       <div className="profile-info">
-                        <div className="profile-header">
-                          <h1>
-                            {/* {user.party}  */}
-                            {participantProfile().firstName}{" "}
-                            {participantProfile().lastName}
-                          </h1>
-                          <IonButton size="large" onClick={(e)=>
-                              props.history.push("/main/profile")
-                          } className="edit-button">
-                            
-                            Go Back {" "}
-                          </IonButton>
-                        </div>
-
                         <div className="profile-about">
-                          <h2>About</h2>
-                          <p>{participantProfile().about}</p>
-                          <p>
-                            Email:{" "}
-                            <a href={"mailto:" + participantProfile().email}>
-                              {participantProfile().email}
-                            </a>
-                          </p>
+                          <IonSegment value={selectedTab} onIonChange={e => setSelectedTab(e.detail?.value ?? 'coordinates') }>
+                            <IonSegmentButton value="coordinates">
+                              <IonLabel>Coordinates</IonLabel>
+                            </IonSegmentButton>
+                            <IonSegmentButton value="about">
+                              <IonLabel>About</IonLabel>
+                            </IonSegmentButton>
+                          </IonSegment>
 
-                          <p>
-                            Name: {participantProfile().firstName} {participantProfile().lastName}
-                          </p>
-              
-                          <p>
-                            Job: {participantProfile().job}
-                          </p>
-                          <p>
-                            About: {participantProfile().about}
-                          </p>
-                          
+                          {
+                            (selectedTab == 'coordinates') ? (
+                              <div className="coordinates">
+                                <p>{participantProfile().about}</p>
+                                <p>
+                                  Email:{" "}
+                                  <a href={"mailto:" + participantProfile().email}>
+                                    {participantProfile().email}
+                                  </a>
+                                </p>
+
+                                <p>
+                                  Name: {participantProfile().firstName} {participantProfile().lastName}
+                                </p>
+
+                                <p>
+                                  Job: {participantProfile().job}
+                                </p>
+                              </div>
+                              
+                              
+                            ) : (
+                              <div className="about-text">
+                                <p>
+                                  {participantProfile().about}
+                                </p>
+                                <p>Lorem ipsum dolor sit amet, consectetur adipisicing elit. Doloremque voluptatibus ex, incidunt nostrum veniam labore quis, quidem nemo porro eum velit, vel numquam deserunt omnis explicabo nulla aliquid? Tempore, hic!</p>
+                              </div>
+                            )
+                          }
+                        
                         </div>
                       </div>
                     </div>
@@ -224,6 +237,7 @@ const ViewProfile = (props: RouteComponentProps) => {
                     <Footer />
                   </div>
 
+                </div>
                   
               </IonPage>
 			  
