@@ -654,8 +654,7 @@ const Project = (props: RouteComponentProps) => {
                                   <span>
                                     <b>{j}</b>
                                     <i>
-                                      Recruiting Senior Analyst / Accenture
-                                      Technology
+                                       Mentor / Hackathon judge
                                     </i>
                                   </span>
                                 </li>
