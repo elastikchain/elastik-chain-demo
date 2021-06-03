@@ -491,7 +491,8 @@ const Home = (props: RouteComponentProps) => {
 				<h4 className="blue">START DESIGNS</h4>
 				
 				<p>
-				    <i>"Design and Development company"</i>
+				    <i>"Design and Development company <br/>
+UI/UX Design, React, DAML, Node.."</i>
 				</p>
 				<a href="https://www.startdesigns.com/" target="_blank">https://www.startdesigns.com/</a>
 				
