@@ -4,6 +4,7 @@ import Confirmation from "../profile/confirmation";
 import Alert from "../profile/alert";
 import { useUserState } from "../../context/UserContext";
 import RequestForJudgeOnProject from "./projectRequest";
+import GetJudge from './getjudge';
 import {
   getSelectedProject,
   setSelectedSubmission,
@@ -649,11 +650,11 @@ const Project = (props: RouteComponentProps) => {
                           <h2>JUDGES ({selectedProj[0] && selectedProj[0].payload.judges ? selectedProj[0].payload.judges.length : "0"})</h2>
                           <ul>
                             {
-                              selectedProj[0] && selectedProj[0].payload.judges.map((j,index) => (
+                              selectedProj[0] && selectedProj[0].payload.judges.map((j:any,index:any) => (
                                 <li key={index}>
                                   <img src={userImg} alt=""/>
                                   <span>
-                                    <b>{j}</b>
+                                   <b> <GetJudge name={j}/> </b> 
                                     <i>
                                        Mentor / Hackathon judge
                                     </i>
@@ -847,8 +848,7 @@ const Project = (props: RouteComponentProps) => {
                                 >
                                   View details
                                 </a> &nbsp;
-                                {((getUserType() === "participant" || getUserType() === "" ) && !(selectedProj[0].payload.judges.includes((user as any).party)))&& (  <a
-                                  href="#top"
+                                {((getUserType() === "participant" || getUserType() === "" ) && !(selectedProj[0].payload.judges.includes((user as any).party)))&& (  <span
                                   className="btn view-details-btn"
                                   onClick={(e) => {
                                     const selectedSub = sc as any;  
@@ -860,7 +860,7 @@ const Project = (props: RouteComponentProps) => {
                                   }}
                                 >
                                   Edit
-                                </a> )}
+                                </span> )}
                                 </div>
                                 </div>
                               </div>

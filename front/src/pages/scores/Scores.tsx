@@ -87,7 +87,15 @@ const Scores = (props: RouteComponentProps) => {
                   <IonLabel>{c.name}</IonLabel>
                   <IonLabel>{c.submissionId}</IonLabel>
                   <IonLabel>{c.judge}</IonLabel>
-                 
+                  {(scorecard[index].payload.scoretable || []).length > 0 ? (
+                    <IonLabel>
+                      {(scorecard[index].payload.scoretable || []).map((s:any) => (
+                        <p>
+                          {s.name}: {s.point}
+                        </p>
+                      ))}
+                    </IonLabel>
+                  ) : null}
                 </IonItem>
                 
               ))
