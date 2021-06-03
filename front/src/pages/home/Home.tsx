@@ -453,7 +453,7 @@ const Home = (props: RouteComponentProps) => {
                 <div id="about" className="about wrapper1">
                     {/* <p className="mb-4 show-case"><b>ABOUT</b></p> */}
                     {/* <h4 className="mb-4">Learn More <b className='text-danger'>About Us</b></h4> */}
-                    <h4 className="mb-4 blue">Learn More About Us</h4>
+                    <h4 className="mb-4 blue">Our partners</h4>
                     {/* <p className="description mb-4">
                         Here is simply how Elastik-Chain works we are making it easy for Dapps to scale by getting funded and brought the light to our community.
                     </p> */}
