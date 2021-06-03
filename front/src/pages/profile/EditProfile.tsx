@@ -5,7 +5,6 @@ import {
   ClientRole,
   ClientProject,
   UserRole,
-  JudgeRole,
 } from "@daml.js/cosmart-0.0.1/lib/Main";
 import Alert from "./alert";
 import "./Profile.scss";
@@ -42,7 +41,6 @@ const EditProfile = (props: RouteComponentProps) => {
 
   const projectAssets = useStreamQueries(ClientRole).contracts;
   const participantAssets = useStreamQueries(UserRole).contracts;
-  const judgeAssets = useStreamQueries(JudgeRole).contracts;
   const getUserType = (): "" | "client" | "participant" | "judge" => {
     if (
       clientProjectAssets.length > 0 &&
@@ -67,12 +65,6 @@ const EditProfile = (props: RouteComponentProps) => {
       return "participant";
     }
 
-    if (
-      judgeAssets.filter((c) => (user as any).party === c.payload.judge)
-        .length > 0
-    ) {
-      return "judge";
-    }
     return "participant";
   };
   let userContract:any;
@@ -91,22 +83,7 @@ const EditProfile = (props: RouteComponentProps) => {
       contractId: userContract,
     };
     switch (getUserType()) {
-      case "judge":
-        const ja = judgeAssets.filter(
-          (j) => j.payload.judge === (user as any).party
-        );
-        if (ja.length > 0) {
-          d.firstName = ja[0].payload.judgeProfile.firstName;
-          d.lastName = ja[0].payload.judgeProfile.lastName;
-          d.email = ja[0].payload.judgeProfile.email;
-          d.job = ja[0].payload.judgeProfile.job;
-          d.about = ja[0].payload.judgeProfile.about;
-          d.company = ja[0].payload.judgeProfile.company;
-          d.pictureUrl = ja[0].payload.judgeProfile.pictureUrl;
-          d.contractId = ja[0].contractId;
-        }
-        break;
-      case "participant":
+       case "participant":
         const pa = participantAssets.filter(
           (p) => p.payload.user === (user as any).party
         );

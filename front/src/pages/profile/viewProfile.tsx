@@ -8,7 +8,6 @@ import {
   ClientProject,
   CreateProject,
   RequestToJoinProject,
-  JudgeRole,
   UserRoleRequest,
   UserRole
   
@@ -57,8 +56,6 @@ const ViewProfile = (props: RouteComponentProps) => {
 
 
   const participantAssets = useStreamQueries(UserRole).contracts;
-  const judgeAssets = useStreamQueries(JudgeRole).contracts;
-
   console.log("User Role Data", participantAssets);
   console.log("User Role Data", projectAssets);
   const getUserType = (): "" | "client" | "participant" | "judge" => {
@@ -98,7 +95,7 @@ const ViewProfile = (props: RouteComponentProps) => {
   const [selectedTab, setSelectedTab] = useState("coordinates");
 
   const participantProfile = () => {
-    console.log("judgeAssets", judgeAssets);
+
     const d = {
       firstName: "",
       lastName: "",
@@ -140,7 +137,7 @@ const ViewProfile = (props: RouteComponentProps) => {
     }
     return d;
   };
-  if((projectAssets && projectAssets.length !== 0 && checkFirstTimeLogin === 0) || (participantAssets && participantAssets.length !== 0 && checkFirstTimeLogin === 0)|| (judgeAssets && judgeAssets.length !== 0 && checkFirstTimeLogin === 0)){ checkFirstTimeLogin = 1;  }
+  if((projectAssets && projectAssets.length !== 0 && checkFirstTimeLogin === 0) || (participantAssets && participantAssets.length !== 0 && checkFirstTimeLogin === 0)){ checkFirstTimeLogin = 1;  }
    if(roleRequested && roleRequested.length !== 0 && checkFirstTimeLogin === 0){checkFirstTimeLogin = 2;  }
 
 

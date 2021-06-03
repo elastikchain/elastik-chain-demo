@@ -118,7 +118,8 @@ const Project = (props: RouteComponentProps) => {
   };
 
   const defaultJudgeDetail: AddJudge = {
-    judge : ""
+    judge : "",
+    judgemail:''
   };
   const participantSubmissionProposalAssets = useStreamQueries(
     ParticipantSubmissionProposal,
@@ -1137,6 +1138,19 @@ const Project = (props: RouteComponentProps) => {
                         setJudgeDetail({
                           ...cJudgeDetail,
                           judge: e.detail.value!,
+                        });
+                      }}
+                    ></IonInput>
+                  </IonItem>
+                  <IonItem>
+                    <IonLabel position="floating">Judge Email </IonLabel>
+                    <IonInput
+                      required={true}
+                      value={cJudgeDetail.judgemail}
+                      onIonChange={(e) => {
+                        setJudgeDetail({
+                          ...cJudgeDetail,
+                          judgemail: e.detail.value!,
                         });
                       }}
                     ></IonInput>

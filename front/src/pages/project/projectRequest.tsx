@@ -10,6 +10,7 @@ import {
     IonButton
   } from "@ionic/react";
  import Alert from "../profile/alert"; 
+ import GetJudge from './getjudge';
 const RequestForJudgeOnProject = (props:any) => {
    const requestJudge =  useStreamQueries(RequestToJudgeProject).contracts;
    const [showAlert, setAlerts] = useState(false);
@@ -46,7 +47,7 @@ const RequestForJudgeOnProject = (props:any) => {
                             
                         }}
                         >
-                          Accept Judge Request For {obj.payload.judge}
+                          Accept Judge Request For <GetJudge name={obj.payload.judge}/>
                         </IonButton>
                      ))}
                     

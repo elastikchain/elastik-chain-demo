@@ -12,7 +12,6 @@ import {
   ClientProject,
   CreateProject,
   PrizeData,
-  JudgeRole,
   UserRoleRequest,
   UserRole
   
@@ -137,7 +136,6 @@ const Profile = (props: RouteComponentProps) => {
   const roleRequested = useStreamQueries(UserRoleRequest).contracts;
   const clientProjectAssets = useStreamQueries(ClientProject).contracts;
   const participantAssets = useStreamQueries(UserRole).contracts;
-  const judgeAssets = useStreamQueries(JudgeRole).contracts;
   const getUserType = (): "" | "client" | "participant" | "judge" => {
     if (
       clientProjectAssets.length > 0 &&
@@ -335,7 +333,7 @@ const Profile = (props: RouteComponentProps) => {
     }
     return d;
   };
-  if((projectAssets && projectAssets.length !== 0 && checkFirstTimeLogin === 0) || (participantAssets && participantAssets.length !== 0 && checkFirstTimeLogin === 0)|| (judgeAssets && judgeAssets.length !== 0 && checkFirstTimeLogin === 0)){ checkFirstTimeLogin = 1;  }
+  if((projectAssets && projectAssets.length !== 0 && checkFirstTimeLogin === 0) || (participantAssets && participantAssets.length !== 0 && checkFirstTimeLogin === 0)){ checkFirstTimeLogin = 1;  }
    if(roleRequested && roleRequested.length !== 0 && checkFirstTimeLogin === 0){checkFirstTimeLogin = 2;  }
    if(checkFirstTimeLogin === 0){checkFirstTimeLogin = 3;}
   const HackathonComponenent = (hackathonProps: any) => {
