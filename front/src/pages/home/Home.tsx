@@ -31,6 +31,7 @@ import icWork2 from "../../assets/img/icon-product.png";
 import icWork3 from "../../assets/img/icon-work.png";
 import icWork4 from "../../assets/img/ic-work4.png";
 import topBannerImage from "../../assets/img/img-top-section.png";
+import startLogo from "../../assets/img/logo.png";
 import "./Home.scss";
 import { useUserDispatch, loginUser,loginDablUser } from "../../context/UserContext";
 import { RouteComponentProps } from "react-router-dom";
@@ -481,6 +482,23 @@ const Home = (props: RouteComponentProps) => {
                         </Col> */}
                     </Row>
                 </div>
+		<div className="row wrapper1 partner-design">
+		    <div className="col-md-4 col-sm-12">
+			<div className="box">
+			    <div className="box-img">
+				<img src={startLogo} alt=""/></div>
+			    <div className="box-body">
+				<h4 className="blue">START DESIGNS</h4>
+				
+				<p>
+				    <i>"Design and Development company"</i>
+				</p>
+				<a href="https://www.startdesigns.com/" target="_blank">https://www.startdesigns.com/</a>
+				
+			    </div>
+			</div>
+		    </div>
+		</div>
         <StyledNewsletter>
           <NewsParent>
             <Newsletter>
