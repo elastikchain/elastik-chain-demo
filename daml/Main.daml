@@ -87,6 +87,7 @@ data PrizeData = PrizeData
 template Registry
   with 
     projectKeys: [(Text,Party)]
+    participantKeys: [(Text,Party)]
     participants: [Party]
     operator: Party 
   where 
@@ -99,6 +100,7 @@ template Registry
       AddParticipantToProjectListing: ContractId Registry
         with 
           participant: Party 
+          participantProfile: ProfileData
         do 
           -- add this new participants to all current project listings
           forA projectKeys
@@ -106,11 +108,26 @@ template Registry
               -> do
                 -- exerciseByKey @ClientProjectListing (operator, projKey) AddParticipantToListing with participant 
                 exerciseByKey @ClientProject (client, projKey) AddParticipantToGeneralPublic with participant 
-
-
+          
+          -- now add to the participant list so they can be added to new project listings
+          let newParticipantKey = (participantProfile.email,participant)
+          create this with participants = participant::participants, participantKeys = newParticipantKey::participantKeys
+    
+    -- controller operator can 
+    --   AddObserversToUserRole: ContractId Registry
+    --     with 
+    --       participant: Party 
+    --     do 
+    --       -- add this new participants to all current project listings
+    --       forA participantKeys
+    --         $ \ (pemail,operator)
+    --           -> do
+    --             -- exerciseByKey @ClientProjectListing (operator, projKey) AddParticipantToListing with participant 
+    --             exerciseByKey @UserRole (operator, pemail) AddMultipleObservers with newobservers=participants,requester=operator
 
           -- now add to the participant list so they can be added to new project listings
-          create this with participants = participant::participants 
+          -- create this with participants = participant::participants 
+
 
     controller operator can 
       AddProjectListing: ContractId Registry
@@ -135,7 +152,7 @@ template Platform
 
     controller operator can
       nonconsuming CreateRegistry: ContractId Registry
-        do create Registry with projectKeys = [], participants = [], operator     
+        do create Registry with projectKeys = [], participants = [], operator, participantKeys=[]    
 
 template UserRoleRequest
   with 
@@ -148,8 +165,10 @@ template UserRoleRequest
     controller operator can 
       AcceptUserRequest: ContractId UserRole
         do 
-          exerciseByKey @Registry (operator) AddParticipantToProjectListing with participant = user
-          create UserRole with user,operator,participantProfile,observers=[]
+          (r1,r1o) <- fetchByKey @Registry (operator)
+          us <- create UserRole with user,operator,participantProfile,observers=r1o.participants
+          exerciseByKey @Registry (operator) AddParticipantToProjectListing with participant = user, participantProfile
+          return us          
 
 template UserRole --
   with 
@@ -173,9 +192,16 @@ template UserRole --
       nonconsuming PromoteToClient: ContractId ClientRole
         do create ClientRole with client=user,operator,clientProfile=participantProfile
     
-    controller operator can -- delete
-      nonconsuming PromoteToJudge: ContractId JudgeRole
-        do create JudgeRole with judge=user,operator,judgeProfile=participantProfile
+    -- choice AddMultipleObservers: ContractId UserRole
+    --   with
+    --     requester: Party
+    --     newobservers: [Party]
+    --   controller requester 
+    --     do create this with observers=newobservers + observers -- cehck syntax
+    
+    -- controller operator can -- delete
+    --   nonconsuming PromoteToJudge: ContractId JudgeRole
+    --     do create JudgeRole with judge=user,operator,judgeProfile=participantProfile
 
     controller user can 
       UpdateParProfile: ContractId UserRole
@@ -204,27 +230,27 @@ template UserRole --
 --       AcceptJudgeRequest: ContractId JudgeRole
 --         do create JudgeRole with ..
 
-template JudgeRole
-  with 
-    judge: Party 
-    operator: Party 
-    judgeProfile: ProfileData
-  where 
-    signatory judge, operator
+-- template JudgeRole
+--   with 
+--     judge: Party 
+--     operator: Party 
+--     judgeProfile: ProfileData
+--   where 
+--     signatory judge, operator
 
-    controller judge can 
-      AddEditJudProfile: ContractId JudgeRole
-        with
-          newJudgeProfile:ProfileData
-        do
-          create this with judgeProfile=newJudgeProfile
+--     controller judge can 
+--       AddEditJudProfile: ContractId JudgeRole
+--         with
+--           newJudgeProfile:ProfileData
+--         do
+--           create this with judgeProfile=newJudgeProfile
 
-    controller judge can 
-      nonconsuming JudgeForProject: ContractId RequestToJudgeProject
-        with 
-          projectId: Text 
-          client: Party
-        do create RequestToJudgeProject with ..
+--     controller judge can 
+--       nonconsuming JudgeForProject: ContractId RequestToJudgeProject
+--         with 
+--           projectId: Text 
+--           client: Party
+--         do create RequestToJudgeProject with ..
 
 template RequestToJudgeProject  
   with 
@@ -232,13 +258,15 @@ template RequestToJudgeProject
     client: Party
     operator: Party 
     projectId: Text
+    judgemail: Text
   where 
     signatory judge 
 
     controller client can 
       AddJudgeToProject: ContractId ClientProject 
         do 
-          exerciseByKey @ClientProject (client, projectId) AddJudge with judge
+          -- o <- fetch @UserRole()
+          exerciseByKey @ClientProject (client, projectId) AddJudge with judge, judgemail
 
 --  ----------------------------------------------------------------
 
@@ -514,17 +542,18 @@ template ClientProject
     controller client can 
        AddJudge: ContractId ClientProject 
         with 
-          -- judgemail: Text
+          judgemail: Text
           judge: Party 
         do 
           -- (c1,co) <- fetchByKey @UserRole (operator,judge) 
           forA projects
             $ \ projKey
               -> do
-                -- exerciseByKey @ClientProjectListing (operator, projKey) AddParticipantToListing with participant 
+                -- exerciseByKey @ClientProjectListing (operator, projKey) AddParticipantToListing with participant  
                 exerciseByKey @ParticipantSubmission (client, projKey) AddJudgToSubmission with judge
-
+                -- exerciseByKey @UserRole (operator,judgemail) AddMultipleObservers with generalPublic
           create this with operator, client, name, desc, criteria, challenges, judges =judge::judges
+
 
     nonconsuming choice RequestToJudge: ContractId RequestToJudgeProject 
       with 
@@ -534,7 +563,7 @@ template ClientProject
             do 
                -- exerciseByKey @ClientProjectListing (operator, projKey) AddParticipantToListing with participant 
               exerciseByKey @UserRole (operator, judgemail) AddObserver with partyId=client 
-              create RequestToJudgeProject with client, judge, operator, projectId
+              create RequestToJudgeProject with client, judge, operator, projectId, judgemail
           
           
     nonconsuming choice ProposeSubmission: ContractId ParticipantSubmissionProposal
