@@ -16,6 +16,7 @@ import {
   useUserState,
 } from "../../context/UserContext";
 import { useStreamQueries } from "@daml/react";
+import GetJudge from '../project/getjudge';
 import { arrowBack,arrowUp,arrowDown } from "ionicons/icons";
 import { Scorecard } from "@daml.js/cosmart-0.0.1/lib/Main";
 function stableSort<T>(array: T[], comparator: (a: T, b: T) => number) {
@@ -61,6 +62,7 @@ const Scores = (props: RouteComponentProps) => {
       setOrderBy(name);
       setOrder(orderType);
   }
+  console.log("scorecard",scorecard);
   return (
     <IonPage>
      <SubHeader {...props} />
@@ -86,7 +88,7 @@ const Scores = (props: RouteComponentProps) => {
                   {console.log("c.payload",c)}
                   <IonLabel>{c.name}</IonLabel>
                   <IonLabel>{c.submissionId}</IonLabel>
-                  <IonLabel>{c.judge}</IonLabel>
+                  <IonLabel> <GetJudge name={c.judge}/></IonLabel>
                   {(scorecard[index].payload.scoretable || []).length > 0 ? (
                     <IonLabel>
                       {(scorecard[index].payload.scoretable || []).map((s:any) => (

@@ -43,6 +43,7 @@ import {
   IonNote,
   IonSpinner,
   IonIcon,
+  IonCheckbox,
 } from "@ionic/react";
 
 import {
@@ -105,6 +106,7 @@ const Profile = (props: RouteComponentProps) => {
   const [projectDetail, setProjectDetail] = useState(defaultProjectDetail);
   const [projectIdTouched, setProjectIdTouched] = useState(false);
   const [showCreateProjectModal, setShowCreateProjectModal] = useState(false);
+  const [requestSend, setRequestSend] = useState(false);
   const [showTrashProjectModal, setShowTrashProjectModal] = useState({
     status: false,
     projectID: "",
@@ -164,7 +166,9 @@ const Profile = (props: RouteComponentProps) => {
   };
 
 
-
+  const setRequestCheckbox = (e:any)=>{
+    setRequestSend(e.detail.checked);
+  }
   const handleCreateProject = async (evt: any) => {
     evt.preventDefault();
     const exercise = (cb: () => void) => {
@@ -958,15 +962,36 @@ const Profile = (props: RouteComponentProps) => {
                             }
                           ></IonTextarea>
                         </IonItem>  
+                        <IonItem>
+                       
+                          <IonCheckbox
+                           
+                            value={registerRequest.job}
+                            onIonChange={(e) =>
+                              setRequestCheckbox(e)
+                            }
+                          ></IonCheckbox>
+                             <IonLabel className="checkboxxlass">By ticking this box you agree to the terms and conditions of the hackathon <a href="">T&C</a> </IonLabel>
+                        </IonItem>
                         <IonItem> 
+                         
+                          {requestSend === false ? 
                         <IonButton
-                        className="profile-default-update-btn"
-                         onClick={(e) => {
-                          handleNewAccountRequest(e);
-                        }}
+                        className="profile-default-update-btn disabled"
+                      
                       >
                        Request For new account
                       </IonButton>
+                       :
+                       <IonButton
+                       className="profile-default-update-btn"
+                        onClick={(e) => {
+                         handleNewAccountRequest(e);
+                       }}
+                     >
+                      Request For new account
+                     </IonButton>
+                      }
                       </IonItem>    
                     </div>
                   }

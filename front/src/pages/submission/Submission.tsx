@@ -33,6 +33,7 @@ import {
 } from "../../context/UserContext";
 import SubHeader from "../../components/Header/subheader";
 import Footer from "../../components/Footer/footer";
+import GetJudge from '../project/getjudge';
 const Submission = (props: RouteComponentProps) => {
   const selectedSubmission = getSelectedSubmission();
   
@@ -235,7 +236,7 @@ const Submission = (props: RouteComponentProps) => {
                           src="https://via.placeholder.com/152x128.png"
                           alt="team member"
                         />
-                        <p>{c.payload.participant}</p>
+                        <p> <GetJudge name={c.payload.participant}/></p>
                       </div>
                     ))}
                     {submission.map((c) =>
@@ -245,7 +246,7 @@ const Submission = (props: RouteComponentProps) => {
                             src="https://via.placeholder.com/152x128.png"
                             alt="team member item"
                           />
-                          <p>{p}</p>
+                          <p> <GetJudge name={p}/></p>
                         </div>
                       ))
                     )}
