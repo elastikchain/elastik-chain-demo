@@ -361,8 +361,9 @@ template ClientRole
           projectvideoLink: Text
           eligibility:[Text]
           requirements:[Text]
+          projectStatus: Text
         do 
-          create ClientProjectProposal with operator, client, projectId, location, startDate, endDate, name, desc, criteria,pictureUrl,challenges = [], participants = [], judges = [], projects=[], rules, termsLink,privacyLink,prizes,projectvideoLink,eligibility=[],requirements=[]
+          create ClientProjectProposal with operator, client, projectId, location, startDate, endDate, name, desc, criteria,pictureUrl,challenges = [], participants = [], judges = [], projects=[], rules, termsLink,privacyLink,prizes,projectvideoLink,eligibility=[],requirements=[],projectStatus
 --  ----------------------------------------------------------------
 
 -- create a hackathon
@@ -389,6 +390,7 @@ template ClientProjectProposal
     projectvideoLink: Text
     eligibility:[Text]
     requirements:[Text]
+    projectStatus: Text
   where
     signatory client 
     
@@ -399,7 +401,7 @@ template ClientProjectProposal
           -- create project listing for participants to see online
           -- create ClientProjectListing with operator, client, projectId, name, participants = []
           -- now create actual project
-          create ClientProject with operator, client, projectId, location, startDate, endDate, name, desc, criteria,pictureUrl,challenges = [], participants = [], judges = [], projects=[],rules,termsLink,privacyLink,prizes,generalPublic=[],projectvideoLink,requirements=[],eligibility=[]
+          create ClientProject with operator, client, projectId, location, startDate, endDate, name, desc, criteria,pictureUrl,challenges = [], participants = [], judges = [], projects=[],rules,termsLink,privacyLink,prizes,generalPublic=[],projectvideoLink,requirements=[],eligibility=[],projectStatus
           -- add to registry
           exerciseByKey @Registry (operator) AddProjectListing with projectKey = projectId,client
           
@@ -443,6 +445,7 @@ template ClientProject
     projectvideoLink: Text
     eligibility:[Text]
     requirements:[Text]
+    projectStatus: Text
   where
     signatory client, operator 
     observer participants,judges,generalPublic
