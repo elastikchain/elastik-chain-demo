@@ -108,7 +108,8 @@ template Registry
               -> do
                 -- exerciseByKey @ClientProjectListing (operator, projKey) AddParticipantToListing with participant 
                 exerciseByKey @ClientProject (client, projKey) AddParticipantToGeneralPublic with participant 
-          
+         
+         
           -- now add to the participant list so they can be added to new project listings
           let newParticipantKey = (participantProfile.email,participant)
           create this with participants = participant::participants, participantKeys = newParticipantKey::participantKeys
@@ -748,8 +749,9 @@ template ParticipantSubmission
         with 
           scores: [CriteriaPoint] 
           judge: Party
+          judgeComment: Text
         controller judge 
-          do create Scorecard with client,name, submissionId, scoretable=scores, judge
+          do create Scorecard with client,name, submissionId, scoretable=scores, judge,judgeComment
           
 --  ----------------------------------------------------------------
 
@@ -931,6 +933,7 @@ template Scorecard
         -- participant: Party 
         judge: Party 
         scoretable: [CriteriaPoint]
+        judgeComment: Text
      where 
         signatory judge  
         observer client 
