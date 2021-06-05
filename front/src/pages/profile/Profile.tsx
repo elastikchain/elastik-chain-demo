@@ -91,6 +91,7 @@ const Profile = (props: RouteComponentProps) => {
     loading: false,
     eligibility: [],
     requirements: [],
+    projectStatus:'notsubmitted'
   };
   let checkFirstTimeLogin = 0;
   const defaultRegisterRequest = {
@@ -381,6 +382,7 @@ const Profile = (props: RouteComponentProps) => {
                     )
                   : 0}{" "}
                 Days left
+                
               </div>
               <div className="online-point">
                 {" "}
@@ -822,6 +824,7 @@ const Profile = (props: RouteComponentProps) => {
                 </IonModal>
 
                 <div className="wrapper">
+                  {participantProfile().firstName !== "" && 
                   <div className="profile-info-container">
                     <div className="profile-img-container">
                       {projectAssets.length > 0 &&
@@ -894,6 +897,7 @@ const Profile = (props: RouteComponentProps) => {
                       </div>
                     </div>
                   </div>
+                  }
                   {checkFirstTimeLogin === 3 &&
                     <div className="new-user-profile">
                         <IonItem>

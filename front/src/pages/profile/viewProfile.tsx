@@ -22,7 +22,6 @@ import SubHeader from "../../components/Header/subheader";
 import Footer from "../../components/Footer/footer";
 import {
   IonPage,
-  IonButton,
   IonContent,
   IonSplitPane,
   IonLabel,
@@ -196,7 +195,7 @@ const ViewProfile = (props: RouteComponentProps) => {
                           </IonSegment>
 
                           {
-                            (selectedTab == 'coordinates') ? (
+                            (selectedTab === 'coordinates') ? (
                               <div className="coordinates">
                                 <p>{participantProfile().about}</p>
                                 <p>

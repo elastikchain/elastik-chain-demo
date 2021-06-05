@@ -1,6 +1,5 @@
 import React, { useState } from "react";
 import {
-  ClientProject,
   RequestToJudgeProject
   
 } from "@daml.js/cosmart-0.0.1/lib/Main";

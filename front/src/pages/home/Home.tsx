@@ -10,8 +10,6 @@ import {
   IonSearchbar,
   IonButtons,
   IonButton,
-  IonSlides,
-  IonSlide,
   IonModal,
   IonLabel,
   IonInput,
@@ -494,7 +492,7 @@ const Home = (props: RouteComponentProps) => {
 				    <i>"Design and Development company <br/>
 UI/UX Design, React, DAML, Node.."</i>
 				</p>
-				<a href="https://www.startdesigns.com/" target="_blank">https://www.startdesigns.com/</a>
+				<a href="https://www.startdesigns.com/" rel="noopener noreferrer" target="_blank">https://www.startdesigns.com/</a>
 				
 			    </div>
 			</div>

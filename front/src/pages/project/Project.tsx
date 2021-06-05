@@ -12,7 +12,7 @@ import {
 
 import Tabs from "../../components/Tabs";
 import Tab from "../../components/Tabs/Tab";
-
+import ScoreSubmit from './scoresubmit';
 import {
   IonButton,
   IonCard,
@@ -115,7 +115,8 @@ const Project = (props: RouteComponentProps) => {
   };
   const defaultSubmitScoreDetail: SubmitScorecard = {
     judge:(user as any).party,
-    scores:Array<CriteriaPoint>()
+    scores:Array<CriteriaPoint>(),
+    judgeComment:""
   };
 
   const defaultJudgeDetail: AddJudge = {
@@ -142,8 +143,13 @@ const Project = (props: RouteComponentProps) => {
     evt.preventDefault();
     defaultSubmitScoreDetail.scores = Array<CriteriaPoint>();
     for(let i=0;i<evt.target.elements.name.length;i++){
-      defaultSubmitScoreDetail.scores.push({name:evt.target.elements.name[i].value,point:evt.target.elements.point[i].value});
+      if(evt.target.elements.name[i] !== ""){
+        defaultSubmitScoreDetail.scores.push({name:evt.target.elements.name[i].value,point:evt.target.elements.point[i].value});
+      }
+      
     }
+    defaultSubmitScoreDetail.judgeComment = evt.target.elements.comment.value;
+  
     ledger
       .exercise(
         ParticipantSubmission.SubmitScorecard,
@@ -789,33 +795,10 @@ const Project = (props: RouteComponentProps) => {
                                 <div className="submission-manage">
                                 {(selectedProj[0] &&  (selectedProj[0].payload.judges.includes((user as any).party))) &&(
                                   <div className="submit-your-score">
-                                    <input
-                                      type="hidden"
-                                      name="point"
-                                      placeholder="Score"
-                                      value=""
-                                    />
-                                    <input
-                                      type="hidden"
-                                      name="name"
-                                      value=""
-                                    />
+                                    
                                     <form method="post" onSubmit={handleSubmitJudgeScore}>
                                     { (sc.payload.criteria.length > 0) && sc.payload.criteria.map((crt,index) => (
-                                     <div className="judging" key={index}>
-                                     <label>{crt.name}</label>
-                                     <input
-                                      type="number"
-                                      name="point"
-                                      placeholder="Score"
-                                     
-                                    />
-                                    <input
-                                      type="hidden"
-                                      name="name"
-                                      value={crt.name}
-                                    />
-                                    </div>
+                                      <ScoreSubmit key={index} crt={crt}/>
                                     ))}
                                     <input
                                       type="hidden"
