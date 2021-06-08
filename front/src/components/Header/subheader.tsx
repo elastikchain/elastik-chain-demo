@@ -30,16 +30,16 @@ const SubHeader = (props: any) => {
               <img className="app-logo" src={logo} alt="logo" />
             </div>
             <div className="search-form">
-              <IonSearchbar
+              {/* <IonSearchbar
                 placeholder="Explore amazing ideas"
                 value={searchText}
                 onIonChange={(e) => setSearchText(e.detail.value!)}
-              ></IonSearchbar>
+              ></IonSearchbar> */}
             </div>
             <div className="header-menu">
               <IonButtons slot="end" className="toolbar-buttons-container">
                 <div className="toolbar-buttons">
-                  <IonButton>Explore</IonButton>
+                  {/* <IonButton>Explore</IonButton> */}
                   <IonButton className="activeButton"
                     onClick={(evt: any) => {
                       signOut(userDispatch, props.history,props, false);
