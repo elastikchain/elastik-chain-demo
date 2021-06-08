@@ -120,9 +120,9 @@ const Submission = (props: RouteComponentProps) => {
                 <li>
                   <span>Projects</span>
                 </li>
-                <li>
+                {/* <li>
                   <span>Fintech</span>
-                </li>
+                </li> */}
                 <li>
                   <span>{selectedSubmission.payload.name}</span>
                 </li>
