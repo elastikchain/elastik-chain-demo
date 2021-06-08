@@ -31,12 +31,12 @@ const ProfileMenu = (props: RouteComponentProps) => {
                             props.history.push("/main/profile/view")
                         }>Profile</IonLabel>
                     </IonItem>
-                    <IonItem>
+                    {/* <IonItem>
                       <img slot="start" src={menuItemImg} alt="menu item" />
                       <IonLabel onClick={(e)=>
                             props.history.push("/main/profile/setting")
                         }>Settings</IonLabel>
-                    </IonItem>
+                    </IonItem> */}
                   </IonList>
                 </IonContent>
               </IonMenu>
