@@ -24,11 +24,7 @@ const ScoreSubmit = (props:any) => {
                              placeholder="Score"
                        />
                        <label>Comment: </label>
-                       <input
-                            type="text"
-                             name="comment"
-                             placeholder="Comment"
-                       />
+                     
                        <input
                           type="hidden"
                           name="name"

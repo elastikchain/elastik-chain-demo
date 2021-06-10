@@ -5,9 +5,12 @@
     --min-height: 3.8rem;
 }
 
+.full-width-container .profile-wrapper{
+    margin-left:0px !important;
+    padding-right: 0px !important;
+}
 .view-profile-content{
     position: relative;
-    overflow-y: scroll;
     overflow-x: hidden;
 }
 .profile-top-header{
@@ -28,8 +31,9 @@
         display: flex;
         .profile-img-container{
             position: relative; 
-            min-width: 13rem;
-            max-height: 13rem;
+            min-width: 180px;
+            width: 180px;
+            height: 180px;
             img{
                 width: 100%;
                 height: 100%;
@@ -47,7 +51,7 @@
         }
         .profile-info{
             padding-left: 2rem;
-            padding-top: 4rem;
+            padding-top: 40px;
             .profile-header{
                 max-width: 584px;
                 display: flex;
@@ -71,6 +75,9 @@
                 a{
                     text-decoration: none;
                     color: var(--ion-color-dark);
+                }
+                .coordinates{
+                    margin-top:10px;
                 }
             }
         }
@@ -437,6 +444,7 @@ h2.title-project {
 .price-chanllanges-parti {
     display: flex;
     margin-top: 10px;
+    justify-content: space-between;
 }
 
 .project-price-lsiitng {
@@ -498,17 +506,17 @@ p.participants-numbers span {
     color: #143b6c;
 }
 
-.project-price-lsiitng {
-    flex: 0 0 40%;
-}
+// .project-price-lsiitng {
+//     flex: 0 0 40%;
+// }
 
 .Challanges-list {
-    flex: 0 0 15%;
+    // flex: 0 0 15%;
     text-align: center;
 }
 
 .participants {
-    flex: 0 0 41%;
+    // flex: 0 0 41%;
     justify-content: flex-end;
     display: flex;
 }
@@ -562,7 +570,7 @@ span.Criteria-lisitng {
     
     .Challanges-list {
         margin: 5px 0px;
-        flex: 0 0 20%;
+        // flex: 0 0 20%;
     }
 
     .price-chanllanges-parti {
@@ -572,15 +580,15 @@ span.Criteria-lisitng {
     }
 
     .participants {
-        flex: 0 0 30%;
+        // flex: 0 0 30%;
         justify-content: flex-end;
         display: flex;
         align-items: center;
     }
 
-    .project-price-lsiitng {
-        flex: 0 0 100%;
-    }
+    // .project-price-lsiitng {
+    //     flex: 0 0 100%;
+    // }
 
     
   }
@@ -614,6 +622,7 @@ span.Criteria-lisitng {
     transform: none;
     float: none;
     margin-top: 16px;
+    line-height: 40px;
 }
 textarea.native-textarea.sc-ion-textarea-md {
     resize: both;

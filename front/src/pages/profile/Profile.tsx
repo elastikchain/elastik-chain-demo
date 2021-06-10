@@ -21,7 +21,7 @@ import "./Profile.scss";
 import {
   useUserState,
 } from "../../context/UserContext";
-
+import ViewProfileData from './viewprofiledata';
 import { setSelectedProject } from "../../context/SharedContext";
 import SubHeader from "../../components/Header/subheader";
 import Footer from "../../components/Footer/footer";
@@ -823,7 +823,7 @@ const Profile = (props: RouteComponentProps) => {
                   </IonButton>
                 </IonModal>
 
-                <div className="wrapper">
+                <div className="wrapper profile-wrapper">
                   {participantProfile().firstName !== "" && 
                   <div className="profile-info-container">
                     <div className="profile-img-container">
@@ -883,7 +883,7 @@ const Profile = (props: RouteComponentProps) => {
                         <p>
                           About: {participantProfile().about}
                         </p>
-                        { getUserType() }
+                        
                         {getUserType() === "client" ? (
                           <div>
                             <IonButton
@@ -900,6 +900,7 @@ const Profile = (props: RouteComponentProps) => {
                   }
                   {checkFirstTimeLogin === 3 &&
                     <div className="new-user-profile">
+                      <ViewProfileData {...props}/>
                         <IonItem>
                          <IonLabel position="floating">First Name</IonLabel>
                           <IonInput

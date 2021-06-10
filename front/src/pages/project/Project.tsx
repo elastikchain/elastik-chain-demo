@@ -116,7 +116,8 @@ const Project = (props: RouteComponentProps) => {
   const defaultSubmitScoreDetail: SubmitScorecard = {
     judge:(user as any).party,
     scores:Array<CriteriaPoint>(),
-    judgeComment:""
+    judgeComment:"",
+    finalScore:""
   };
 
   const defaultJudgeDetail: AddJudge = {
@@ -142,14 +143,16 @@ const Project = (props: RouteComponentProps) => {
   const handleSubmitJudgeScore = async (evt:any)=>{
     evt.preventDefault();
     defaultSubmitScoreDetail.scores = Array<CriteriaPoint>();
+    let score = 0;
     for(let i=0;i<evt.target.elements.name.length;i++){
       if(evt.target.elements.name[i] !== ""){
+        score += evt.target.elements.point[i].value;
         defaultSubmitScoreDetail.scores.push({name:evt.target.elements.name[i].value,point:evt.target.elements.point[i].value});
       }
       
     }
     defaultSubmitScoreDetail.judgeComment = evt.target.elements.comment.value;
-  
+    defaultSubmitScoreDetail.finalScore = score.toString();
     ledger
       .exercise(
         ParticipantSubmission.SubmitScorecard,
@@ -800,6 +803,11 @@ const Project = (props: RouteComponentProps) => {
                                     { (sc.payload.criteria.length > 0) && sc.payload.criteria.map((crt,index) => (
                                       <ScoreSubmit key={index} crt={crt}/>
                                     ))}
+                                      <input
+                                        type="text"
+                                        name="comment"
+                                        placeholder="Comment"
+                                  />
                                     <input
                                       type="hidden"
                                       name="contactid"

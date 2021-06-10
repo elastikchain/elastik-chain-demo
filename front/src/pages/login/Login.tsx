@@ -33,15 +33,15 @@ const Login = (props : RouteComponentProps) => {
                   Something is wrong with your login or password :(
                 </Typography>
               </Fade>
-              {!isLocalDev &&
+              {!isLocalDev ?
                 <>
                   <Button className={classes.dablLoginButton} variant="contained" color="primary" size="large" onClick={loginDablUser}>
                     Log in with DABL
                   </Button>
-                  <Typography>
-                    OR
-                  </Typography>
-                </>}
+                 
+                </>
+                :
+                <>
               <TextField
                 id="email"
                 InputProps={{
@@ -117,7 +117,8 @@ const Login = (props : RouteComponentProps) => {
                   >
                     Login
                   </Button>}
-              </div>
+              </div> 
+              </> }
             </React.Fragment>
         </div>
       </div>

@@ -18,8 +18,7 @@ import {
   useUserState,
 } from "../../context/UserContext";
 
-import SubHeader from "../../components/Header/subheader";
-import Footer from "../../components/Footer/footer";
+
 import {
   IonPage,
   IonContent,
@@ -30,13 +29,13 @@ import {
 } from "@ionic/react";
 
 import "./Profile.scss";
-import ProfileMenu from "./profileMenu";
+
 interface CriteriaPoint {
   name: string;
   point: damlTypes.Numeric;
 }
 
-const ViewProfile = (props: RouteComponentProps) => {
+const ViewProfileData = (props: RouteComponentProps) => {
   const user = useUserState();
   interface FrontCreateProject extends CreateProject {
     projectImageFile?: File;
@@ -137,30 +136,12 @@ const ViewProfile = (props: RouteComponentProps) => {
     }
     return d;
   };
-  if((projectAssets && projectAssets.length !== 0 && checkFirstTimeLogin === 0) || (participantAssets && participantAssets.length !== 0 && checkFirstTimeLogin === 0)){ checkFirstTimeLogin = 1;  }
-   if(roleRequested && roleRequested.length !== 0 && checkFirstTimeLogin === 0){checkFirstTimeLogin = 2;  }
-
-
-
-
-  if (!user.isAuthenticated) {
-    return null;
-  } else {
+  
     return (
-      <IonPage>
-    
-        <SubHeader {...props} />
-        <IonContent>
-          <div className="content-container">
-            <IonSplitPane className="menu-container" contentId="main">
-              <ProfileMenu {...props}/>
-              {/*-- the main content --*/}
-              <IonPage className="full-width-container" id="main">
-                <div className="view-profile-content">
-                <div className="profile-top-header">
+                    <div className="view-profile-content">
+                    <div className="profile-top-header">
 
-                </div>
-                <div className="wrapper">
+                    </div>
                     <div className="profile-info-container">
                       <div className="profile-img-container">
                         {projectAssets.length > 0 &&
@@ -221,7 +202,7 @@ const ViewProfile = (props: RouteComponentProps) => {
                                 <p>
                                   {participantProfile().about}
                                 </p>
-                              
+                                
                               </div>
                             )
                           }
@@ -229,21 +210,9 @@ const ViewProfile = (props: RouteComponentProps) => {
                         </div>
                       </div>
                     </div>
-                  
-                  
-                    <Footer />
-                  </div>
-
-                </div>
-                  
-              </IonPage>
-			  
-            </IonSplitPane>
-			
-          </div>
-        </IonContent>
-      </IonPage>
+                    </div> 
+                 
     );
-  }
+
 };
-export default ViewProfile;
+export default ViewProfileData;

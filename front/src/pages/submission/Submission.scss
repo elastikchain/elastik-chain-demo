@@ -125,7 +125,12 @@
 .submission-wrapper .submission-info-container .short-info-container {
     padding-top: 0px;
 }
-
+.submission-wrapper .submission-info-container .short-info-container > p {
+    max-width: 729px;
+    font-size: 18px;
+    line-height: 30px;
+    margin-top: 36px;
+}
 .short-info-container h1 {
     font-family: Nixie One;
     font-style: normal;
