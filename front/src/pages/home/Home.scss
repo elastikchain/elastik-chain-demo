@@ -195,6 +195,22 @@ footer {
 .footer-news-input {
 	color: #000;
 }
+.footer-container ul{
+  width: 100%;
+  display: inline-block;
+  margin: 0px;
+  padding:20px 0 0 0;
+  text-align: center;
+  list-style: none;
+}
+.footer-container ul li{
+  display: inline-block;
+}
+.footer-container ul li a{
+  padding: 0 5px;
+  font-size: 20px;
+}
+
 
 .footer-subs-text {
 	font-size: 24px;

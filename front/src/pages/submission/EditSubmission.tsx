@@ -34,8 +34,7 @@ import {
         props.match.params,
     ]).contracts;
  
-    console.log("submission", props.match.params);
-    console.log("selectedSubmission", submission);
+
     const defaultSubmission = {
         newDesc: selectedSubmission.payload.desc,
         newName:selectedSubmission.payload.name,

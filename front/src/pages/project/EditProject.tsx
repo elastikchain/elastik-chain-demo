@@ -271,7 +271,7 @@ const EditProject = (props: RouteComponentProps) => {
                       </div>
                       <div className="addmore-tags-container">
                         <IonLabel>Requirements</IonLabel>
-                        {console.log(projectDetail.requirements)}
+                       
                         <AddMore
                           defaultTags={requirements}
                           onChange={(tags) => {

@@ -21,7 +21,7 @@ export default function Report() {
   const ledger = useLedger();
   const assets = useStreamQueries(Platform).contracts;
   const clientProjectAssets = useStreamQueries(ClientProject).contracts;  
-  console.log('clientProjectAssets', clientProjectAssets);
+  
   const projectAssets = useStreamQueries(ClientRole).contracts;
   //const judgeInvitationAssets = useStreamQueries(JudgeInvitation).contracts;
   const requestToJoinProjectAssets = useStreamQueries(RequestToJoinProject).contracts;

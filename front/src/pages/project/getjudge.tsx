@@ -8,11 +8,19 @@ import { useStreamQueries } from "@daml/react";
 
 const GetJudge = (props:any) => {
     const participantAssets = useStreamQueries(UserRole,()=>[{user:props.name}]).contracts;
-    console.log("requestJudge",participantAssets)
+    
     return (
+                
                 <> 
-                {participantAssets[0] && participantAssets[0].payload.participantProfile.firstName}  &nbsp;
-                {participantAssets[0] && participantAssets[0].payload.participantProfile.lastName}
+                {participantAssets.length > 0 ?    
+                <>{participantAssets[0] && participantAssets[0].payload.participantProfile.firstName}  &nbsp;
+                 {participantAssets[0] && participantAssets[0].payload.participantProfile.lastName}
+                 {(props.showjob !== "undefined" ) &&  <i>{participantAssets[0] && participantAssets[0].payload.participantProfile.job}  </i> }
+                </>
+                :
+                props.name
+
+                }
             </>
         )
 };

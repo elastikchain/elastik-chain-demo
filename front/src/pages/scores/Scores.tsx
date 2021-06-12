@@ -53,7 +53,7 @@ const Scores = (props: RouteComponentProps) => {
   const scorecard = useStreamQueries(Scorecard, () => {
     return [{ client: (user as any).party }];
   }).contracts;
- 
+ console.log("scorecard",scorecard)
   const rows:any = scorecard.map((c, i) => {
         return c.payload;
   });
@@ -62,7 +62,7 @@ const Scores = (props: RouteComponentProps) => {
       setOrderBy(name);
       setOrder(orderType);
   }
-  console.log("scorecard",scorecard);
+
   return (
     <IonPage>
      <SubHeader {...props} />
@@ -80,24 +80,26 @@ const Scores = (props: RouteComponentProps) => {
               <IonLabel>Submission Id</IonLabel>
               <IonLabel>Judge</IonLabel>
               <IonLabel>Scores</IonLabel>
+              <IonLabel>Final Score</IonLabel>
             </IonItem>
            
             {scorecard.length > 0 ? (
               stableSort(rows, getComparator(order, orderBy)).map((c,index) => (
                 <IonItem key={index}>
-                  {console.log("c.payload",c)}
+                  
                   <IonLabel>{c.name}</IonLabel>
                   <IonLabel>{c.submissionId}</IonLabel>
                   <IonLabel> <GetJudge name={c.judge}/></IonLabel>
                   {(scorecard[index].payload.scoretable || []).length > 0 ? (
                     <IonLabel>
-                      {(scorecard[index].payload.scoretable || []).map((s:any) => (
-                        <p>
+                      {(scorecard[index].payload.scoretable || []).map((s:any,indx) => (
+                        <p key={indx}>
                           {s.name}: {s.point}
                         </p>
                       ))}
                     </IonLabel>
                   ) : null}
+                  <IonLabel> {c.finalScore}</IonLabel>
                 </IonItem>
                 
               ))

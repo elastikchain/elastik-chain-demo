@@ -94,7 +94,7 @@ const Profile = (props: RouteComponentProps) => {
     projectStatus:'notsubmitted'
   };
   let checkFirstTimeLogin = 0;
-  const defaultRegisterRequest = {
+  let defaultRegisterRequest = {
       firstName:'',
       lastName: '',
       email:'',
@@ -103,7 +103,7 @@ const Profile = (props: RouteComponentProps) => {
       about:'',
       pictureUrl:'https://static.remove.bg/remove-bg-web/2a274ebbb5879d870a69caae33d94388a88e0e35/assets/start-0e837dcc57769db2306d8d659f53555feb500b3c5d456879b9c843d1872e7baa.jpg'
   };
-  const [registerRequest, setRegisterRequest] = useState(defaultRegisterRequest);
+
   const [projectDetail, setProjectDetail] = useState(defaultProjectDetail);
   const [projectIdTouched, setProjectIdTouched] = useState(false);
   const [showCreateProjectModal, setShowCreateProjectModal] = useState(false);
@@ -137,7 +137,14 @@ const Profile = (props: RouteComponentProps) => {
   const ledger = useLedger();
   const projectAssets = useStreamQueries(ClientRole).contracts;
   const roleRequested = useStreamQueries(UserRoleRequest).contracts;
+  if(roleRequested.length > 0){
+    defaultRegisterRequest = roleRequested[0].payload.participantProfile;
+    //setRegisterRequest(defaultRegisterRequest);
+  }
+  const [registerRequest, setRegisterRequest] = useState(defaultRegisterRequest);
   const clientProjectAssets = useStreamQueries(ClientProject).contracts;
+
+
   const participantAssets = useStreamQueries(UserRole).contracts;
   const getUserType = (): "" | "client" | "participant" | "judge" => {
     if (
@@ -174,7 +181,7 @@ const Profile = (props: RouteComponentProps) => {
     evt.preventDefault();
     const exercise = (cb: () => void) => {
       const { loading, projectImageFile, ...dataToExercise } = projectDetail;
-      //console.log("dataToExercise", dataToExercise);
+     
       ledger
         .exercise(
           ClientRole.CreateProject,
@@ -205,7 +212,7 @@ const Profile = (props: RouteComponentProps) => {
     setProjectDetail({ ...projectDetail, loading: true });
     if (projectDetail.projectImageFile) {
       let imgFile = projectDetail.projectImageFile;
-      // console.log("imgFile", imgFile);
+     
       const { name } = imgFile;
       const filePath = `${new Date().getTime()}_${name}`;
       const storage = firebase.storage;
@@ -217,7 +224,7 @@ const Profile = (props: RouteComponentProps) => {
           task
             .getDownloadURL()
             .then((urlStr) => {
-              // console.log("urlStr", urlStr);
+             
               const pd = projectDetail;
               pd.pictureUrl = urlStr;
               setProjectDetail(pd);
@@ -280,7 +287,7 @@ const Profile = (props: RouteComponentProps) => {
           contractID: "",
         });
       })
-      .catch((err: any) => console.log(err));
+      .catch((err: any) => {alert("Error")});
   };
 
   const handleNewAccountRequest = async(evt:any)=>{
@@ -297,15 +304,7 @@ const Profile = (props: RouteComponentProps) => {
 
   }
   const participantProfile = () => {
-    const d = {
-      firstName: "",
-      lastName: "",
-      email: "",
-      job: "",
-      about: "",
-      company: "",
-      pictureUrl: "",
-    };
+    const d =defaultRegisterRequest;
     switch (getUserType()) {
       case "participant":
         const pa = participantAssets.filter(
@@ -338,6 +337,8 @@ const Profile = (props: RouteComponentProps) => {
     }
     return d;
   };
+ 
+  
   if((projectAssets && projectAssets.length !== 0 && checkFirstTimeLogin === 0) || (participantAssets && participantAssets.length !== 0 && checkFirstTimeLogin === 0)){ checkFirstTimeLogin = 1;  }
    if(roleRequested && roleRequested.length !== 0 && checkFirstTimeLogin === 0){checkFirstTimeLogin = 2;  }
    if(checkFirstTimeLogin === 0){checkFirstTimeLogin = 3;}
@@ -345,6 +346,7 @@ const Profile = (props: RouteComponentProps) => {
     const p = hackathonProps.project;
      return (
       <div className="listing-projects-name">
+
         <div className="created-projects-listing">
           <div
             className="left--project-image"
@@ -371,6 +373,11 @@ const Profile = (props: RouteComponentProps) => {
           >
             <h2 className="title-project">{p.payload.name}</h2>
             <div className="online-and-days">
+              <div className="online-point">
+                {" "}
+                <IonIcon icon={globe}></IonIcon> {p.payload.location}
+              </div>
+              <div className="itemdata">
               <div className="left-days">
                 {new Date(p.payload.endDate).getTime() > new Date().getTime()
                   ? Math.ceil(
@@ -384,10 +391,14 @@ const Profile = (props: RouteComponentProps) => {
                 Days left
                 
               </div>
-              <div className="online-point">
+              <div className="Challanges-list">
                 {" "}
-                <IonIcon icon={globe}></IonIcon> {p.payload.location}
+                <IonIcon icon={flag}></IonIcon>{" "}
+                <span>{p.payload.challenges.length}</span> Challange
+                {p.payload.challenges.length > 1 && "s"}
               </div>
+              </div>
+              
             </div>
             <div className="price-chanllanges-parti">
               <div className="project-price-lsiitng">
@@ -402,12 +413,7 @@ const Profile = (props: RouteComponentProps) => {
                   </p>
                 ))}
               </div>
-              <div className="Challanges-list">
-                {" "}
-                <IonIcon icon={flag}></IonIcon>{" "}
-                <span>{p.payload.challenges.length}</span> Challange
-                {p.payload.challenges.length > 1 && "s"}
-              </div>
+             
               <div className="participants">
                 <p className="participants-numbers">
                   {" "}
@@ -443,7 +449,7 @@ const Profile = (props: RouteComponentProps) => {
                     icon={hammer}
                     onClick={(e) => {
                       e.stopPropagation();
-                      console.log("the selected::", p);
+                     
 
                       setSelectedProject(p);
                       props.history.push("/main/scores/" + p.payload.projectId);
@@ -454,8 +460,7 @@ const Profile = (props: RouteComponentProps) => {
                     icon={pencil}
                     onClick={(e) => {
                       e.stopPropagation();
-                      console.log("the selected::", p);
-
+                     
                       setSelectedProject(p);
                       props.history.push(
                         "/main/projects/" + p.payload.projectId + "/edit"
@@ -825,87 +830,40 @@ const Profile = (props: RouteComponentProps) => {
 
                 <div className="wrapper profile-wrapper">
                   {participantProfile().firstName !== "" && 
-                  <div className="profile-info-container">
-                    <div className="profile-img-container">
-                      {projectAssets.length > 0 &&
-                      projectAssets[0].payload.clientProfile.pictureUrl !==
-                        "" ? (
-                        <img
-                          src={
-                            projectAssets[0].payload.clientProfile.pictureUrl
-                          }
-                          alt="profile1"
-                        />
-                      ) : (
-                        <img
-                          src="https://via.placeholder.com/214x198.png"
-                          alt="profile"
-                        />
-                      )}
-                      <input
-                        className="profile-picture-input"
-                        type="file"
-                        accept="image/*"
-                      />
-                    </div>
-                    <div className="profile-info">
-                      <div className="profile-header">
-                        <h1>
-                          {/* {user.party}  */}
-                          {participantProfile().firstName}{" "}
-                          {participantProfile().lastName}
-                        </h1>
-                        <IonButton size="large" onClick={(e)=>
-                            props.history.push("/main/profile/edit")
-                        } className="edit-button">
-                          
-                          Edit{" "}
-                        </IonButton>
-                      </div>
-
-                      <div className="profile-about">
-                        <h2>About</h2>
-                        <p>{participantProfile().about}</p>
-                        <p>
-                          Email:{" "}
-                          <a href={"mailto:" + participantProfile().email}>
-                            {participantProfile().email}
-                          </a>
-                        </p>
-
-                        <p>
-                          Name: {participantProfile().firstName} {participantProfile().lastName}
-                        </p>
-						
-                        <p>
-                          Job: {participantProfile().job}
-                        </p>
-                        <p>
-                          About: {participantProfile().about}
-                        </p>
+                   <div className="profile-box">
+                    <ViewProfileData {...props}/>
+                  
+                      
+                      <div className="profile-btn">
                         
+                      
                         {getUserType() === "client" ? (
-                          <div>
+                          
                             <IonButton
                               onClick={() => setShowCreateProjectModal(true)}
                               className="create-project-button extra-create-newproject-btn"
                             >
                               Create New Hackathon
                             </IonButton>
-                          </div>
+                          
                         ) : null}
-                      </div>
-                    </div>
-                  </div>
+                          <IonButton size="large" onClick={(e)=>
+                            props.history.push("/main/profile/edit")
+                        } className="edit-button">
+                          
+                          Edit Porfile{" "}
+                        </IonButton>
+                        </div>
+                     </div>
                   }
-                  {checkFirstTimeLogin === 3 &&
+                  {(checkFirstTimeLogin === 3 || checkFirstTimeLogin === 2) &&
                     <div className="new-user-profile">
-                      <ViewProfileData {...props}/>
+                        
                         <IonItem>
                          <IonLabel position="floating">First Name</IonLabel>
                           <IonInput
                             required={true}
-                            value={registerRequest.firstName}
+                            value={defaultRegisterRequest.firstName}
                             onIonChange={(e) =>
                               setRegisterRequest({
                                 ...registerRequest,
@@ -918,7 +876,7 @@ const Profile = (props: RouteComponentProps) => {
                          <IonLabel position="floating">Last Name</IonLabel>
                           <IonInput
                             required={true}
-                            value={registerRequest.lastName}
+                            value={defaultRegisterRequest.lastName}
                             onIonChange={(e) =>
                               setRegisterRequest({
                                 ...registerRequest,
@@ -931,7 +889,7 @@ const Profile = (props: RouteComponentProps) => {
                          <IonLabel position="floating">Email</IonLabel>
                           <IonInput
                             required={true}
-                            value={registerRequest.email}
+                            value={defaultRegisterRequest.email}
                             onIonChange={(e) =>
                               setRegisterRequest({
                                 ...registerRequest,
@@ -945,7 +903,7 @@ const Profile = (props: RouteComponentProps) => {
                          <IonLabel position="floating">Job</IonLabel>
                           <IonInput
                             required={true}
-                            value={registerRequest.job}
+                            value={defaultRegisterRequest.job}
                             onIonChange={(e) =>
                               setRegisterRequest({
                                 ...registerRequest,
@@ -958,7 +916,7 @@ const Profile = (props: RouteComponentProps) => {
                          <IonLabel position="floating">About</IonLabel>
                           <IonTextarea
                             required={true}
-                            value={registerRequest.about}
+                            value={defaultRegisterRequest.about}
                             onIonChange={(e) =>
                               setRegisterRequest({
                                 ...registerRequest,
@@ -971,7 +929,7 @@ const Profile = (props: RouteComponentProps) => {
                        
                           <IonCheckbox
                            
-                            value={registerRequest.job}
+                            value={defaultRegisterRequest.job}
                             onIonChange={(e) =>
                               setRequestCheckbox(e)
                             }
@@ -1000,9 +958,7 @@ const Profile = (props: RouteComponentProps) => {
                       </IonItem>    
                     </div>
                   }
-                  {(checkFirstTimeLogin === 2) &&
-                    <h1>We are processing your account registration. Please check back later.</h1>
-                  }
+                 
                   {checkFirstTimeLogin === 1 &&
                   (getUserType() === "client" ? (
                     clientProjectAssets.filter(
@@ -1025,9 +981,10 @@ const Profile = (props: RouteComponentProps) => {
                   ) : (
                     <IonList>
                       <IonListHeader>Hackathons:</IonListHeader>
-                      {clientProjectAssets.map((p) => (
+                      {clientProjectAssets.map((p,index) => (
                         <HackathonComponenent
                           project={p}
+                          key={index}
                         ></HackathonComponenent>
                       ))}
                     </IonList>

@@ -28,7 +28,7 @@ const ProfileMenu = (props: RouteComponentProps) => {
                     <IonItem>
                       <img slot="start" src={menuItemImg} alt="menu item" />
                       <IonLabel  onClick={(e)=>
-                            props.history.push("/main/profile/view")
+                            props.history.push("/main/profile")
                         }>Profile</IonLabel>
                     </IonItem>
                     {/* <IonItem>

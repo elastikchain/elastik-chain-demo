@@ -16,7 +16,7 @@ import Scores from "../../pages/scores/Scores";
 
 
 const FrontLayout = (props: any) => {
-  console.log("FrontLayout", props);
+
   const user = useUserState();
   if (!user.isAuthenticated) {
     return null;

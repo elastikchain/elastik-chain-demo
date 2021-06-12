@@ -12,12 +12,11 @@ const PrizesComponent = (props: any) => {
     });
     
   }
-  console.log("fields",fields);
   function handleChange(i: number, event: any) {
     const { name, value } = event.target;
     const list: any = [...fields];
     list[i][name] = value;
-    console.log("list",list);
+ 
     
     props.onPrizeChange(list);
   }

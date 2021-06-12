@@ -195,7 +195,7 @@ const EditProfile = (props: RouteComponentProps) => {
               <IonLabel position="floating">First Name</IonLabel>
               <IonInput
                 required={true}
-                value={profileDetail.firstName}
+                value={profileDetail.firstName === "" ? userProfileData().firstName: profileDetail.firstName}
                 onIonChange={(e) => {
                     setProfileDetail({
                     ...profileDetail,
@@ -208,7 +208,7 @@ const EditProfile = (props: RouteComponentProps) => {
               <IonLabel position="floating">Last Name</IonLabel>
               <IonInput
                 required={true}
-                value={profileDetail.lastName}
+                value={profileDetail.lastName === "" ? userProfileData().lastName: profileDetail.lastName}
                 onIonChange={(e) => {
                     setProfileDetail({
                     ...profileDetail,
@@ -221,7 +221,7 @@ const EditProfile = (props: RouteComponentProps) => {
               <IonLabel position="floating">Email </IonLabel>
               <IonInput
                 required={true}
-                value={profileDetail.email}
+                value={profileDetail.email === "" ? userProfileData().email: profileDetail.email}
                 onIonChange={(e) => {
                     setProfileDetail({
                     ...profileDetail,
@@ -234,7 +234,7 @@ const EditProfile = (props: RouteComponentProps) => {
               <IonLabel position="floating">Job </IonLabel>
               <IonInput
                 required={true}
-                value={profileDetail.job}
+                value={profileDetail.job === "" ? userProfileData().job: profileDetail.job}
                 onIonChange={(e) => {
                     setProfileDetail({
                     ...profileDetail,
@@ -247,7 +247,7 @@ const EditProfile = (props: RouteComponentProps) => {
               <IonLabel position="floating">Company </IonLabel>
               <IonInput
                 required={true}
-                value={profileDetail.company}
+                value={profileDetail.company === "" ? userProfileData().company: profileDetail.company}
                 onIonChange={(e) => {
                     setProfileDetail({
                     ...profileDetail,
@@ -257,9 +257,9 @@ const EditProfile = (props: RouteComponentProps) => {
               ></IonInput>
             </IonItem>
             <IonItem>
-              <IonLabel position="floating">Video Link</IonLabel>
+              <IonLabel position="floating">About Me</IonLabel>
               <IonTextarea
-                value={profileDetail.about}
+                value={profileDetail.about === "" ? userProfileData().about: profileDetail.about}
                 onIonChange={(e) => {
                     setProfileDetail({
                     ...profileDetail,
@@ -271,7 +271,7 @@ const EditProfile = (props: RouteComponentProps) => {
             <IonItem>
               <IonLabel position="floating">Picture URL</IonLabel>
               <IonInput
-                value={profileDetail.pictureUrl}
+                value={profileDetail.pictureUrl === "" ? userProfileData().pictureUrl: profileDetail.pictureUrl}
                 onIonChange={(e) => {
                     setProfileDetail({
                     ...profileDetail,

@@ -49,15 +49,14 @@ const ViewProfile = (props: RouteComponentProps) => {
   const projectAssets = useStreamQueries(ClientRole).contracts;
   const roleRequested = useStreamQueries(UserRoleRequest).contracts;
   
-  console.log("clientRole",projectAssets);
+
 
   const clientProjectAssets = useStreamQueries(ClientProject).contracts;
   
 
 
   const participantAssets = useStreamQueries(UserRole).contracts;
-  console.log("User Role Data", participantAssets);
-  //console.log("User Role Data", projectAssets);
+
   const getUserType = (): "" | "client" | "participant" | "judge" => {
     if (
       clientProjectAssets.length > 0 &&
@@ -90,7 +89,7 @@ const ViewProfile = (props: RouteComponentProps) => {
 
   const requestToJoinProjectAssets = useStreamQueries(RequestToJoinProject)
     .contracts;
-  console.log("requestToJoinProjectAssets", requestToJoinProjectAssets);
+ 
 
   const [selectedTab, setSelectedTab] = useState("coordinates");
 

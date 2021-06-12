@@ -8,7 +8,6 @@ import {
   ClientProject,
   CreateProject,
   RequestToJoinProject,
-  UserRoleRequest,
   UserRole
   
 } from "@daml.js/cosmart-0.0.1/lib/Main";
@@ -18,11 +17,9 @@ import {
   useUserState,
 } from "../../context/UserContext";
 
-
+import clientIcon from '../../assets/img/client.png';
+import participantIcon from '../../assets/img/participant.png';
 import {
-  IonPage,
-  IonContent,
-  IonSplitPane,
   IonLabel,
   IonSegment,
   IonSegmentButton,
@@ -43,20 +40,15 @@ const ViewProfileData = (props: RouteComponentProps) => {
   }
 
 
-  let checkFirstTimeLogin = 0;
-
   const projectAssets = useStreamQueries(ClientRole).contracts;
-  const roleRequested = useStreamQueries(UserRoleRequest).contracts;
-  
-  console.log("clientRole",projectAssets);
+ 
 
   const clientProjectAssets = useStreamQueries(ClientProject).contracts;
   
 
 
   const participantAssets = useStreamQueries(UserRole).contracts;
-  console.log("User Role Data", participantAssets);
-  //console.log("User Role Data", projectAssets);
+
   const getUserType = (): "" | "client" | "participant" | "judge" => {
     if (
       clientProjectAssets.length > 0 &&
@@ -89,7 +81,7 @@ const ViewProfileData = (props: RouteComponentProps) => {
 
   const requestToJoinProjectAssets = useStreamQueries(RequestToJoinProject)
     .contracts;
-  console.log("requestToJoinProjectAssets", requestToJoinProjectAssets);
+  
 
   const [selectedTab, setSelectedTab] = useState("coordinates");
 
@@ -155,7 +147,7 @@ const ViewProfileData = (props: RouteComponentProps) => {
                           />
                         ) : (
                           <img
-                            src="https://via.placeholder.com/214x198.png"
+                            src={getUserType() === "client" ? clientIcon : participantIcon}
                             alt="profile "
                           />
                         )}

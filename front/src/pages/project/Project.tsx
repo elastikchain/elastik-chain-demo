@@ -34,9 +34,6 @@ import {
   man,
   close,
   arrowBack,
-  logoFacebook,
-  logoInstagram,
-  logoTwitter,
 } from "ionicons/icons";
 import "./Project.scss";
 import { useLedger, useStreamQueries } from "@daml/react";
@@ -70,13 +67,13 @@ const Project = (props: RouteComponentProps) => {
     { projectId: getSelectedProject().payload.projectId },
   ]).contracts;
 
-  console.log('selectedProj', selectedProj);
+
   
 
  
 
    const getUserType = (): "" | "client" | "participant" | "judge" => {
-     console.log('user type', (user as any).party);
+     
      
     if (
       selectedProj.filter(
@@ -143,10 +140,10 @@ const Project = (props: RouteComponentProps) => {
   const handleSubmitJudgeScore = async (evt:any)=>{
     evt.preventDefault();
     defaultSubmitScoreDetail.scores = Array<CriteriaPoint>();
-    let score = 0;
+    let score = 0.0;
     for(let i=0;i<evt.target.elements.name.length;i++){
-      if(evt.target.elements.name[i] !== ""){
-        score += evt.target.elements.point[i].value;
+      if(evt.target.elements.name[i].value !== ""){
+        score += parseFloat(evt.target.elements.point[i].value);
         defaultSubmitScoreDetail.scores.push({name:evt.target.elements.name[i].value,point:evt.target.elements.point[i].value});
       }
       
@@ -337,7 +334,6 @@ const Project = (props: RouteComponentProps) => {
     ]
   ).contracts
 
-  console.log("requestToJudgeProject", requestToJudgeProject);
   
 
   
@@ -353,7 +349,7 @@ const Project = (props: RouteComponentProps) => {
         comment: challengeID,
       })
       .then((data: any) => {
-        console.log("Record Delete successfully");
+   
         deleteChallenderConfirmation({
           status: false,
           challengeID: "",
@@ -445,7 +441,7 @@ const Project = (props: RouteComponentProps) => {
 
             <IonItem>
               <IonLabel position="floating">Submission Description*</IonLabel>
-              <IonInput
+              <IonTextarea
                 required={true}
                 value={submissionDetail.subDesc}
                 onIonChange={(e) =>
@@ -454,7 +450,7 @@ const Project = (props: RouteComponentProps) => {
                     subDesc: e.detail.value!,
                   })
                 }
-              ></IonInput>
+              ></IonTextarea>
             </IonItem>
 
             <IonButton className="submit-button" type="submit">
@@ -663,10 +659,8 @@ const Project = (props: RouteComponentProps) => {
                                 <li key={index}>
                                   <img src={userImg} alt=""/>
                                   <span>
-                                   <b> <GetJudge name={j}/> </b> 
-                                    <i>
-                                       Mentor / Hackathon judge
-                                    </i>
+                                   <b> <GetJudge name={j} showjob={true}/> </b> 
+                                    
                                   </span>
                                 </li>
                               ))
@@ -773,7 +767,7 @@ const Project = (props: RouteComponentProps) => {
                             </div>
                           </div>
                         ))}
-                        {console.log(approvedSubmissions)}
+                       
                        
                         { (approvedSubmissions.length > 0) ? approvedSubmissions.map((sc,index) => (
                           <IonCard
@@ -800,14 +794,27 @@ const Project = (props: RouteComponentProps) => {
                                   <div className="submit-your-score">
                                     
                                     <form method="post" onSubmit={handleSubmitJudgeScore}>
+                                    <input
+                                      type="hidden"
+                                      name="point"
+                                      placeholder="Score"
+                                      value=""
+                                    />
+                                    <input
+                                      type="hidden"
+                                      name="name"
+                                      value=""
+                                    />
                                     { (sc.payload.criteria.length > 0) && sc.payload.criteria.map((crt,index) => (
                                       <ScoreSubmit key={index} crt={crt}/>
                                     ))}
+                                   <div className="judging">
+                                    <label>Comment: </label>
                                       <input
                                         type="text"
                                         name="comment"
                                         placeholder="Comment"
-                                  />
+                                  /></div>
                                     <input
                                       type="hidden"
                                       name="contactid"
@@ -869,7 +876,7 @@ const Project = (props: RouteComponentProps) => {
                       </div>
                     </Tab>
                     {
-                      (getUserType() === "client" || requestToJudgeProject.length < 1) ? 
+                      (getUserType() === "client") ? 
                           <Tab title="Judge Requests" className="tabs-contant"> 
                             <div className="list_inner">
                               <h2>Judge Requests</h2>
@@ -1027,31 +1034,6 @@ const Project = (props: RouteComponentProps) => {
                   </div>
                 </div>
 
-                <div className="edtion_child">
-                  <div className="details-social-icon">
-                    <h2>Invite others to compete</h2>
-                    <ul>
-                      <li>
-                        <a href="#top">
-                          {" "}
-                          <IonIcon icon={logoFacebook}></IonIcon>
-                        </a>
-                      </li>
-                      <li>
-                        <a href="#top">
-                          {" "}
-                          <IonIcon icon={logoTwitter}></IonIcon>
-                        </a>
-                      </li>
-                      <li>
-                        <a href="#top">
-                          {" "}
-                          <IonIcon icon={logoInstagram}></IonIcon>
-                        </a>
-                      </li>
-                    </ul>
-                  </div>
-                </div>
               </div>
             </div>
           </div>

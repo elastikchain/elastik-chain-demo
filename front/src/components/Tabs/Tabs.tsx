@@ -14,7 +14,7 @@ const Tabs: React.FC<Props> = ({ children, className, defaultActiveKey }) => {
     <div>
       <div className={className}>
         {children.map((item, index) => {
-          // console.log("item", item);
+         
           return (
             <TabTitle
               key={index}

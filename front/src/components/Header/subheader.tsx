@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React from "react";
 
 import {
   useUserDispatch,
@@ -9,18 +9,11 @@ import {
   IonButton,
   IonButtons,
   IonHeader,
-  IonSearchbar,
   IonToolbar,
 } from "@ionic/react";
-
-
 import logo from "../../assets/img/logo-combination.png";
-
-
 const SubHeader = (props: any) => {
-  const [searchText, setSearchText] = useState("");
   const userDispatch = useUserDispatch();
-
   return (
     <IonHeader>
       <IonToolbar className="toolbar">

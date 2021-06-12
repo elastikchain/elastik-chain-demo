@@ -7,7 +7,6 @@ import {
   IonHeader,
   IonPage,
   IonToolbar,
-  IonSearchbar,
   IonButtons,
   IonButton,
   IonModal,
@@ -16,7 +15,11 @@ import {
   IonItem,
   IonIcon,
 } from "@ionic/react";
-
+import {
+  logoFacebook,
+  logoInstagram,
+  logoTwitter,
+} from "ionicons/icons";
 import "slick-carousel/slick/slick.css"; 
 import "slick-carousel/slick/slick-theme.css";
 import Slider from "react-slick";
@@ -109,7 +112,6 @@ const renderCatgoriesSlides = () => {
 const slides = renderCatgoriesSlides();
 const Home = (props: RouteComponentProps) => {
 
-  const [searchText, setSearchText] = useState("");
   const [showLoginModal, setShowLoginModal] = useState(false);
   const [loginSegement, setLoginSegement] = useState("SIGN_IN");
   const [loginUserName, setLoginUserName] = useState("");
@@ -517,6 +519,26 @@ UI/UX Design, React, DAML, Node.."</i>
               <span>Terms of use</span> | <span>Privacy Statement</span> |{" "}
               <span>Copyright ElastikChain Ltd 2021</span>
             </div>
+            <ul>
+                      <li>
+                        <a href="#top">
+                          {" "}
+                          <IonIcon icon={logoFacebook}></IonIcon>
+                        </a>
+                      </li>
+                      <li>
+                        <a href="#top">
+                          {" "}
+                          <IonIcon icon={logoTwitter}></IonIcon>
+                        </a>
+                      </li>
+                      <li>
+                        <a href="#top">
+                          {" "}
+                          <IonIcon icon={logoInstagram}></IonIcon>
+                        </a>
+                      </li>
+                    </ul>
           </div>
         </footer>
       </IonContent>

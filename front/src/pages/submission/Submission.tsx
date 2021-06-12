@@ -232,11 +232,8 @@ const Submission = (props: RouteComponentProps) => {
                   <div className="teammate-container">
                     {submission.map((c,index) => (
                       <div className="team-member" key={index}>
-                        <img
-                          src="https://via.placeholder.com/152x128.png"
-                          alt="team member"
-                        />
-                        <p> <GetJudge name={c.payload.participant}/></p>
+                       
+                        <p> <GetJudge name={c.payload.participant} showjob={true}/></p>
                       </div>
                     ))}
                     {submission.map((c) =>

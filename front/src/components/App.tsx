@@ -105,7 +105,6 @@ export default function App() {
   }
 
   function FrontPrivateRoute({ component, ...rest } : any) {
-    console.log('FrontPrivateRoute');
     return (
       <Route
         {...rest}

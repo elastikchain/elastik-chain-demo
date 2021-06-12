@@ -32,7 +32,7 @@ const RequestForJudgeOnProject = (props:any) => {
         setMessageType("error");
       });
     }
-    console.log("requestJudge",requestJudge)
+  
     return (
                 <> <Alert type={messageType} showAlert={showAlert} setAlerts={setAlerts} text={messageText} />
                      {requestJudge && requestJudge.map((obj,index)=>(

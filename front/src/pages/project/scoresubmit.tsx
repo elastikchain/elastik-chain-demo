@@ -5,17 +5,7 @@ const ScoreSubmit = (props:any) => {
     
     return (
                 <> 
-                <input
-                                      type="hidden"
-                                      name="point"
-                                      placeholder="Score"
-                                      value=""
-                                    />
-                                    <input
-                                      type="hidden"
-                                      name="name"
-                                      value=""
-                                    />
+                
                   <div className="judging">
                        <label>{props.crt.name}</label>
                        <input
@@ -23,7 +13,7 @@ const ScoreSubmit = (props:any) => {
                              name="point"
                              placeholder="Score"
                        />
-                       <label>Comment: </label>
+                       
                      
                        <input
                           type="hidden"
