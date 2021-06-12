@@ -1,3 +1,37 @@
+Skip to content
+Search or jump to…
+
+Pull requests
+Issues
+Marketplace
+Explore
+ 
+@devendrastartdesigns 
+elastikchain
+/
+elastik-chain-demo
+1
+0
+1
+Code
+Issues
+Pull requests
+7
+Actions
+Projects
+Wiki
+Security
+Insights
+Settings
+elastik-chain-demo/front/src/pages/profile/Profile.tsx /
+@devendrastartdesigns
+devendrastartdesigns Fix issue
+Latest commit 554081e 1 hour ago
+ History
+ 3 contributors
+@devendrastartdesigns@itisnajim@med-amiine
+1005 lines (932 sloc)  37.4 KB
+  
 import React, { useState } from "react";
 import { RouteComponentProps } from "react-router-dom";
 
@@ -863,7 +897,7 @@ const Profile = (props: RouteComponentProps) => {
                          <IonLabel position="floating">First Name</IonLabel>
                           <IonInput
                             required={true}
-                            value={defaultRegisterRequest.firstName}
+                            value={ registerRequest.firstName === "" ? defaultRegisterRequest.firstName : registerRequest.firstName}
                             onIonChange={(e) =>
                               setRegisterRequest({
                                 ...registerRequest,
@@ -876,7 +910,7 @@ const Profile = (props: RouteComponentProps) => {
                          <IonLabel position="floating">Last Name</IonLabel>
                           <IonInput
                             required={true}
-                            value={defaultRegisterRequest.lastName}
+                            value={registerRequest.lastName === "" ? defaultRegisterRequest.lastName : registerRequest.lastName}
                             onIonChange={(e) =>
                               setRegisterRequest({
                                 ...registerRequest,
@@ -889,7 +923,7 @@ const Profile = (props: RouteComponentProps) => {
                          <IonLabel position="floating">Email</IonLabel>
                           <IonInput
                             required={true}
-                            value={defaultRegisterRequest.email}
+                            value={registerRequest.email === "" ? defaultRegisterRequest.email : registerRequest.email}
                             onIonChange={(e) =>
                               setRegisterRequest({
                                 ...registerRequest,
@@ -903,7 +937,7 @@ const Profile = (props: RouteComponentProps) => {
                          <IonLabel position="floating">Job</IonLabel>
                           <IonInput
                             required={true}
-                            value={defaultRegisterRequest.job}
+                            value={registerRequest.job === "" ? defaultRegisterRequest.job : registerRequest.job}
                             onIonChange={(e) =>
                               setRegisterRequest({
                                 ...registerRequest,
@@ -916,7 +950,7 @@ const Profile = (props: RouteComponentProps) => {
                          <IonLabel position="floating">About</IonLabel>
                           <IonTextarea
                             required={true}
-                            value={defaultRegisterRequest.about}
+                            value={registerRequest.about === "" ? defaultRegisterRequest.about : registerRequest.about}
                             onIonChange={(e) =>
                               setRegisterRequest({
                                 ...registerRequest,
@@ -929,7 +963,7 @@ const Profile = (props: RouteComponentProps) => {
                        
                           <IonCheckbox
                            
-                            value={defaultRegisterRequest.job}
+                            value={registerRequest.job === "" ? defaultRegisterRequest.job : registerRequest.job}
                             onIonChange={(e) =>
                               setRequestCheckbox(e)
                             }
@@ -1003,3 +1037,16 @@ const Profile = (props: RouteComponentProps) => {
   }
 };
 export default Profile;
+© 2021 GitHub, Inc.
+Terms
+Privacy
+Security
+Status
+Docs
+Contact GitHub
+Pricing
+API
+Training
+Blog
+About
+Loading complete
