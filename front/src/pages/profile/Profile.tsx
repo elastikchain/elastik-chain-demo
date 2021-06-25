@@ -1,37 +1,3 @@
-Skip to content
-Search or jump to…
-
-Pull requests
-Issues
-Marketplace
-Explore
- 
-@devendrastartdesigns 
-elastikchain
-/
-elastik-chain-demo
-1
-0
-1
-Code
-Issues
-Pull requests
-7
-Actions
-Projects
-Wiki
-Security
-Insights
-Settings
-elastik-chain-demo/front/src/pages/profile/Profile.tsx /
-@devendrastartdesigns
-devendrastartdesigns Fix issue
-Latest commit 554081e 1 hour ago
- History
- 3 contributors
-@devendrastartdesigns@itisnajim@med-amiine
-1005 lines (932 sloc)  37.4 KB
-  
 import React, { useState } from "react";
 import { RouteComponentProps } from "react-router-dom";
 
@@ -1037,16 +1003,4 @@ const Profile = (props: RouteComponentProps) => {
   }
 };
 export default Profile;
-© 2021 GitHub, Inc.
-Terms
-Privacy
-Security
-Status
-Docs
-Contact GitHub
-Pricing
-API
-Training
-Blog
-About
-Loading complete
+

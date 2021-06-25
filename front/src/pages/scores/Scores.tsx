@@ -87,9 +87,13 @@ const Scores = (props: RouteComponentProps) => {
               stableSort(rows, getComparator(order, orderBy)).map((c,index) => (
                 <IonItem key={index}>
                   
-                  <IonLabel>{c.name}</IonLabel>
+                  <IonLabel>{c.name}
+                  
+                  </IonLabel>
                   <IonLabel>{c.submissionId}</IonLabel>
-                  <IonLabel> <GetJudge name={c.judge}/></IonLabel>
+                  <IonLabel> <GetJudge name={c.judge}/>
+                  <p>{c.judgeComment}</p>
+                  </IonLabel>
                   {(scorecard[index].payload.scoretable || []).length > 0 ? (
                     <IonLabel>
                       {(scorecard[index].payload.scoretable || []).map((s:any,indx) => (
